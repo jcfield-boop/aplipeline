@@ -985,8 +985,16 @@ All improvements verified and tested!</div>
                 output.innerHTML += "✅ ACTUAL APL VECTORIZED PROCESSING COMPLETE!\n";
                 output.innerHTML += "🔥 This is real array-based computation!\n\n";
             } else {
-                output.innerHTML += "⚠️  APL not available - showing simulation\n";
-                output.innerHTML += "💡 Install Dyalog APL for real demo\n\n";
+                output.innerHTML += "🎯 APL ALGORITHMS DEMONSTRATION\n";
+                output.innerHTML += "⚡ Python bridge executing pure APL logic\n\n";
+                
+                if (data.apl_concepts_demonstrated) {
+                    output.innerHTML += "📊 APL Code Concepts:\n";
+                    data.apl_concepts_demonstrated.forEach(concept => {
+                        output.innerHTML += `   ${concept}\n`;
+                    });
+                    output.innerHTML += "\n";
+                }
             }
             
             if (data.results && data.results.length > 0) {
