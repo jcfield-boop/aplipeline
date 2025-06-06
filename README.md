@@ -12,13 +12,32 @@ A groundbreaking CI/CD system written in APL, designed to handle thousands of AI
 - Dyalog APL v19.0+ 
 - macOS/Linux/Windows with command-line access
 
-### Installation & Demo
+### Web Dashboard Demo (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/jcfield-boop/aplipeline.git
 cd aplipeline
 
+# Start the web dashboard
+python3 demos/serve.py
+# Open: http://localhost:8080/dashboard.html
+
+# Optional: Real APL backend (in another terminal)
+pip3 install websockets
+python3 backend/websocket-bridge.py
+```
+
+**Web Interface Features:**
+- 🔗 **APL Backend Connection** status with live indicator
+- 🚀 **Live Performance Benchmark** - Comprehensive 1K→100K PR testing
+- ⚡ **Quick Performance Test** - Fast 1,000 PR validation  
+- 🧠 **AI Code Analysis** - Model detection with visual results
+- 📊 **System Monitoring** - Real-time APL workspace status
+
+### Command-Line Demo
+
+```bash
 # Command-line setup (macOS)
 alias dyalog="/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl"
 
