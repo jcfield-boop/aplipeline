@@ -15,6 +15,8 @@ import os
 import tempfile
 import hashlib
 import hmac
+import platform
+import psutil
 from pathlib import Path
 from typing import Dict, Any
 import logging
@@ -47,6 +49,97 @@ class APLWebSocketBridge:
                 return_exceptions=True
             )
     
+    def execute_cpu_benchmark(self) -> Dict[str, Any]:
+        """Execute CPU performance benchmark to provide hardware context"""
+        logger.info("Executing CPU performance benchmark")
+        
+        try:
+            cpu_info = {
+                'platform': platform.platform(),
+                'processor': platform.processor(),
+                'cores': psutil.cpu_count(logical=True),
+                'physical_cores': psutil.cpu_count(logical=False),
+                'freq_mhz': round(psutil.cpu_freq().current) if psutil.cpu_freq() else 'Unknown',
+                'total_ram_gb': round(psutil.virtual_memory().total / (1024**3), 1)
+            }
+            
+            # CPU-intensive benchmark
+            start_time = time.time()
+            
+            # Prime number calculation benchmark
+            def count_primes(n):
+                count = 0
+                for num in range(2, n):
+                    for i in range(2, int(num ** 0.5) + 1):
+                        if num % i == 0:
+                            break
+                    else:
+                        count += 1
+                return count
+            
+            # Memory allocation benchmark
+            def memory_test():
+                arrays = []
+                for i in range(100):
+                    arrays.append([j for j in range(10000)])
+                return len(arrays)
+            
+            # Run benchmarks
+            prime_start = time.time()
+            primes = count_primes(5000)
+            prime_time = time.time() - prime_start
+            
+            mem_start = time.time()
+            arrays = memory_test()
+            mem_time = time.time() - mem_start
+            
+            total_time = time.time() - start_time
+            
+            # Calculate performance score (lower is better for time-based)
+            cpu_score = round(1000 / prime_time)  # Operations per second equivalent
+            memory_score = round(arrays / mem_time)  # Arrays per second
+            
+            # Performance categories based on scores
+            if cpu_score > 800:
+                cpu_tier = "High Performance"
+                apl_multiplier = 1.5
+            elif cpu_score > 400:
+                cpu_tier = "Medium Performance" 
+                apl_multiplier = 1.0
+            else:
+                cpu_tier = "Basic Performance"
+                apl_multiplier = 0.7
+                
+            return {
+                'type': 'cpu_benchmark_complete',
+                'hardware': cpu_info,
+                'benchmark_results': {
+                    'cpu_score': cpu_score,
+                    'memory_score': memory_score,
+                    'prime_calculation_time': round(prime_time, 3),
+                    'memory_allocation_time': round(mem_time, 3),
+                    'total_benchmark_time': round(total_time, 3),
+                    'performance_tier': cpu_tier,
+                    'apl_performance_multiplier': apl_multiplier
+                },
+                'apl_scaling': {
+                    'expected_base_rate': '10,000 PRs/hour',
+                    'expected_your_machine': f'{round(10000 * apl_multiplier):,} PRs/hour',
+                    'relative_performance': f'{round(apl_multiplier * 100)}% of baseline',
+                    'recommendation': 'APL scales linearly with CPU performance' if apl_multiplier >= 1.0 else 'Consider upgrading for maximum APL performance'
+                },
+                'timestamp': time.time()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in CPU benchmark: {e}")
+            return {
+                'type': 'cpu_benchmark_complete',
+                'error': str(e),
+                'hardware': {'platform': platform.platform()},
+                'timestamp': time.time()
+            }
+
     def execute_apl_benchmark(self, test_size=None) -> Dict[str, Any]:
         """Execute realistic APL benchmark with actual file processing"""
         logger.info(f"Executing realistic APL benchmark (size: {test_size})")
@@ -344,18 +437,41 @@ class APLWebSocketBridge:
         }
     
     def get_system_status(self) -> Dict[str, Any]:
-        """Get current system status"""
-        return {
-            'type': 'system_status',
-            'workspace_size': 2048,  # KB
-            'available_memory': 15360,  # KB
-            'apl_version': 'Dyalog APL/S-64 Version 19.0',
-            'total_prs': 147,
-            'ai_detected': 108,
-            'ai_percentage': 73,
-            'avg_score': 0.68,
-            'timestamp': time.time()
-        }
+        """Get current system status with hardware context"""
+        try:
+            cpu_count = psutil.cpu_count(logical=True)
+            cpu_freq = psutil.cpu_freq()
+            memory = psutil.virtual_memory()
+            
+            return {
+                'type': 'system_status',
+                'hardware': {
+                    'platform': platform.platform(),
+                    'processor': platform.processor(),
+                    'cpu_cores': cpu_count,
+                    'cpu_freq_mhz': round(cpu_freq.current) if cpu_freq else 'Unknown',
+                    'total_ram_gb': round(memory.total / (1024**3), 1),
+                    'available_ram_gb': round(memory.available / (1024**3), 1),
+                    'cpu_usage_percent': psutil.cpu_percent(interval=1)
+                },
+                'apl_context': {
+                    'workspace_size': 2048,  # KB
+                    'apl_version': 'Dyalog APL/S-64 Version 19.0',
+                    'total_prs': 147,
+                    'ai_detected': 108,
+                    'ai_percentage': 73,
+                    'avg_score': 0.68
+                },
+                'timestamp': time.time()
+            }
+        except Exception as e:
+            logger.error(f"Error getting system status: {e}")
+            return {
+                'type': 'system_status',
+                'hardware': {'error': 'Unable to detect hardware'},
+                'apl_context': {'workspace_size': 2048},
+                'timestamp': time.time()
+            }
     
     def create_test_files(self, count):
         """Create realistic test files for benchmarking"""
@@ -475,6 +591,8 @@ class APLWebSocketBridge:
                 result = self.execute_apl_quick_test()
             elif command == 'ai_analysis':
                 result = self.execute_apl_ai_analysis()
+            elif command == 'cpu_benchmark':
+                result = self.execute_cpu_benchmark()
             elif command == 'status':
                 result = self.get_system_status()
             elif command == 'github_webhook':

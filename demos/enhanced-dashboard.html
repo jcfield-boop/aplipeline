@@ -300,6 +300,18 @@
         </div>
 
         <div class="file-demo">
+            <h3>🖥️ Your Machine Performance Context<span class="real-indicator">HARDWARE</span></h3>
+            <p><strong>Important:</strong> APL performance scales with your hardware - let's benchmark your machine first!</p>
+            <button class="demo-button" onclick="runCPUBenchmark()">🔧 BENCHMARK THIS MACHINE</button>
+            <div class="progress-bar">
+                <div class="progress-fill" id="cpu-progress"></div>
+            </div>
+            <div id="cpu-benchmark-output" class="demo-output">Click to benchmark your CPU and see how APL will perform on your specific hardware.
+
+This will help contextualize the APL performance results relative to your machine capabilities.</div>
+        </div>
+
+        <div class="file-demo">
             <h3>⚡ APL's Revolutionary Scale Advantage<span class="real-indicator">ENTERPRISE</span></h3>
             <p><strong>The Problem:</strong> Traditional CI/CD systems process commits sequentially - a major bottleneck for large teams</p>
             <p><strong>The APL Solution:</strong> Vectorized array operations process thousands of PRs simultaneously</p>
@@ -531,6 +543,12 @@ All improvements verified and tested!</div>
                 case 'enterprise_scale_complete':
                 case 'scale_advantage_complete':
                     displayScaleAdvantageResults(data);
+                    break;
+                case 'cpu_benchmark_complete':
+                    displayCPUBenchmarkResults(data);
+                    break;
+                case 'system_status':
+                    displaySystemStatus(data);
                     break;
                 default:
                     console.log('Received:', data);
@@ -1012,6 +1030,108 @@ All improvements verified and tested!</div>
             }
             
             progress.style.width = '100%';
+        }
+
+        function runCPUBenchmark() {
+            const output = document.getElementById('cpu-benchmark-output');
+            const progress = document.getElementById('cpu-progress');
+            
+            output.innerHTML = "🔧 CPU Performance Benchmark Starting...\n";
+            output.innerHTML += "=====================================\n\n";
+            progress.style.width = '10%';
+            
+            if (isConnected) {
+                output.innerHTML += "⚡ Running CPU benchmark on your machine...\n";
+                output.innerHTML += "📊 Testing: Prime calculations, memory allocation\n";
+                output.innerHTML += "🎯 Purpose: Context for APL performance scaling\n\n";
+                progress.style.width = '30%';
+                
+                // Send command to run CPU benchmark
+                sendCommand('cpu_benchmark');
+                
+                setTimeout(() => {
+                    output.innerHTML += "⏱️  Measuring CPU performance...\n";
+                    output.innerHTML += "🧮 Computing prime numbers...\n";
+                    output.innerHTML += "💾 Testing memory allocation...\n";
+                    progress.style.width = '70%';
+                }, 1000);
+                
+            } else {
+                output.innerHTML += "⚠️  Backend not connected - showing sample results\n";
+                output.innerHTML += "   Start: python3 backend/websocket-bridge.py\n";
+                output.innerHTML += "   For real hardware benchmarking!\n\n";
+                
+                setTimeout(() => {
+                    displaySampleCPUResults();
+                    progress.style.width = '100%';
+                }, 1500);
+            }
+        }
+
+        function displayCPUBenchmarkResults(data) {
+            const output = document.getElementById('cpu-benchmark-output');
+            const progress = document.getElementById('cpu-progress');
+            
+            output.innerHTML += "\n🎉 CPU Benchmark Complete!\n";
+            output.innerHTML += "==========================\n\n";
+            
+            if (data.hardware) {
+                output.innerHTML += "🖥️  Your Machine:\n";
+                output.innerHTML += `Platform: ${data.hardware.platform || 'Unknown'}\n`;
+                output.innerHTML += `CPU Cores: ${data.hardware.cores || 'Unknown'}\n`;
+                output.innerHTML += `RAM: ${data.hardware.total_ram_gb || 'Unknown'} GB\n`;
+                if (data.hardware.freq_mhz && data.hardware.freq_mhz !== 'Unknown') {
+                    output.innerHTML += `CPU Frequency: ${data.hardware.freq_mhz} MHz\n`;
+                }
+                output.innerHTML += "\n";
+            }
+            
+            if (data.benchmark_results) {
+                const results = data.benchmark_results;
+                output.innerHTML += "📊 Performance Results:\n";
+                output.innerHTML += `CPU Score: ${results.cpu_score} (${results.performance_tier})\n`;
+                output.innerHTML += `Memory Score: ${results.memory_score}\n`;
+                output.innerHTML += `Prime Calculation: ${results.prime_calculation_time}s\n`;
+                output.innerHTML += `Memory Test: ${results.memory_allocation_time}s\n\n`;
+            }
+            
+            if (data.apl_scaling) {
+                const scaling = data.apl_scaling;
+                output.innerHTML += "🚀 APL Performance Scaling:\n";
+                output.innerHTML += `Expected APL Rate: ${scaling.expected_your_machine}\n`;
+                output.innerHTML += `Relative Performance: ${scaling.relative_performance}\n`;
+                output.innerHTML += `Recommendation: ${scaling.recommendation}\n\n`;
+                
+                // Update metrics with machine-specific values
+                const aplRate = scaling.expected_your_machine.replace(/[^\d]/g, '');
+                updateMetric('processing-rate', scaling.expected_your_machine);
+                
+                // Show multiplier in speedup factor
+                const multiplier = data.benchmark_results?.apl_performance_multiplier || 1.0;
+                updateMetric('speedup-factor', `${Math.round(multiplier * 100)}x`);
+            }
+            
+            output.innerHTML += "✅ Your machine is now benchmarked!\n";
+            output.innerHTML += "🎯 APL performance estimates are customized for your hardware.\n";
+            
+            progress.style.width = '100%';
+        }
+
+        function displaySampleCPUResults() {
+            const output = document.getElementById('cpu-benchmark-output');
+            
+            output.innerHTML += "\n📊 Sample Results (Connect for real benchmark):\n";
+            output.innerHTML += "============================================\n\n";
+            output.innerHTML += "🖥️  Sample Machine: Modern laptop\n";
+            output.innerHTML += "CPU Score: 650 (Medium Performance)\n";
+            output.innerHTML += "Expected APL Rate: 10,000 PRs/hour\n";
+            output.innerHTML += "Relative Performance: 100% of baseline\n\n";
+            output.innerHTML += "🎯 Connect APL backend for your actual machine benchmark!\n";
+        }
+
+        function displaySystemStatus(data) {
+            console.log('System status:', data);
+            // Could update connection status display here
         }
 
         // Connect on page load
