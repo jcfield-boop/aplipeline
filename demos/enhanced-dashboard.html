@@ -528,6 +528,10 @@ All improvements verified and tested!</div>
                 case 'ai_analysis_complete':
                     displayAIResults(data);
                     break;
+                case 'enterprise_scale_complete':
+                case 'scale_advantage_complete':
+                    displayScaleAdvantageResults(data);
+                    break;
                 default:
                     console.log('Received:', data);
             }
@@ -537,49 +541,58 @@ All improvements verified and tested!</div>
             const output = document.getElementById('scale-demo-output');
             const progress = document.getElementById('scale-progress');
             
-            output.innerHTML = "🚀 APL Scale Advantage Demonstration\n";
-            output.innerHTML += "===================================\n\n";
+            output.innerHTML = "🚀 REAL APL Scale Advantage Demonstration\n";
+            output.innerHTML += "========================================\n\n";
             progress.style.width = '10%';
             
-            setTimeout(() => {
-                output.innerHTML += "📊 Problem: Traditional CI/CD Sequential Bottleneck\n";
-                output.innerHTML += "Jenkins/GitHub Actions: Process PRs one-by-one\n";
-                output.innerHTML += "Enterprise Reality: 1000+ developers, 5000+ daily commits\n";
-                output.innerHTML += "Result: Deployment delays, reduced velocity\n\n";
+            if (isConnected) {
+                output.innerHTML += "⚡ Executing REAL APL vectorized processing...\n";
+                output.innerHTML += "🔥 This is actual APL code, not simulation!\n\n";
                 progress.style.width = '30%';
-            }, 800);
-            
-            setTimeout(() => {
-                output.innerHTML += "⚡ APL Solution: Vectorized Array Processing\n";
-                output.innerHTML += "scores ← AIScore¨ prs     ⍝ All PRs simultaneously\n";
-                output.innerHTML += "risks ← RiskMatrix prs   ⍝ Parallel risk assessment\n";
-                output.innerHTML += "status ← ProcessAll prs  ⍝ No sequential bottleneck\n\n";
-                progress.style.width = '60%';
-            }, 1600);
-            
-            setTimeout(() => {
-                output.innerHTML += "📈 Performance Comparison:\n";
-                output.innerHTML += "Traditional YAML CI/CD:    50-100 PRs/hour\n";
-                output.innerHTML += "APL Vectorized CI/CD:   10,000+ PRs/hour\n";
-                output.innerHTML += "Scale Advantage:         100x faster\n\n";
-                progress.style.width = '90%';
-            }, 2400);
-            
-            setTimeout(() => {
-                output.innerHTML += "🏆 Business Impact:\n";
-                output.innerHTML += "✅ Transform DevOps from bottleneck to advantage\n";
-                output.innerHTML += "✅ Enable true continuous deployment at scale\n";
-                output.innerHTML += "✅ Perfect for large teams with AI-assisted development\n";
-                output.innerHTML += "✅ Reduce time-to-market from hours to minutes\n\n";
-                output.innerHTML += "🎯 APL's Killer Feature: No other language can match\n";
-                output.innerHTML += "    this level of parallel processing for CI/CD!\n";
-                progress.style.width = '100%';
                 
-                // Update metrics
-                updateMetric('processing-rate', '10,000+');
-                updateMetric('files-processed', '50,000');
+                // Send command to execute real APL
+                sendCommand('scale_advantage');
                 
-            }, 3200);
+                setTimeout(() => {
+                    output.innerHTML += "📊 APL Code Running:\n";
+                    output.innerHTML += "scores ← AIScore¨ prs     ⍝ All PRs simultaneously\n";
+                    output.innerHTML += "priorities ← CalculatePriorities scores\n";
+                    output.innerHTML += "statuses ← DetermineStatuses priorities scores\n\n";
+                    output.innerHTML += "⏱️  Measuring real APL array operations...\n";
+                    progress.style.width = '70%';
+                }, 1000);
+                
+            } else {
+                output.innerHTML += "⚠️  APL backend not connected - showing simulation\n";
+                output.innerHTML += "   Start: python3 backend/websocket-bridge.py\n";
+                output.innerHTML += "   For REAL APL vectorized processing!\n\n";
+                progress.style.width = '30%';
+                
+                setTimeout(() => {
+                    output.innerHTML += "📊 Problem: Traditional CI/CD Sequential Bottleneck\n";
+                    output.innerHTML += "Jenkins/GitHub Actions: Process PRs one-by-one\n";
+                    output.innerHTML += "Enterprise Reality: 1000+ developers, 5000+ daily commits\n";
+                    output.innerHTML += "Result: Deployment delays, reduced velocity\n\n";
+                    progress.style.width = '60%';
+                }, 800);
+                
+                setTimeout(() => {
+                    output.innerHTML += "⚡ APL Solution: Vectorized Array Processing\n";
+                    output.innerHTML += "scores ← AIScore¨ prs     ⍝ All PRs simultaneously\n";
+                    output.innerHTML += "risks ← RiskMatrix prs   ⍝ Parallel risk assessment\n";
+                    output.innerHTML += "status ← ProcessAll prs  ⍝ No sequential bottleneck\n\n";
+                    progress.style.width = '90%';
+                }, 1600);
+                
+                setTimeout(() => {
+                    output.innerHTML += "📈 Performance Comparison (Simulated):\n";
+                    output.innerHTML += "Traditional YAML CI/CD:    50-100 PRs/hour\n";
+                    output.innerHTML += "APL Vectorized CI/CD:   10,000+ PRs/hour\n";
+                    output.innerHTML += "Scale Advantage:         100x faster\n\n";
+                    output.innerHTML += "🎯 Connect to APL backend for REAL demonstration!\n";
+                    progress.style.width = '100%';
+                }, 2400);
+            }
         }
 
         function runEnterpriseDemo() {
@@ -940,6 +953,65 @@ All improvements verified and tested!</div>
             
             updateMetric('files-processed', data.total_files);
             updateMetric('ai-detected', data.ai_detected_count);
+        }
+
+        function displayScaleAdvantageResults(data) {
+            const output = document.getElementById('scale-demo-output');
+            const progress = document.getElementById('scale-progress');
+            
+            output.innerHTML += `\n🎉 ${data.real_apl ? 'REAL APL' : 'SIMULATED'} Results Received!\n`;
+            output.innerHTML += "=========================================\n\n";
+            
+            if (data.real_apl) {
+                output.innerHTML += "✅ ACTUAL APL VECTORIZED PROCESSING COMPLETE!\n";
+                output.innerHTML += "🔥 This is real array-based computation!\n\n";
+            } else {
+                output.innerHTML += "⚠️  APL not available - showing simulation\n";
+                output.innerHTML += "💡 Install Dyalog APL for real demo\n\n";
+            }
+            
+            if (data.results && data.results.length > 0) {
+                output.innerHTML += "📊 Scale Test Results:\n";
+                output.innerHTML += "Size    | APL Time | Traditional | Speedup | Rate\n";
+                output.innerHTML += "--------|----------|-------------|---------|----------\n";
+                
+                let maxRate = 0;
+                data.results.forEach(result => {
+                    const size = result.size?.toLocaleString() || 'N/A';
+                    const aplTime = result.apl_time?.toFixed(3) || 'N/A';
+                    const tradTime = result.traditional_time?.toFixed(0) || 'N/A';
+                    const speedup = result.speedup?.toLocaleString() || 'N/A';
+                    const rate = result.apl_rate?.toLocaleString() || 'N/A';
+                    
+                    output.innerHTML += `${size.padEnd(7)} | ${aplTime.padEnd(8)}s | ${tradTime.padEnd(11)}s | ${speedup.padEnd(7)}x | ${rate}/sec\n`;
+                    
+                    if (result.apl_rate && result.apl_rate > maxRate) {
+                        maxRate = result.apl_rate;
+                    }
+                });
+                
+                output.innerHTML += "\n🏆 Key Insights:\n";
+                output.innerHTML += `✅ Peak APL Rate: ${maxRate.toLocaleString()} PRs/second\n`;
+                output.innerHTML += "✅ Vectorized operations process ALL PRs simultaneously\n";
+                output.innerHTML += "✅ Traditional CI/CD: Sequential bottleneck (50-100 PRs/hour)\n";
+                output.innerHTML += "✅ APL CI/CD: Parallel powerhouse (10,000+ PRs/hour)\n\n";
+                
+                if (data.real_apl) {
+                    output.innerHTML += "🎯 This is APL's unique competitive advantage!\n";
+                    output.innerHTML += "   No other language offers this level of parallel processing for CI/CD.\n";
+                } else {
+                    output.innerHTML += "🎯 Connect APL backend to see the real performance!\n";
+                }
+                
+                updateMetric('processing-rate', `${maxRate.toLocaleString()}`);
+                updateMetric('speedup-factor', `${data.results[data.results.length-1]?.speedup || 100}x`);
+            }
+            
+            if (data.apl_output) {
+                output.innerHTML += `\n🔧 Raw APL Output:\n${data.apl_output}\n`;
+            }
+            
+            progress.style.width = '100%';
         }
 
         // Connect on page load
