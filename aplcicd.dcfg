@@ -1,0 +1,28 @@
+{
+  "name": "APLCICD",
+  "version": "1.0.0",
+  "description": "Pure APL CI/CD System for GitHub Integration",
+  "author": "APL Forge Contest 2025",
+  "license": "MIT",
+  "dyalog_version": "19.0",
+  "dependencies": {
+    "Conga": "*",
+    "HttpCommand": "*"
+  },
+  "keywords": ["CI/CD", "GitHub", "AI Detection", "WebHooks", "APL", "Vibe Coding"],
+  "homepage": "https://github.com/aplforge2025/aplcicd",
+  "main": "APLCICD.dyalog",
+  "exports": {
+    "APLCICD.Core": "./Core/Core.dyalog",
+    "APLCICD.Analysis": "./Analysis/Analysis.dyalog", 
+    "APLCICD.Server": "./Server/Server.dyalog",
+    "APLCICD.Demo": "./Demo/Demo.dyalog",
+    "APLCICD.Tests": "./Tests/Tests.dyalog",
+    "APLCICD.Examples": "./Examples/Examples.dyalog"
+  },
+  "contest": {
+    "name": "Dyalog APL Forge Contest 2025",
+    "category": "Vibe Coding",
+    "features": ["Ultra-concise AI detection", "GitHub integration", "Performance benchmarks", "Recursive analysis"]
+  }
+}

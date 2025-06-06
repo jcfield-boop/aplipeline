@@ -21,3 +21,6 @@ logs/
 
 # Claude development files
 .claude/
+
+# Old/deprecated files
+old/
