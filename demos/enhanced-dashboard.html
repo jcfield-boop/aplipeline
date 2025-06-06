@@ -290,11 +290,11 @@
                     <span id="websocket-text">Connecting...</span>
                 </div>
             </div>
-            <div class="status-card connected">
-                <h4>✅ System Status</h4>
+            <div class="status-card" id="implementation-status">
+                <h4>🏗️ Implementation</h4>
                 <div class="connection-status">
-                    <div class="status-dot status-connected"></div>
-                    <span>All improvements deployed</span>
+                    <div class="status-dot status-processing" id="impl-dot"></div>
+                    <span id="impl-text">Detecting...</span>
                 </div>
             </div>
         </div>
@@ -1140,7 +1140,26 @@ All improvements verified and tested!</div>
 
         function displaySystemStatus(data) {
             console.log('System status:', data);
-            // Could update connection status display here
+            
+            // Update implementation status display
+            if (data.backend_info) {
+                const implDot = document.getElementById('impl-dot');
+                const implText = document.getElementById('impl-text');
+                const implCard = document.getElementById('implementation-status');
+                
+                if (data.backend_info.implementation === 'Python WebSocket Bridge') {
+                    implDot.className = 'status-dot status-warning';
+                    implText.textContent = 'Python Bridge + APL';
+                    implCard.className = 'status-card warning';
+                } else if (data.backend_info.implementation === 'Pure APL Conga Server') {
+                    implDot.className = 'status-dot status-connected';
+                    implText.textContent = 'Pure APL Conga';
+                    implCard.className = 'status-card connected';
+                }
+                
+                // Show detailed backend info in console for debugging
+                console.log('Backend Implementation:', data.backend_info);
+            }
         }
 
         // Connect on page load

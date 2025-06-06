@@ -469,6 +469,13 @@ class APLWebSocketBridge:
             
             return {
                 'type': 'system_status',
+                'backend_info': {
+                    'implementation': 'Python WebSocket Bridge',
+                    'apl_integration': 'Subprocess calls to Dyalog APL',
+                    'websocket_library': 'Python websockets library',
+                    'purpose': 'APL algorithm demonstration via Python bridge',
+                    'contest_note': 'Fallback implementation - Pure APL Conga server available'
+                },
                 'hardware': {
                     'platform': platform.platform(),
                     'processor': platform.processor(),
