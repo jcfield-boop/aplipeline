@@ -221,7 +221,7 @@ dyalog -script demos/working-test.apl
 
 ## 📝 License
 
-MIT License - Built for the Dyalog APL Forge Contest 2024
+MIT License - Built for the Dyalog APL Forge Contest 2025
 
 ---
 
