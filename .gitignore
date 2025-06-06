@@ -1,0 +1,23 @@
+# APL CI/CD Project - Git Ignore
+# Temporary files
+*.tmp
+*.bak
+
+# APL workspace files
+*.dws
+*.dsm
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# Claude development files
+.claude/
