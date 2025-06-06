@@ -586,7 +586,7 @@ class APLWebSocketBridge:
             elif command == 'ai_risk_analysis':
                 result = self.execute_ai_risk_analysis()
             elif command == 'scale_advantage':
-                result = self.execute_scale_advantage_demo()
+                result = self.execute_enterprise_scale_demo()
             elif command == 'quick_test':
                 result = self.execute_apl_quick_test()
             elif command == 'ai_analysis':

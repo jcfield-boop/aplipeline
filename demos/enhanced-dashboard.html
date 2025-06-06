@@ -300,18 +300,6 @@
         </div>
 
         <div class="file-demo">
-            <h3>🖥️ Your Machine Performance Context<span class="real-indicator">HARDWARE</span></h3>
-            <p><strong>Important:</strong> APL performance scales with your hardware - let's benchmark your machine first!</p>
-            <button class="demo-button" onclick="runCPUBenchmark()">🔧 BENCHMARK THIS MACHINE</button>
-            <div class="progress-bar">
-                <div class="progress-fill" id="cpu-progress"></div>
-            </div>
-            <div id="cpu-benchmark-output" class="demo-output">Click to benchmark your CPU and see how APL will perform on your specific hardware.
-
-This will help contextualize the APL performance results relative to your machine capabilities.</div>
-        </div>
-
-        <div class="file-demo">
             <h3>⚡ APL's Revolutionary Scale Advantage<span class="real-indicator">ENTERPRISE</span></h3>
             <p><strong>The Problem:</strong> Traditional CI/CD systems process commits sequentially - a major bottleneck for large teams</p>
             <p><strong>The APL Solution:</strong> Vectorized array operations process thousands of PRs simultaneously</p>
@@ -342,6 +330,19 @@ This will help contextualize the APL performance results relative to your machin
         </div>
 
         <div class="demo-grid">
+            <div class="demo-panel">
+                <h3>🖥️ Your Machine Performance<span class="real-indicator">HARDWARE</span></h3>
+                <div id="cpu-benchmark-output" class="demo-output">Benchmark your CPU to see how APL will perform on your specific hardware.
+
+APL performance scales with your machine capabilities:
+• High Performance CPUs: 15,000+ PRs/hour
+• Medium Performance CPUs: 10,000 PRs/hour  
+• Basic Performance CPUs: 7,000 PRs/hour
+
+Click below to benchmark YOUR machine and get personalized APL performance estimates.</div>
+                <button id="cpu-benchmark-btn" onclick="runCPUBenchmark()" class="demo-button">🔧 BENCHMARK THIS MACHINE</button>
+            </div>
+
             <div class="demo-panel">
                 <h3>🏭 Enterprise Volume Processing<span class="real-indicator">VECTORIZED</span></h3>
                 <div id="enterprise-output" class="demo-output">APL's killer feature: Processing massive PR volumes simultaneously.
