@@ -1,0 +1,9 @@
+# APL-aware Git configuration
+*.dyalog text eol=lf
+*.apl text eol=lf
+*.dws binary
+*.dcfg text
+*.json text
+*.md text
+*.html text
+*.sh text eol=lf

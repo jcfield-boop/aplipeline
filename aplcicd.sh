@@ -3,7 +3,7 @@
 # Pure APL CI/CD System - Dyalog APL Forge Contest 2025
 
 # Default Dyalog path (can be overridden)
-DYALOG=${DYALOG:-dyalog}
+DYALOG=${DYALOG:-/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl}
 
 # Check if Dyalog is available
 if ! command -v $DYALOG &> /dev/null; then

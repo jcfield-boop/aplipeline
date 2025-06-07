@@ -1,0 +1,24 @@
+# Version control
+.git/
+.gitignore
+
+# Documentation that's not needed in container
+*.md
+!README.md
+
+# Development files
+test_*
+old/
+*.tmp
+*.log
+
+# APL workspace files (use source instead)
+*.dws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/

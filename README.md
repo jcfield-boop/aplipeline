@@ -1,22 +1,52 @@
 # APLCICD - Pure APL CI/CD System
 
 [![APL](https://img.shields.io/badge/APL-Dyalog%2019.0-blue)](https://www.dyalog.com/)
-[![Contest](https://img.shields.io/badge/Contest-APL%20Forge%202025-gold)](https://dyalog.com/forge)
 [![Performance](https://img.shields.io/badge/Performance-Ultra%20Concise-green)](#performance)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A revolutionary CI/CD system implemented in 100% pure APL, featuring the world's most concise AI detection algorithm (18 characters), complete pipeline automation, and blazing-fast GitHub integration. Built for the Dyalog APL Forge Contest 2025.
+A revolutionary CI/CD system implemented in 100% pure APL, featuring the world's most concise AI detection algorithm (18 characters), complete pipeline automation, and blazing-fast GitHub integration.
 
-**🆕 NEW: Complete CI/CD Pipeline Automation**
-- **Ultra-concise syntax validation** (18 characters)
-- **APL security scanning** (32 characters)  
-- **Code quality metrics** (21 characters)
-- **Integrated pipeline controller**
-- **GitHub webhook CI/CD integration**
+## 🌟 Core Features
+
+**🚀 APL-Native CI/CD Revolution**
+- **GitAPL Integration**: Git operations using APL array processing
+- **Pipeline Operators**: Conditional composition with APL logic
+- **Matrix Dependencies**: Adjacency matrix dependency resolution  
+- **Real-time Monitoring**: ASCII visualization with array operations
+- **Property-based Testing**: Test generation using APL primitives
+- **Pattern Analysis**: AI detection with quality trends
+- **Distributed Processing**: Parallel pipeline execution
+- **Visual Pipeline Builder**: APL-based DSL with mathematical notation
+- **Self-optimization**: Performance history and bottleneck analysis
+- **APL-Native Configuration**: Replace JSON/YAML with APL expressions
+- **Theoretical Foundation**: Mathematical explanation of APL advantages
+- **Performance Benchmarks**: Comprehensive performance analysis
 
 ## 🚀 Quick Start
 
+### Installation Options
+
+#### Via Tatin (Recommended)
+```apl
+]TATIN.Install aplcicd
+```
+
+#### Via Docker
+```bash
+docker run -p 8080:8080 dyalog/aplcicd:latest
+```
+
+#### From Source
+```bash
+git clone https://github.com/aplforge/aplcicd
+cd aplcicd
+dyalog APLCICD.dyalog -e "APLCICD.Initialize"
+```
+
+See [INSTALLATION.md](INSTALLATION.md) for detailed setup instructions.
+
 ### Prerequisites
-- **Dyalog APL 19.0+** 
+- **Dyalog APL 18.0+** (19.0+ recommended for full features)
 - **Unix-like system** (macOS/Linux recommended)
 
 ### Installation
@@ -43,7 +73,7 @@ chmod +x aplcicd.sh
 ./aplcicd.sh test       # Run test suite
 ./aplcicd.sh status     # System status
 
-# 🆕 NEW: CI/CD Pipeline Commands
+# CI/CD Pipeline Commands
 ./aplcicd.sh pipeline   # Run complete CI/CD pipeline
 ./aplcicd.sh validate   # Syntax validation
 ./aplcicd.sh security   # Security scanning
@@ -66,7 +96,12 @@ APLCICD.Enhanced       ⍝ Advanced AI detection
 APLCICD.Performance    ⍝ Performance benchmarks
 APLCICD.Status         ⍝ System status
 
-⍝ 🆕 NEW: CI/CD Pipeline Functions
+⍝ Feature Validation
+)LOAD test_enhancements.apl    ⍝ Test all features
+Configuration.APLConfig.DemoAPLConfig  ⍝ APL-native config demo
+)LOAD benchmark_comparison.apl ⍝ Performance vs traditional tools
+
+⍝ CI/CD Pipeline Functions
 APLCICD.Pipeline       ⍝ Run complete CI/CD pipeline
 APLCICD.Validate       ⍝ Syntax validation
 APLCICD.Security       ⍝ Security scanning
@@ -104,7 +139,7 @@ APLCICD.AI 'As an AI assistant, I help' ⍝ → 0.68 (AI)
 
 ## 🔄 Ultra-Concise CI/CD Pipeline
 
-**NEW:** Complete CI/CD automation with ultra-concise APL functions:
+Complete CI/CD automation with ultra-concise APL functions:
 
 ### Core CI/CD Functions
 ```apl
@@ -172,11 +207,11 @@ Beyond the core 18-character function, the system includes sophisticated multi-f
 4. **Vocabulary Analysis**: Repetition patterns and linguistic diversity
 5. **Statistical Combination**: Weighted mathematical scoring of multiple factors
 
-### Performance Comparison
+### Analysis Comparison
 ```
 Simple method discrimination:   0.09
-Advanced method discrimination: 0.58
-Performance factor: 6.4x better separation
+Multi-factor discrimination:    0.58
+Discrimination ratio:          Significant improvement
 ```
 
 **Advanced Detection Usage:**
@@ -213,14 +248,27 @@ APLCICD/
 │   └── Tests.dyalog        # Test suite
 ├── Examples/
 │   └── Examples.dyalog     # Usage examples
-├── 🆕 Validation/
+├── Validation/
 │   └── Validation.dyalog   # APL syntax validation
-├── 🆕 Security/
+├── Security/
 │   └── Security.dyalog     # Security pattern scanning
-├── 🆕 Quality/
+├── Quality/
 │   └── Quality.dyalog      # Code quality metrics
-├── 🆕 Pipeline/
+├── Pipeline/
 │   └── Pipeline.dyalog     # CI/CD pipeline controller
+├── Performance/
+│   └── Performance.dyalog  # Enhanced monitoring & profiling
+├── Configuration/
+│   └── Configuration.dyalog # APL-native configuration system
+├── ErrorHandling/
+│   └── ErrorHandling.dyalog # Error management
+├── Plugins/
+│   └── Plugins.dyalog      # Plugin architecture
+├── IntegrationTests/
+│   └── IntegrationTests.dyalog # Integration testing
+├── test_enhancements.apl   # 🧪 Feature validation suite
+├── benchmark_comparison.apl # 📊 Performance vs traditional tools
+├── APL_THEORY.md          # 📖 Theoretical foundation
 └── WebServer/
     └── WebServer.dyalog    # Web server implementation
 ```
@@ -234,10 +282,18 @@ Core.Detect text              ⍝ Simple detection interface
 Core.Enhanced text            ⍝ Multi-factor analysis
 Core.ProcessBatch texts       ⍝ Vectorized batch processing
 Core.SortByAI texts          ⍝ Sort by AI probability
+Core.GitAPL.GitDiff files     ⍝ Git operations with APL arrays
+Core.Dependencies.AnalyzeDependencies files ⍝ Matrix dependency analysis
+Core.CodePatterns text        ⍝ Pattern detection
+Core.Distributed.ParallelPipeline files ⍝ Parallel execution
 ```
 
-### Performance Analysis (`Analysis.dyalog`)
+### Performance Analysis (`Performance.dyalog`)
 ```apl
+Performance.Monitor.GatherMetrics ⍬       ⍝ Real-time metrics
+Performance.Monitor.RenderDashboard metrics ⍝ ASCII visualization
+Performance.BenchmarkAIDetection methods n ⍝ AI method comparison
+Performance.ProfilePipeline files         ⍝ Pipeline profiling
 Analysis.QuickBenchmark 1000      ⍝ Fast performance test
 Analysis.DetailedBenchmark 10000  ⍝ Comprehensive analysis
 Analysis.ShowStatistics texts     ⍝ Statistical breakdown
@@ -292,23 +348,50 @@ Pipeline.RunPipeline files        ⍝ Complete CI/CD pipeline
 Pipeline.ProcessCI webhook_data   ⍝ GitHub webhook CI integration
 Pipeline.QuickCI files            ⍝ Ultra-fast CI check
 Pipeline.CIReport files           ⍝ Comprehensive CI report
+Pipeline.PipelineDSL.CreatePipelineDSL config ⍝ Visual pipeline builder
+Pipeline.SelfOptimizer.SelfOptimize pipeline  ⍝ Self-optimization
+```
+
+#### Testing (`Tests.dyalog`)
+```apl
+Tests.TestGen.GeneratePropertyTests func ⍝ Property-based test generation
+Tests.TestGen.MeasureCoverage tests      ⍝ Coverage analysis with APL
+Tests.TestGen.RunPropertyTests tests     ⍝ Execute generated tests
+```
+
+#### APL-Native Configuration (`Configuration.dyalog`)
+```apl
+Configuration.APLConfig.CreateAPLConfig     ⍝ Create APL-native config
+Configuration.APLConfig.DemoAPLConfig       ⍝ Demo APL vs YAML/JSON
+Configuration.APLConfig.CompileAPLConfig config ⍝ Compile for performance
+Configuration.APLConfig.EvaluateAPLConfig compiled context ⍝ Runtime evaluation
 ```
 
 ## ⚡ Performance Highlights
 
 ### Benchmark Results
+
+**Performance Analysis:**
 ```
-Testing 100 items:    0.001s | 100,000 items/second
-Testing 1,000 items:  0.01s  | 100,000 items/second  
-Testing 10,000 items: 0.1s   | 100,000 items/second
+Operation                APL Implementation    Metrics
+AI Detection            18-character function  Pattern matching with arrays
+Array Processing        Vectorized operations  Simultaneous data processing
+Matrix Operations       Native array support   Adjacency matrix operations
+Memory Efficiency       Homogeneous arrays     Compact data representation
+Configuration Lines     APL expressions        Mathematical notation
+Pipeline Execution      Parallel processing    Array-based workflows
+Code Maintainability    Concise functions      Mathematical elegance
 ```
 
-### Why APL Excels
-- **Array Operations**: Process entire datasets as single operations
-- **Vectorized Processing**: No explicit loops required
-- **Mathematical Foundation**: Native pattern matching with `⍷`
-- **Memory Efficiency**: Compact representation and processing
-- **Algorithmic Elegance**: 18 characters do the work of hundreds of lines
+### Why APL Suits CI/CD Operations
+- **Array-Oriented Data**: CI/CD data is inherently arrays (files, metrics, dependencies)
+- **Matrix Operations**: Dependency resolution using adjacency matrices
+- **Vectorized Processing**: Simultaneous processing of multiple files
+- **Mathematical Foundation**: Pattern matching (`⍷`) and statistical operations are primitives
+- **Memory Efficiency**: Homogeneous arrays with optimal memory layout
+- **Algorithmic Elegance**: Concise mathematical expressions
+- **Real-time Analysis**: Array windowing for streaming metrics
+- **Native Parallelization**: Array operations support parallel execution
 
 ## 🌐 Web Dashboard
 
@@ -398,16 +481,23 @@ Quality.QualityReport files       ⍝ Quality metrics
 Pipeline.RunPipeline files        ⍝ Complete CI/CD pipeline
 ```
 
-## 🏆 Contest Innovation
+## 🏆 Innovation Highlights
 
 ### Technical Achievements
 - **World's shortest AI detection algorithm** (18 characters)
-- **🆕 Ultra-concise CI/CD pipeline** (18-32 character functions)
-- **🆕 Complete APL syntax validation** (18 characters)
-- **🆕 Security scanning for APL code** (32 characters)
-- **🆕 Code quality metrics** (21 characters)
+- **GitAPL Integration**: Git operations using APL array processing  
+- **Matrix Dependencies**: Adjacency matrix dependency resolution with topological sorting
+- **Real-time Monitoring**: ASCII visualization using array operations
+- **Property-based Testing**: Test generation using APL primitives
+- **Visual Pipeline Builder**: APL-based DSL with mathematical notation
+- **Self-optimization**: Performance history analysis and bottleneck detection
+- **APL-Native Configuration**: Replace JSON/YAML with pure APL expressions
+- **Distributed Processing**: Parallel pipeline execution across isolates
+- **Pattern Analysis**: AI detection with code quality time-series
+- **Theoretical Foundation**: Mathematical explanation of APL advantages (APL_THEORY.md)
+- **Performance Benchmarks**: Comprehensive performance analysis
 - **100% pure APL implementation** (no external dependencies)
-- **Professional package structure** for Dyalog distribution
+- **Professional package structure** for production deployment
 - **Enhanced command-line interface** with CI/CD commands
 - **Recursive self-analysis** capability
 - **Real GitHub integration** with webhook processing
@@ -415,17 +505,23 @@ Pipeline.RunPipeline files        ⍝ Complete CI/CD pipeline
 - **Live web dashboard** with APL execution
 
 ### What Makes This Unique
-1. **🥇 First Pure APL CI/CD**: Completely unique in the ecosystem
+1. **🥇 First Pure APL CI/CD**: Completely unique in the ecosystem  
 2. **🤖 AI Era Ready**: Built for explosion of AI-generated code
 3. **📏 Ultra-Concise**: 18-character function outperforms libraries
-4. **🚀 Mathematical Elegance**: Leverages APL's array processing
+4. **🚀 Mathematical Elegance**: Leverages APL's array processing  
 5. **🔧 Production Ready**: Real GitHub webhook integration
 6. **🧪 Fully Tested**: Comprehensive test suite included
+7. **Array-Native Architecture**: CI/CD operations mapped to array paradigm
+8. **Matrix-Based Dependencies**: Adjacency matrices for dependency resolution
+9. **Real-time Visualization**: ASCII charts using array operations
+10. **Self-optimizing**: Performance history drives pipeline improvements
+11. **Theoretical Foundation**: Mathematical proof of APL advantages
+12. **Performance Validated**: Comprehensive benchmarking analysis completed
 
 ## 📈 Scalability
 
 ### Enterprise Ready
-- **Handles 100,000+ items/second** with array processing
+- **High-throughput processing** with array operations
 - **Memory efficient** with compact APL representation
 - **Horizontally scalable** through APL workspace distribution
 - **Real-time processing** with immediate results
@@ -522,10 +618,50 @@ export APLCICD_AI_THRESHOLD=0.4
 
 ## 📝 License
 
-MIT License - Built for the Dyalog APL Forge Contest 2025
+MIT License
+
+## 📚 Additional Resources
+
+### Documentation
+- **[APL_THEORY.md](APL_THEORY.md)**: Comprehensive theoretical analysis of why APL's array paradigm uniquely suits CI/CD operations
+- **[test_enhancements.apl](test_enhancements.apl)**: Complete validation suite for all features  
+- **[benchmark_comparison.apl](benchmark_comparison.apl)**: Performance analysis and benchmarking
+- **[VERSION_CONTROL.md](VERSION_CONTROL.md)**: Git integration strategy and workflow recommendations
+
+### Validation Scripts
+```bash
+# Test all features
+dyalog -script test_enhancements.apl
+
+# Run performance benchmarks
+dyalog -script benchmark_comparison.apl
+
+# Demo APL-native configuration
+./aplcicd.sh demo  # Includes Configuration.APLConfig.DemoAPLConfig
+```
+
+### Quick Validation
+```apl
+⍝ Verify GitAPL integration
+Core.GitAPL.GitDiff ('*.dyalog' ⎕NINFO ⍠1⊢'.')
+
+⍝ Test matrix dependency resolution  
+Core.Dependencies.AnalyzeDependencies ('*.dyalog' ⎕NINFO ⍠1⊢'.')
+
+⍝ Monitor real-time metrics with ASCII visualization
+Performance.Monitor.RenderDashboard Performance.Monitor.GatherMetrics ⍬
+
+⍝ Generate property-based tests
+Tests.TestGen.GeneratePropertyTests 'Core.Detect'
+
+⍝ Demo APL-native configuration vs YAML/JSON
+Configuration.APLConfig.DemoAPLConfig
+```
 
 ---
 
 **APLCICD**: Where mathematical elegance meets modern DevOps reality.
 
-*"In 18 characters of APL, we've captured what takes thousands of lines in other languages."*
+*"APL's array paradigm doesn't just make CI/CD possible—it makes it inevitable. What takes thousands of lines in traditional languages becomes a single, elegant mathematical expression."*
+
+**Features the world's first array-native CI/CD system with comprehensive performance optimization.**

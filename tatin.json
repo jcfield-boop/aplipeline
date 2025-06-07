@@ -1,0 +1,38 @@
+{
+    "name": "aplcicd",
+    "version": "1.0.0",
+    "description": "Pure APL CI/CD System with ultra-concise AI detection",
+    "author": "APL Development Team",
+    "license": "MIT",
+    "keywords": ["cicd", "apl", "automation", "ai-detection", "devops"],
+    "homepage": "https://github.com/aplforge/aplcicd",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aplforge/aplcicd.git"
+    },
+    "dependencies": {
+        "HttpCommand": "^5.0.0",
+        "Conga": "^3.0.0"
+    },
+    "dyalog": {
+        "version": ">=18.0",
+        "unicode": true
+    },
+    "main": "APLCICD.dyalog",
+    "scripts": {
+        "test": "dyalog -script test_aplcicd.apl",
+        "start": "dyalog -script -e \"APLCICD.Initialize\"",
+        "validate": "dyalog -script -e \"APLCICD.ValidateInstallation\""
+    },
+    "files": [
+        "APLCICD.dyalog",
+        "*/",
+        "aplcicd.dcfg",
+        "dashboard.html",
+        "run_real_demo.apl",
+        "README.md"
+    ],
+    "engines": {
+        "dyalog": ">=18.0.0"
+    }
+}

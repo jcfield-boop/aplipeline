@@ -355,4 +355,255 @@
         :EndIf
     ∇
 
+⍝ ═══════════════════════════════════════════════════════════════════════════════
+⍝ Monitor - Real-Time CI/CD Monitoring with APL Arrays
+⍝ ═══════════════════════════════════════════════════════════════════════════════
+
+:Namespace Monitor
+    
+    ∇ dashboard ← RealTimeMonitor interval
+    ⍝ Live CI/CD metrics using APL's array processing
+        :If 0=⎕NC'interval' ⋄ interval←5 ⋄ :EndIf
+        
+        dashboard ← ⎕NS ''
+        dashboard.interval ← interval
+        dashboard.start_time ← ⎕TS
+        
+        metrics ← ⍬
+        dashboard.running ← 1
+        
+        ⎕←'🔄 Real-Time CI/CD Monitor'
+        ⎕←'=========================='
+        ⎕←'Press Ctrl+C to stop monitoring'
+        ⎕←''
+        
+        :Repeat
+            current ← GatherMetrics ⍬
+            metrics ← metrics,[0]current
+            
+            ⍝ Keep only last 100 measurements
+            :If 100<≢metrics ⋄ metrics ← ¯100↑metrics ⋄ :EndIf
+            
+            dashboard ← RenderDashboard metrics
+            
+            ⍝ Clear screen and redraw
+            ⎕←(⎕UCS 27),'[2J',(⎕UCS 27),'[H'
+            DisplayDashboard dashboard
+            
+            ⎕DL interval
+        :Until ~dashboard.running
+    ∇
+    
+    ∇ current ← GatherMetrics dummy
+    ⍝ Gather current system metrics
+        current ← ⎕NS ''
+        current.timestamp ← ⎕TS
+        current.memory_used ← ⎕WA
+        current.workspace_size ← ⎕SIZE ⍬
+        current.cpu_time ← ⎕AI[3]
+        
+        ⍝ Pipeline metrics (if available)
+        :Trap 0
+            files ← '*.dyalog' ⎕NINFO ⍠1⊢'.'
+            :If 0<≢files
+                validation_result ← Validation.QuickSyntax ∊⊃⎕NGET¨files 1
+                current.syntax_pass_rate ← (+/validation_result) ÷ ≢validation_result
+            :Else
+                current.syntax_pass_rate ← 1
+            :EndIf
+        :Else
+            current.syntax_pass_rate ← 0
+        :EndTrap
+        
+        ⍝ Git metrics (if in git repo)
+        :Trap 0
+            git_status ← ⎕SH 'git status --porcelain 2>/dev/null'
+            current.uncommitted_changes ← ≢(⎕UCS 10)(≠⊆⊢)git_status
+        :Else
+            current.uncommitted_changes ← 0
+        :EndTrap
+        
+        ⍝ Performance metrics
+        current.performance_score ← CalculatePerformanceScore current
+    ∇
+    
+    ∇ score ← CalculatePerformanceScore metrics
+    ⍝ Calculate overall performance score
+        ⍝ Memory efficiency (0-40 points)
+        memory_score ← 40 × (1 - (metrics.memory_used ÷ 100000000)⌊1)
+        
+        ⍝ Syntax quality (0-30 points)
+        syntax_score ← 30 × metrics.syntax_pass_rate
+        
+        ⍝ Git cleanliness (0-20 points)
+        git_score ← 20 × (1 - (metrics.uncommitted_changes ÷ 20)⌊1)
+        
+        ⍝ Workspace efficiency (0-10 points)
+        workspace_score ← 10 × (1 - (metrics.workspace_size ÷ 10000000)⌊1)
+        
+        score ← memory_score + syntax_score + git_score + workspace_score
+    ∇
+    
+    ∇ dashboard ← RenderDashboard metrics
+    ⍝ Render dashboard using APL array processing
+        dashboard ← ⎕NS ''
+        dashboard.metrics ← metrics
+        dashboard.timestamp ← ⎕TS
+        
+        :If 0=≢metrics ⋄ :Return ⋄ :EndIf
+        
+        ⍝ Calculate trends
+        performance_scores ← ⊃¨metrics.performance_score
+        memory_usage ← ⊃¨metrics.memory_used
+        syntax_rates ← ⊃¨metrics.syntax_pass_rate
+        
+        dashboard.current_performance ← ⊃⌽performance_scores
+        dashboard.performance_trend ← CalculateTrend performance_scores
+        dashboard.memory_trend ← CalculateTrend memory_usage
+        dashboard.syntax_trend ← CalculateTrend syntax_rates
+        
+        ⍝ Visual representation
+        dashboard.performance_visual ← RenderVisual performance_scores
+        dashboard.memory_visual ← RenderVisual memory_usage
+        dashboard.syntax_visual ← RenderVisual syntax_rates
+        
+        ⍝ Alerts
+        dashboard.alerts ← GenerateAlerts dashboard
+    ∇
+    
+    ∇ trend ← CalculateTrend values
+    ⍝ Calculate trend direction (positive/negative/stable)
+        :If 2>≢values ⋄ trend←'STABLE' ⋄ :Return ⋄ :EndIf
+        recent ← ¯5↑values
+        differences ← 2⌿/recent
+        avg_change ← (+/differences) ÷ ≢differences
+        :If avg_change > 0.1 ⋄ trend←'RISING'
+        :ElseIf avg_change < ¯0.1 ⋄ trend←'FALLING'
+        :Else ⋄ trend←'STABLE'
+        :EndIf
+    ∇
+    
+    ∇ visual ← RenderVisual values
+    ⍝ ASCII visualization using APL
+        :If 0=≢values ⋄ visual←'' ⋄ :Return ⋄ :EndIf
+        normalized ← values ÷ (⌈/values)⌈0.001
+        chars ← '▁▂▃▄▅▆▇█'
+        indices ← ⌊8×normalized⌊1
+        visual ← chars[indices]
+    ∇
+    
+    ∇ alerts ← GenerateAlerts dashboard
+    ⍝ Generate system alerts
+        alerts ← ⍬
+        
+        ⍝ Performance alerts
+        :If dashboard.current_performance < 50
+            alerts ,← ⊂'⚠️  Low performance score: ',⍕dashboard.current_performance
+        :EndIf
+        
+        :If dashboard.performance_trend≡'FALLING'
+            alerts ,← ⊂'📉 Performance declining'
+        :EndIf
+        
+        :If dashboard.memory_trend≡'RISING'
+            alerts ,← ⊂'🐏 Memory usage increasing'
+        :EndIf
+        
+        :If dashboard.syntax_trend≡'FALLING'
+            alerts ,← ⊂'🔧 Code quality declining'
+        :EndIf
+        
+        :If 0=≢alerts ⋄ alerts ,← ⊂'✅ All systems normal' ⋄ :EndIf
+    ∇
+    
+    ∇ DisplayDashboard dashboard
+    ⍝ Display dashboard to console
+        ⎕←'🔄 APLCICD Real-Time Dashboard'
+        ⎕←'════════════════════════════════'
+        ⎕←'Time: ',⍕dashboard.timestamp
+        ⎕←''
+        
+        ⎕←'Performance Score: ',⍕dashboard.current_performance,'/100 [',dashboard.performance_trend,']'
+        ⎕←'Visual: ',dashboard.performance_visual
+        ⎕←''
+        
+        ⎕←'Memory Trend: [',dashboard.memory_trend,']'
+        ⎕←'Visual: ',dashboard.memory_visual
+        ⎕←''
+        
+        ⎕←'Syntax Quality: [',dashboard.syntax_trend,']'
+        ⎕←'Visual: ',dashboard.syntax_visual
+        ⎕←''
+        
+        ⎕←'ALERTS:'
+        ⎕←'-------'
+        :For alert :In dashboard.alerts
+            ⎕←alert
+        :EndFor
+        ⎕←''
+        ⎕←'Press Ctrl+C to stop monitoring...'
+    ∇
+    
+    ∇ summary ← MonitoringSummary duration
+    ⍝ Generate monitoring summary for specified duration
+        :If 0=⎕NC'duration' ⋄ duration←60 ⋄ :EndIf
+        
+        summary ← ⎕NS ''
+        summary.duration_seconds ← duration
+        summary.start_time ← ⎕TS
+        
+        ⍝ Collect metrics over duration
+        metrics ← ⍬
+        interval ← 5  ⍝ 5 second intervals
+        iterations ← ⌈duration÷interval
+        
+        :For i :In ⍳iterations
+            current ← GatherMetrics ⍬
+            metrics ← metrics,[0]current
+            :If i<iterations ⋄ ⎕DL interval ⋄ :EndIf
+        :EndFor
+        
+        summary.end_time ← ⎕TS
+        summary.total_measurements ← ≢metrics
+        
+        ⍝ Analysis
+        performance_scores ← ⊃¨metrics.performance_score
+        summary.avg_performance ← (+/performance_scores) ÷ ≢performance_scores
+        summary.min_performance ← ⌊/performance_scores
+        summary.max_performance ← ⌈/performance_scores
+        summary.performance_stability ← 1 - ((⌈/performance_scores) - (⌊/performance_scores)) ÷ 100
+        
+        ⍝ Memory analysis
+        memory_usage ← ⊃¨metrics.memory_used
+        summary.avg_memory ← (+/memory_usage) ÷ ≢memory_usage
+        summary.peak_memory ← ⌈/memory_usage
+        summary.memory_growth ← (⊃⌽memory_usage) - (⊃memory_usage)
+        
+        ⍝ Recommendations
+        summary.recommendations ← GenerateMonitoringRecommendations summary
+    ∇
+    
+    ∇ recommendations ← GenerateMonitoringRecommendations summary
+    ⍝ Generate recommendations based on monitoring data
+        recommendations ← ⍬
+        
+        :If summary.avg_performance < 60
+            recommendations ,← ⊂'Average performance below 60% - investigate bottlenecks'
+        :EndIf
+        
+        :If summary.performance_stability < 0.8
+            recommendations ,← ⊂'Performance instability detected - check for resource conflicts'
+        :EndIf
+        
+        :If summary.memory_growth > 1000000
+            recommendations ,← ⊂'Significant memory growth detected - potential memory leak'
+        :EndIf
+        
+        :If 0=≢recommendations
+            recommendations ,← ⊂'System monitoring shows optimal performance'
+        :EndIf
+    ∇
+    
+:EndNamespace
+
 :EndNamespace

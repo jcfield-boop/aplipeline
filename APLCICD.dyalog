@@ -1,6 +1,5 @@
 :Namespace APLCICD
 ⍝ APL CI/CD System - Pure APL GitHub Integration
-⍝ Dyalog APL Forge Contest 2025
 ⍝ Version: 1.0.0
 ⍝
 ⍝ A complete CI/CD system implemented in pure APL with:
@@ -18,9 +17,8 @@
     ∇ Initialize
     ⍝ Initialize the APLCICD package
         ⎕←''
-        ⎕←'🏆 APLCICD v1.0.0 - Pure APL CI/CD System'
-        ⎕←'==============================================='
-        ⎕←'Dyalog APL Forge Contest 2025'
+        ⎕←'APLCICD v1.0.0 - Pure APL CI/CD System'
+        ⎕←'======================================='
         ⎕←''
         ⎕←'Loading components...'
         
@@ -33,7 +31,7 @@
             ⎕←'✅ Quality metrics & analysis'
             ⎕←'✅ HTTP/WebSocket servers'
             ⎕←'✅ Performance benchmarks'
-            ⎕←'✅ Contest demonstrations'
+            ⎕←'✅ System demonstrations'
             ⎕←''
             ⎕←'🚀 APLCICD ready for GitHub integration!'
             ⎕←''
@@ -41,6 +39,72 @@
         :Else
             ⎕←'❌ Error loading components'
             ⎕←'Run APLCICD.LoadComponents for details'
+        :EndTrap
+    ∇
+
+    ∇ ValidateInstallation
+    ⍝ Validate that APLCICD is properly installed
+        ⎕←'Validating APLCICD installation...'
+        
+        :Trap 0
+            ⍝ Check core functions
+            :If 9≠⎕NC'Core.Detect'
+                11 ⎕SIGNAL⍨'Core.Detect not found'
+            :EndIf
+            
+            ⍝ Test basic functionality
+            ai_score ← Core.Detect 'Generated using AI'
+            :If ~(0≤ai_score)∧(ai_score≤1)
+                11 ⎕SIGNAL⍨'AI detection not working'
+            :EndIf
+            
+            ⎕←'✅ Installation validated successfully'
+        :Else
+            ⎕←'❌ Installation validation failed'
+            ⎕SIGNAL ⎕EN
+        :EndTrap
+    ∇
+
+    ∇ HealthCheck
+    ⍝ Health check for containerized deployment
+        :Trap 0
+            ⍝ Quick system check
+            :If 9≠⎕NC'Core.Detect'
+                11 ⎕SIGNAL⍨'Core not loaded'
+            :EndIf
+            
+            ⍝ Test AI detection
+            test_result ← Core.Detect 'test'
+            :If ~0≤test_result≤1
+                11 ⎕SIGNAL⍨'AI detection failed'
+            :EndIf
+            
+            ⎕←'OK'
+        :Else
+            ⎕←'FAIL'
+            ⎕SIGNAL ⎕EN
+        :EndTrap
+    ∇
+
+    ∇ StartServer port
+    ⍝ Start APLCICD web server
+        ⎕←'Starting APLCICD server on port ',⍕port
+        
+        :Trap 0
+            ⍝ Initialize web server
+            Server.Initialize port
+            ⎕←'✅ Web server started'
+            ⎕←'✅ Dashboard available at http://localhost:',⍕port
+            ⎕←'✅ API endpoints available'
+            
+            ⍝ Keep server running
+            :While 1
+                ⎕DL 60  ⍝ Sleep 60 seconds
+                ⎕←'Server running... ',⍕⎕TS
+            :EndWhile
+        :Else
+            ⎕←'❌ Failed to start server: ',⎕DM
+            ⎕SIGNAL ⎕EN
         :EndTrap
     ∇
 
@@ -94,6 +158,9 @@
         ⎕←'  Loading Web Server...'
         ⎕FIX'file://WebServer/WebServer.dyalog'  ⍝ Conga web server
         
+        ⎕←'  Loading Publishing...'
+        ⎕FIX'file://Publishing/Publishing.dyalog'  ⍝ Package publishing
+        
         ⍝ Initialize all namespaces
         Core.Initialize
         Analysis.Initialize  
@@ -111,6 +178,7 @@
         Plugins.Initialize
         IntegrationTests.Initialize
         WebServer.Initialize
+        Publishing.Initialize
     ∇
 
     ∇ version ← Version
@@ -121,11 +189,62 @@
     ∇ QuickHelp
     ⍝ Display quick start information
         ⎕←'🎯 Quick Start:'
-        ⎕←'  APLCICD.Demo         - Run contest demonstration'
+        ⎕←'  APLCICD.Demo         - Run system demonstration'
         ⎕←'  APLCICD.GitHub       - Start GitHub integration'
         ⎕←'  APLCICD.AI           - Test AI detection'
         ⎕←'  APLCICD.Performance  - Run benchmarks'
         ⎕←'  APLCICD.Help         - Full documentation'
+        ⎕←''
+        ⎕←'📦 Publishing:'
+        ⎕←'  Publishing.PublishVersion "1.0.1"  - Publish new version'
+        ⎕←'  Publishing.VersionControl.AutoTag  - Auto semantic versioning'
+        ⎕←'  Publishing.DockerCI.BuildDockerImage "latest"  - Build container'
+    ∇
+
+    ∇ result ← Publish version
+    ⍝ One-command publishing to all channels
+        :If 0=≢version
+            version ← Publishing.VersionControl.AutoVersion
+        :EndIf
+        
+        ⍝ Validate before publishing
+        :If ~Pipeline.RunPipeline '*.dyalog'
+            result ← 'ERROR: CI/CD checks failed'
+            →0
+        :EndIf
+        
+        ⍝ Publish everywhere
+        result ← Publishing.PublishVersion version
+        ⎕←'📦 Published to all distribution channels'
+    ∇
+
+    ∇ result ← InstallFrom source
+    ⍝ Smart installer that detects source type
+        :Select SourceType source
+        :Case 'tatin'
+            result ← ⎕SE.Tatin.Install source
+        :Case 'docker'
+            result ← Publishing.DockerCI.Pull source
+        :Case 'git'
+            result ← GitClone source
+        :Case 'http'
+            result ← DownloadAndInstall source
+        :Else
+            result ← 'Unknown source type'
+        :EndSelect
+    ∇
+
+    ∇ type ← SourceType source
+    ⍝ Detect source type
+        :If 'http'≡4↑source
+            type ← 'http'
+        :ElseIf '.git'≡¯4↑source
+            type ← 'git'
+        :ElseIf 'docker'⍷source
+            type ← 'docker'
+        :Else
+            type ← 'tatin'
+        :EndIf
     ∇
 
     ∇ Help
@@ -174,7 +293,7 @@
     ∇
 
     ∇ Demo
-    ⍝ Run the main contest demonstration
+    ⍝ Run the main system demonstration
         Demo.Contest
     ∇
 
@@ -309,7 +428,7 @@
         info.name ← 'APLCICD'
         info.version ← '1.0.0'
         info.description ← 'Pure APL CI/CD System for GitHub Integration'
-        info.contest ← 'Dyalog APL Forge Contest 2025'
+        info.author ← 'Pure APL Development'
         info.features ← 'AI Detection' 'GitHub Integration' 'Performance Benchmarks' 'Recursive Analysis'
         info.ultra_concise ← 'AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)  ⍝ 18 characters'
     ∇
@@ -348,13 +467,13 @@
         ⎕←'Version: ',Version
         ⎕←'Status: Operational'
         ⎕←'Components loaded: ',(⍕+/⊃¨'Core' 'Analysis' 'Server' 'Demo'∊¨⊂⎕NL 9),' of 4'
-        ⎕←'Contest ready: ✅'
+        ⎕←'System ready: ✅'
         ⎕←''
         ⎕←'Ultra-concise AI function:'
         ⎕←'  AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)  ⍝ 18 characters'
         ⎕←''
         ⎕←'Available demonstrations:'
-        ⎕←'  • Contest demo (APLCICD.Demo)'
+        ⎕←'  • System demo (APLCICD.Demo)'
         ⎕←'  • GitHub integration (APLCICD.GitHub)'
         ⎕←'  • Performance benchmarks (APLCICD.Performance)'
         ⎕←'  • Recursive analysis (APLCICD.Recursive)'
