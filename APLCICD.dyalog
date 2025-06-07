@@ -76,6 +76,21 @@
         ⎕←'  Loading Pipeline...'
         ⎕FIX'file://Pipeline/Pipeline.dyalog'    ⍝ CI/CD pipeline
         
+        ⎕←'  Loading Error Handling...'
+        ⎕FIX'file://ErrorHandling/ErrorHandling.dyalog'  ⍝ Error handling system
+        
+        ⎕←'  Loading Performance...'
+        ⎕FIX'file://Performance/Performance.dyalog'      ⍝ Performance profiling
+        
+        ⎕←'  Loading Configuration...'
+        ⎕FIX'file://Configuration/Configuration.dyalog'  ⍝ Configuration management
+        
+        ⎕←'  Loading Plugins...'
+        ⎕FIX'file://Plugins/Plugins.dyalog'              ⍝ Plugin architecture
+        
+        ⎕←'  Loading Integration Tests...'
+        ⎕FIX'file://IntegrationTests/IntegrationTests.dyalog'  ⍝ Integration tests
+        
         ⎕←'  Loading Web Server...'
         ⎕FIX'file://WebServer/WebServer.dyalog'  ⍝ Conga web server
         
@@ -90,6 +105,11 @@
         Security.Initialize
         Quality.Initialize
         Pipeline.Initialize
+        ErrorHandling.Initialize
+        Performance.Initialize
+        Configuration.Initialize
+        Plugins.Initialize
+        IntegrationTests.Initialize
         WebServer.Initialize
     ∇
 
@@ -116,24 +136,36 @@
         ⎕←''
         ⎕←'Core Components:'
         ⎕←'  AI Detection:'
-        ⎕←'    APLCICD.AI.Simple text     - 18-char detection function'
-        ⎕←'    APLCICD.AI.Enhanced text   - Multi-factor analysis'
-        ⎕←'    APLCICD.AI.Compare         - Compare methods'
+        ⎕←'    APLCICD.AI text            - Basic 18-char detection'
+        ⎕←'    APLCICD.Enhanced text      - Multi-factor analysis'
+        ⎕←'    APLCICD.EnsembleAI text    - Advanced ensemble detection'
+        ⎕←'    APLCICD.LinguisticAI text  - Linguistic analysis'
         ⎕←''
-        ⎕←'  GitHub Integration:'
-        ⎕←'    APLCICD.GitHub.Start       - Start webhook server'
-        ⎕←'    APLCICD.GitHub.Process pr  - Process pull request'
-        ⎕←'    APLCICD.GitHub.Demo        - Demo integration'
+        ⎕←'  CI/CD Pipeline:'
+        ⎕←'    APLCICD.Pipeline files     - Complete CI/CD pipeline'
+        ⎕←'    APLCICD.Validate files     - Syntax validation'
+        ⎕←'    APLCICD.Security files     - Security scanning'
+        ⎕←'    APLCICD.Quality files      - Quality analysis'
+        ⎕←''
+        ⎕←'  Configuration:'
+        ⎕←'    APLCICD.LoadConfiguration  - Load system config'
+        ⎕←'    APLCICD.SaveConfiguration  - Save system config'
         ⎕←''
         ⎕←'  Performance:'
-        ⎕←'    APLCICD.Performance.Quick  - Quick benchmark'
-        ⎕←'    APLCICD.Performance.Full   - Complete analysis'
-        ⎕←'    APLCICD.Performance.Real   - Real file analysis'
+        ⎕←'    APLCICD.Performance        - Quick benchmark'
+        ⎕←'    APLCICD.ProfilePerformance - Detailed profiling'
+        ⎕←'    APLCICD.PerformanceReport  - Generate report'
         ⎕←''
-        ⎕←'  Demonstrations:'
-        ⎕←'    APLCICD.Demo.Contest       - Full contest demo'
-        ⎕←'    APLCICD.Demo.Recursive     - Self-analysis demo'
-        ⎕←'    APLCICD.Demo.Vibe          - Vibe coding demo'
+        ⎕←'  Plugin System:'
+        ⎕←'    APLCICD.RegisterPlugin     - Register new plugin'
+        ⎕←'    APLCICD.CreateSamplePlugins - Create sample plugins'
+        ⎕←''
+        ⎕←'  Testing:'
+        ⎕←'    APLCICD.RunIntegrationTests - Run test suite'
+        ⎕←'    APLCICD.TestCI             - Test on repository'
+        ⎕←''
+        ⎕←'  Error Handling:'
+        ⎕←'    APLCICD.HandleError        - Process errors'
         ⎕←''
         ⎕←'Examples:'
         ⎕←'  ai_score ← APLCICD.AI.Simple "Generated using Claude AI"'
@@ -201,6 +233,60 @@
         ⎕←'=============================='
         files ← '*.dyalog' ⎕NINFO ⍠1⊢'.'
         result ← Pipeline files
+    ∇
+
+    ∇ result ← EnsembleAI text
+    ⍝ Advanced ensemble AI detection
+        result ← Core.EnsembleAI text
+    ∇
+
+    ∇ result ← LinguisticAI text
+    ⍝ Linguistic analysis AI detection
+        result ← Core.LinguisticAI text
+    ∇
+
+    ∇ result ← ProfilePerformance function_name args iterations
+    ⍝ Profile function performance
+        :If 0=⎕NC'iterations' ⋄ iterations←100 ⋄ :EndIf
+        result ← Performance.ProfileFunction function_name args iterations
+    ∇
+
+    ∇ result ← SaveConfiguration config filename
+    ⍝ Save system configuration
+        :If 0=⎕NC'filename' ⋄ filename←'aplcicd.config' ⋄ :EndIf
+        result ← Configuration.SaveConfig config filename
+    ∇
+
+    ∇ config ← LoadConfiguration filename
+    ⍝ Load system configuration
+        :If 0=⎕NC'filename' ⋄ filename←'aplcicd.config' ⋄ :EndIf
+        config ← Configuration.LoadConfig filename
+    ∇
+
+    ∇ result ← RegisterPlugin plugin_info
+    ⍝ Register a new plugin
+        result ← Plugins.RegisterPlugin plugin_info
+    ∇
+
+    ∇ result ← RunIntegrationTests
+    ⍝ Run comprehensive integration test suite
+        result ← IntegrationTests.RunAllTests
+    ∇
+
+    ∇ result ← HandleError error_info
+    ⍝ Handle errors with detailed analysis
+        result ← ErrorHandling.HandleError error_info
+    ∇
+
+    ∇ report ← PerformanceReport timespan
+    ⍝ Generate performance report
+        :If 0=⎕NC'timespan' ⋄ timespan←24 ⋄ :EndIf
+        report ← Performance.GeneratePerformanceReport timespan
+    ∇
+
+    ∇ CreateSamplePlugins
+    ⍝ Create sample plugins for demonstration
+        Plugins.CreateSamplePlugins
     ∇
 
     ∇ result ← WebServer port
