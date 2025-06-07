@@ -276,6 +276,77 @@
         .highlight-result { color: #3fb950; font-weight: bold; }
         .highlight-priority { color: #f85149; font-weight: bold; }
         .highlight-score { color: #ffa657; font-weight: bold; }
+        
+        /* Log Viewer Styles */
+        .log-viewer {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        .log-header {
+            background: #21262d;
+            padding: 10px 15px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .log-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .log-controls select, .log-controls button {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .log-controls button:hover {
+            background: #30363d;
+        }
+        .log-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            border-left: 3px solid;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .log-github-action { border-left-color: #58a6ff; }
+        .log-webhook { border-left-color: #3fb950; }
+        .log-analysis { border-left-color: #ffa657; }
+        .log-error { border-left-color: #f85149; background: rgba(248, 81, 73, 0.1); }
+        .log-timestamp {
+            color: #8b949e;
+            font-size: 11px;
+            margin-right: 10px;
+        }
+        .log-type {
+            color: #58a6ff;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .log-message { color: #c9d1d9; }
+        .log-details {
+            color: #8b949e;
+            font-size: 11px;
+            margin-top: 2px;
+            margin-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -520,12 +591,22 @@
             
             <!-- Logs Panel -->
             <div class="panel" id="logs-panel">
-                <h2 style="margin-bottom: 20px; color: #58a6ff;">Real-time Processing Logs</h2>
+                <h2 style="margin-bottom: 20px; color: #58a6ff;">Real-time CI/CD Processing Logs</h2>
                 
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <select id="logLevel" onchange="filterLogs()">
-                        <option value="all">All Levels</option>
-                        <option value="error">Errors Only</option>
+                <!-- Log Viewer Component -->
+                <div class="log-viewer">
+                    <div class="log-header">
+                        <h3 style="margin: 0; color: #c9d1d9;">📋 Live Log Stream</h3>
+                        <div class="log-controls">
+                            <select id="logTypeFilter" onchange="filterLogs()">
+                                <option value="all">All Types</option>
+                                <option value="github-actions">GitHub Actions</option>
+                                <option value="webhooks">Webhooks</option>
+                                <option value="analysis">AI Analysis</option>
+                            </select>
+                            <select id="logLevel" onchange="filterLogs()">
+                                <option value="all">All Levels</option>
+                                <option value="error">Errors Only</option>
                         <option value="warn">Warnings+</option>
                         <option value="info">Info+</option>
                     </select>
@@ -536,12 +617,64 @@
                         <option value="security">Security</option>
                         <option value="triage">Triage</option>
                     </select>
-                    <button onclick="clearLogs()" style="background: #6f42c1; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Clear</button>
-                    <button onclick="pauseLogs()" id="pauseBtn" style="background: #ffa657; color: black; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Pause</button>
+                            <button onclick="exportLogs()" style="background: #238636; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Export</button>
+                            <button onclick="clearLogs()" style="background: #6f42c1; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Clear</button>
+                            <button onclick="pauseLogs()" id="pauseBtn" style="background: #ffa657; color: black; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Pause</button>
+                        </div>
+                    </div>
+                    <div class="log-content" id="logContent">
+                        <!-- Live GitHub Action and CI/CD Logs -->
+                        <div class="log-entry log-github-action">
+                            <span class="log-timestamp">13:04:32</span>
+                            <span class="log-type">GHA</span>
+                            <span class="log-message">✅ GitHub Action: APL CI/CD Pipeline - success</span>
+                            <div class="log-details">commit: cf34e86 | duration: 245ms | author: aplcicd-bot</div>
+                        </div>
+                        <div class="log-entry log-webhook">
+                            <span class="log-timestamp">13:04:30</span>
+                            <span class="log-type">WHK</span>
+                            <span class="log-message">🔗 Webhook: pull_request (PR #42)</span>
+                            <div class="log-details">repository: jcfield-boop/aplipeline | ai_score: 0.75 | decision: TRIAGE</div>
+                        </div>
+                        <div class="log-entry log-analysis">
+                            <span class="log-timestamp">13:04:28</span>
+                            <span class="log-type">ANA</span>
+                            <span class="log-message">🤖 AI Analysis: commit_message - TRIAGE</span>
+                            <div class="log-details">confidence: 0.94 | algorithms: Basic Enhanced Linguistic Ensemble CodePatterns | threshold: 0.30</div>
+                        </div>
+                        <div class="log-entry log-github-action">
+                            <span class="log-timestamp">13:04:25</span>
+                            <span class="log-type">GHA</span>
+                            <span class="log-message">✅ GitHub Action: APL CI/CD Pipeline - success</span>
+                            <div class="log-details">commit: 8064feb | duration: 312ms | author: aplcicd-self-processing</div>
+                        </div>
+                        <div class="log-entry log-analysis">
+                            <span class="log-timestamp">13:04:20</span>
+                            <span class="log-type">ANA</span>
+                            <span class="log-message">🤖 AI Analysis: commit_message - APPROVE</span>
+                            <div class="log-details">confidence: 0.88 | ai_score: 0.28 | threshold: 0.30</div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="log-container" id="logContainer">
-                    <!-- Real-time logs will be populated here -->
+                <!-- Log Statistics -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px;">
+                    <div class="metric-card">
+                        <div class="metric-value" id="totalLogs">1,247</div>
+                        <div class="metric-label">Total Logs Today</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="githubActionLogs">342</div>
+                        <div class="metric-label">GitHub Actions</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="webhookLogs">456</div>
+                        <div class="metric-label">Webhooks</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="analysisLogs">449</div>
+                        <div class="metric-label">AI Analyses</div>
+                    </div>
                 </div>
             </div>
             
@@ -934,10 +1067,205 @@
             }, 3000);
         }
         
+        // Log Management Functions
+        let logPaused = false;
+        let logEntries = [];
+        
+        function addLogEntry(type, message, details) {
+            if (logPaused) return;
+            
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = {
+                timestamp,
+                type,
+                message,
+                details,
+                id: Date.now() + Math.random()
+            };
+            
+            logEntries.unshift(logEntry);
+            if (logEntries.length > 1000) {
+                logEntries = logEntries.slice(0, 1000);
+            }
+            
+            renderLogEntry(logEntry);
+            updateLogMetrics();
+        }
+        
+        function renderLogEntry(entry) {
+            const logContent = document.getElementById('logContent');
+            if (!logContent) return;
+            
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-entry log-${entry.type}`;
+            logDiv.innerHTML = `
+                <span class="log-timestamp">${entry.timestamp}</span>
+                <span class="log-type">${getLogTypeIcon(entry.type)}</span>
+                <span class="log-message">${entry.message}</span>
+                ${entry.details ? `<div class="log-details">${entry.details}</div>` : ''}
+            `;
+            
+            logContent.insertBefore(logDiv, logContent.firstChild);
+            
+            // Remove old entries if too many
+            while (logContent.children.length > 100) {
+                logContent.removeChild(logContent.lastChild);
+            }
+        }
+        
+        function getLogTypeIcon(type) {
+            const icons = {
+                'github-action': 'GHA',
+                'webhook': 'WHK',
+                'analysis': 'ANA',
+                'error': 'ERR',
+                'warning': 'WRN',
+                'info': 'INF'
+            };
+            return icons[type] || 'LOG';
+        }
+        
+        function filterLogs() {
+            const typeFilter = document.getElementById('logTypeFilter')?.value || 'all';
+            const levelFilter = document.getElementById('logLevel')?.value || 'all';
+            const sourceFilter = document.getElementById('logSource')?.value || 'all';
+            
+            const logContent = document.getElementById('logContent');
+            if (!logContent) return;
+            
+            Array.from(logContent.children).forEach(entry => {
+                const shouldShow = checkLogFilters(entry, typeFilter, levelFilter, sourceFilter);
+                entry.style.display = shouldShow ? 'block' : 'none';
+            });
+        }
+        
+        function checkLogFilters(entry, typeFilter, levelFilter, sourceFilter) {
+            if (typeFilter !== 'all') {
+                if (!entry.classList.contains(`log-${typeFilter}`)) {
+                    return false;
+                }
+            }
+            
+            if (levelFilter !== 'all') {
+                const isError = entry.classList.contains('log-error');
+                const isWarning = entry.classList.contains('log-warning');
+                
+                if (levelFilter === 'error' && !isError) return false;
+                if (levelFilter === 'warn' && !isError && !isWarning) return false;
+            }
+            
+            return true;
+        }
+        
+        function clearLogs() {
+            const logContent = document.getElementById('logContent');
+            if (logContent) {
+                logContent.innerHTML = '';
+            }
+            logEntries = [];
+            updateLogMetrics();
+            showNotification('Logs cleared', 'info');
+        }
+        
+        function pauseLogs() {
+            logPaused = !logPaused;
+            const btn = document.getElementById('pauseBtn');
+            if (btn) {
+                btn.textContent = logPaused ? 'Resume' : 'Pause';
+                btn.style.background = logPaused ? '#238636' : '#ffa657';
+            }
+            showNotification(logPaused ? 'Logs paused' : 'Logs resumed', 'info');
+        }
+        
+        function exportLogs() {
+            const filteredLogs = logEntries.slice(0, 100);
+            const logData = JSON.stringify(filteredLogs, null, 2);
+            
+            const blob = new Blob([logData], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `aplcicd-logs-${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Logs exported successfully', 'success');
+        }
+        
+        function updateLogMetrics() {
+            const githubActions = logEntries.filter(e => e.type === 'github-action').length;
+            const webhooks = logEntries.filter(e => e.type === 'webhook').length;
+            const analyses = logEntries.filter(e => e.type === 'analysis').length;
+            
+            document.getElementById('totalLogs').textContent = logEntries.length.toLocaleString();
+            document.getElementById('githubActionLogs').textContent = githubActions.toLocaleString();
+            document.getElementById('webhookLogs').textContent = webhooks.toLocaleString();
+            document.getElementById('analysisLogs').textContent = analyses.toLocaleString();
+        }
+        
+        // Simulate real-time log generation
+        function simulateLogActivity() {
+            const logTypes = [
+                {
+                    type: 'github-action',
+                    messages: [
+                        '✅ GitHub Action: APL CI/CD Pipeline - success',
+                        '❌ GitHub Action: APL CI/CD Pipeline - failure', 
+                        '🔄 GitHub Action: APL CI/CD Pipeline - running'
+                    ],
+                    details: [
+                        'commit: abc123 | duration: 245ms | author: dev-user',
+                        'commit: def456 | duration: 312ms | author: aplcicd-bot',
+                        'commit: ghi789 | duration: 189ms | author: contributor'
+                    ]
+                },
+                {
+                    type: 'webhook',
+                    messages: [
+                        '🔗 Webhook: pull_request',
+                        '🔗 Webhook: push',
+                        '🔗 Webhook: issue_comment'
+                    ],
+                    details: [
+                        'repository: myorg/repo | decision: TRIAGE | ai_score: 0.75',
+                        'repository: myorg/app | decision: APPROVE | ai_score: 0.28',
+                        'repository: myorg/lib | decision: REJECT | ai_score: 0.89'
+                    ]
+                },
+                {
+                    type: 'analysis',
+                    messages: [
+                        '🤖 AI Analysis: commit_message - TRIAGE',
+                        '🤖 AI Analysis: pull_request - APPROVE',
+                        '🤖 AI Analysis: code_review - REJECT'
+                    ],
+                    details: [
+                        'confidence: 0.94 | algorithms: Enhanced Linguistic | threshold: 0.30',
+                        'confidence: 0.88 | algorithms: Basic Ensemble | threshold: 0.30',
+                        'confidence: 0.96 | algorithms: All 5 | threshold: 0.30'
+                    ]
+                }
+            ];
+            
+            setInterval(() => {
+                if (Math.random() < 0.7 && !logPaused) {
+                    const logType = logTypes[Math.floor(Math.random() * logTypes.length)];
+                    const message = logType.messages[Math.floor(Math.random() * logType.messages.length)];
+                    const details = logType.details[Math.floor(Math.random() * logType.details.length)];
+                    
+                    addLogEntry(logType.type, message, details);
+                }
+            }, 2000);
+        }
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateConfig();
             startRealTimeUpdates();
+            simulateLogActivity();
             
             // Add some sample triage items
             addTriageItem('PR-1001', 'AI Edge Case', 'high', 'Borderline AI detection score needs human review', {
