@@ -89,6 +89,41 @@ APLCICD.Dashboard
 )off" | $DYALOG -script
         ;;
     
+    "pipeline")
+        echo "⎕FIX'file://APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.Pipeline
+)off" | $DYALOG -script
+        ;;
+    
+    "validate")
+        echo "⎕FIX'file://APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.Validate
+)off" | $DYALOG -script
+        ;;
+    
+    "security")
+        echo "⎕FIX'file://APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.Security
+)off" | $DYALOG -script
+        ;;
+    
+    "quality")
+        echo "⎕FIX'file://APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.Quality
+)off" | $DYALOG -script
+        ;;
+    
+    "testci")
+        echo "⎕FIX'file://APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.TestCI
+)off" | $DYALOG -script
+        ;;
+    
     "help"|*)
         cat << EOF
 🏆 APLCICD - Pure APL CI/CD System
@@ -107,6 +142,11 @@ Commands:
   recursive  - Recursive self-analysis
   enhanced   - Advanced AI detection demo
   dashboard  - Start Dyalog web server and execute demos
+  pipeline   - Run complete CI/CD pipeline
+  validate   - Syntax validation
+  security   - Security scanning
+  quality    - Code quality analysis
+  testci     - Test CI/CD on this repository
   help       - Show this help
 
 Examples:
@@ -114,9 +154,14 @@ Examples:
   ./aplcicd.sh ai "Generated using Claude AI"
   ./aplcicd.sh benchmark
   ./aplcicd.sh test
+  ./aplcicd.sh pipeline
+  ./aplcicd.sh testci
 
 Features:
   • Ultra-concise AI detection (18 characters)
+  • Complete CI/CD pipeline automation
+  • Syntax validation & security scanning
+  • Code quality metrics & analysis
   • Advanced multi-factor analysis
   • GitHub webhook integration
   • Real-time performance benchmarks

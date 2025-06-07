@@ -6,7 +6,10 @@
 ⍝ A complete CI/CD system implemented in pure APL with:
 ⍝ • GitHub webhook integration
 ⍝ • Ultra-concise AI detection (18 characters)
+⍝ • Syntax validation and security scanning
+⍝ • Quality metrics and code analysis
 ⍝ • Real-time performance benchmarks
+⍝ • Complete CI/CD pipeline automation
 ⍝ • Recursive system analysis
 ⍝ • Live dashboard demonstrations
 
@@ -25,6 +28,9 @@
             LoadComponents
             ⎕←'✅ Core AI detection algorithms'
             ⎕←'✅ GitHub integration system'  
+            ⎕←'✅ CI/CD pipeline automation'
+            ⎕←'✅ Syntax validation & security'
+            ⎕←'✅ Quality metrics & analysis'
             ⎕←'✅ HTTP/WebSocket servers'
             ⎕←'✅ Performance benchmarks'
             ⎕←'✅ Contest demonstrations'
@@ -58,6 +64,17 @@
         ⎕←'  Loading Examples...'
         ⎕FIX'file://Examples/Examples.dyalog'    ⍝ Usage examples
         
+        ⎕←'  Loading Validation...'
+        ⎕FIX'file://Validation/Validation.dyalog'  ⍝ Syntax validation
+        
+        ⎕←'  Loading Security...'
+        ⎕FIX'file://Security/Security.dyalog'    ⍝ Security scanning
+        
+        ⎕←'  Loading Quality...'
+        ⎕FIX'file://Quality/Quality.dyalog'      ⍝ Quality metrics
+        
+        ⎕←'  Loading Pipeline...'
+        ⎕FIX'file://Pipeline/Pipeline.dyalog'    ⍝ CI/CD pipeline
         
         ⎕←'  Loading Web Server...'
         ⎕FIX'file://WebServer/WebServer.dyalog'  ⍝ Conga web server
@@ -69,6 +86,10 @@
         Demo.Initialize
         Tests.Initialize
         Examples.Initialize
+        Validation.Initialize
+        Security.Initialize
+        Quality.Initialize
+        Pipeline.Initialize
         WebServer.Initialize
     ∇
 
@@ -148,6 +169,38 @@
     ∇ Enhanced
     ⍝ Advanced AI detection demonstration
         Core.DemoAdvanced
+    ∇
+
+    ∇ result ← Pipeline files
+    ⍝ Run complete CI/CD pipeline
+        :If 0=⎕NC'files' ⋄ files ← '*.dyalog' ⎕NINFO ⍠1⊢'.' ⋄ :EndIf
+        result ← Pipeline.RunPipeline files
+    ∇
+
+    ∇ result ← Validate files
+    ⍝ Quick syntax validation
+        :If 0=⎕NC'files' ⋄ files ← '*.dyalog' ⎕NINFO ⍠1⊢'.' ⋄ :EndIf
+        result ← Validation.ValidationReport files
+    ∇
+
+    ∇ result ← Security files
+    ⍝ Security scanning
+        :If 0=⎕NC'files' ⋄ files ← '*.dyalog' ⎕NINFO ⍠1⊢'.' ⋄ :EndIf
+        result ← Security.SecurityReport files
+    ∇
+
+    ∇ result ← Quality files
+    ⍝ Code quality analysis
+        :If 0=⎕NC'files' ⋄ files ← '*.dyalog' ⎕NINFO ⍠1⊢'.' ⋄ :EndIf
+        result ← Quality.QualityReport files
+    ∇
+
+    ∇ TestCI
+    ⍝ Test CI/CD system on this repository
+        ⎕←'🧪 Testing APLCICD CI/CD System'
+        ⎕←'=============================='
+        files ← '*.dyalog' ⎕NINFO ⍠1⊢'.'
+        result ← Pipeline files
     ∇
 
     ∇ result ← WebServer port
