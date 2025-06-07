@@ -1,0 +1,126 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "APLCICD - Enterprise CI/CD Monitoring",
+    "tags": ["aplcicd", "cicd", "apl"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "PR Processing Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "target": "prs_per_minute",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 50},
+                {"color": "red", "value": 80}
+              ]
+            },
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "AI Detection Accuracy",
+        "type": "gauge",
+        "targets": [
+          {
+            "target": "ai_accuracy",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 90,
+            "max": 100,
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": 90},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 97}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "System Load",
+        "type": "timeseries",
+        "targets": [
+          {
+            "target": "system_load",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "unit": "percent"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "Triage Queue Size",
+        "type": "stat",
+        "targets": [
+          {
+            "target": "triage_queue_size",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 10},
+                {"color": "red", "value": 20}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8}
+      },
+      {
+        "id": 5,
+        "title": "Processing Time Distribution",
+        "type": "histogram",
+        "targets": [
+          {
+            "target": "processing_time",
+            "refId": "A"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 18, "x": 6, "y": 8}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "10s"
+  }
+}

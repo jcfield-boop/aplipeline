@@ -1,4 +1,16 @@
 # APL CI/CD Project - Git Ignore
+
+# 🔐 SECURITY - Never commit secrets
+aplcicd_secrets.dyalog
+aplcicd_config.dcf
+*secrets*.json
+*secrets*.dyalog
+*.pem
+*.key
+id_rsa*
+.env
+.env.local
+
 # Temporary files
 *.tmp
 *.bak
@@ -18,6 +30,10 @@ Thumbs.db
 # Logs
 *.log
 logs/
+
+# Test outputs
+test_output/
+benchmark_results/
 
 # Claude development files
 .claude/
