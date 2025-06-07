@@ -1206,66 +1206,152 @@
             document.getElementById('analysisLogs').textContent = analyses.toLocaleString();
         }
         
-        // Simulate real-time log generation
-        function simulateLogActivity() {
-            const logTypes = [
-                {
-                    type: 'github-action',
-                    messages: [
-                        '✅ GitHub Action: APL CI/CD Pipeline - success',
-                        '❌ GitHub Action: APL CI/CD Pipeline - failure', 
-                        '🔄 GitHub Action: APL CI/CD Pipeline - running'
-                    ],
-                    details: [
-                        'commit: abc123 | duration: 245ms | author: dev-user',
-                        'commit: def456 | duration: 312ms | author: aplcicd-bot',
-                        'commit: ghi789 | duration: 189ms | author: contributor'
-                    ]
-                },
-                {
-                    type: 'webhook',
-                    messages: [
-                        '🔗 Webhook: pull_request',
-                        '🔗 Webhook: push',
-                        '🔗 Webhook: issue_comment'
-                    ],
-                    details: [
-                        'repository: myorg/repo | decision: TRIAGE | ai_score: 0.75',
-                        'repository: myorg/app | decision: APPROVE | ai_score: 0.28',
-                        'repository: myorg/lib | decision: REJECT | ai_score: 0.89'
-                    ]
-                },
-                {
-                    type: 'analysis',
-                    messages: [
-                        '🤖 AI Analysis: commit_message - TRIAGE',
-                        '🤖 AI Analysis: pull_request - APPROVE',
-                        '🤖 AI Analysis: code_review - REJECT'
-                    ],
-                    details: [
-                        'confidence: 0.94 | algorithms: Enhanced Linguistic | threshold: 0.30',
-                        'confidence: 0.88 | algorithms: Basic Ensemble | threshold: 0.30',
-                        'confidence: 0.96 | algorithms: All 5 | threshold: 0.30'
-                    ]
+        // Real-time data fetching (no mock data)
+        async function fetchRealTimeData() {
+            try {
+                // Fetch real system status
+                const statusResponse = await fetch('logs/api-status.json');
+                if (statusResponse.ok) {
+                    const status = await statusResponse.json();
+                    updateDashboardWithRealData(status);
+                } else {
+                    addLogEntry('error', '❌ Failed to fetch real status data', 'API endpoint not available');
                 }
-            ];
+                
+                // Fetch real logs
+                const logsResponse = await fetch('logs/api-logs.json');
+                if (logsResponse.ok) {
+                    const logs = await logsResponse.json();
+                    updateLogsWithRealData(logs);
+                } else {
+                    addLogEntry('error', '❌ Failed to fetch real log data', 'Logs API endpoint not available');
+                }
+                
+                // Fetch real errors
+                const errorsResponse = await fetch('logs/real-time-status.json');
+                if (errorsResponse.ok) {
+                    const realStatus = await errorsResponse.json();
+                    if (realStatus.errors && realStatus.errors.length > 0) {
+                        displayRealErrors(realStatus.errors);
+                    }
+                    updateSystemMetrics(realStatus);
+                }
+                
+            } catch (error) {
+                addLogEntry('error', '❌ Real-time data fetch failed', 'Error: ' + error.message);
+                showSystemOfflineWarning();
+            }
+        }
+        
+        function updateDashboardWithRealData(status) {
+            // Update header status with real data
+            if (status.github && status.github.connected) {
+                document.querySelector('.status').innerHTML = `
+                    <div class="status-indicator status-live">● LIVE - Real Data</div>
+                    <div class="status-indicator">Branch: ${status.github.branch}</div>
+                    <div class="status-indicator">Clean: ${status.github.clean ? '✅' : '❌'}</div>
+                `;
+            } else {
+                document.querySelector('.status').innerHTML = `
+                    <div class="status-indicator status-alert">● OFFLINE</div>
+                    <div class="status-indicator">No Git Connection</div>
+                `;
+            }
             
-            setInterval(() => {
-                if (Math.random() < 0.7 && !logPaused) {
-                    const logType = logTypes[Math.floor(Math.random() * logTypes.length)];
-                    const message = logType.messages[Math.floor(Math.random() * logType.messages.length)];
-                    const details = logType.details[Math.floor(Math.random() * logType.details.length)];
-                    
-                    addLogEntry(logType.type, message, details);
+            // Update real metrics
+            if (status.system) {
+                document.getElementById('systemLoad').textContent = status.system.memory_used_mb + 'MB';
+                document.getElementById('totalLogs').textContent = status.system.log_files || 0;
+            }
+        }
+        
+        function updateLogsWithRealData(logsData) {
+            if (logsData.error) {
+                addLogEntry('error', '❌ Logging system error', logsData.error);
+                return;
+            }
+            
+            if (logsData.logs && logsData.logs.length > 0) {
+                // Clear old mock data and show real logs
+                const logContent = document.getElementById('logContent');
+                if (logContent && logContent.children.length > logsData.logs.length) {
+                    logContent.innerHTML = ''; // Clear mock data
                 }
-            }, 2000);
+                
+                logsData.logs.forEach(log => {
+                    if (log.timestamp && log.type && log.message) {
+                        addLogEntry(log.type, log.message, log.details || '');
+                    }
+                });
+                
+                addLogEntry('info', '✅ Real log data loaded', `${logsData.count} entries from APL logging system`);
+            } else {
+                addLogEntry('warning', '⚠️ No real logs available', 'Logging system may not be active');
+            }
+        }
+        
+        function displayRealErrors(errors) {
+            // Show real errors prominently
+            errors.slice(0, 3).forEach(error => {
+                addLogEntry('error', `❌ REAL ERROR: [${error.type}] ${error.message}`, 
+                           `Timestamp: ${new Date(error.timestamp).toLocaleString()}`);
+            });
+            
+            // Update error count in metrics
+            document.getElementById('totalLogs').textContent = `${errors.length} ERRORS`;
+            document.getElementById('totalLogs').style.color = '#f85149';
+        }
+        
+        function updateSystemMetrics(realStatus) {
+            if (realStatus.system_status === 'error') {
+                // Show system in error state
+                document.querySelector('.status').innerHTML += 
+                    '<div class="status-indicator status-alert">🚨 SYSTEM ERROR</div>';
+            }
+            
+            if (realStatus.processing_stats) {
+                const stats = realStatus.processing_stats;
+                document.getElementById('avgProcessTime').textContent = 
+                    stats.success_rate ? `${stats.success_rate}%` : 'N/A';
+            }
+        }
+        
+        function showSystemOfflineWarning() {
+            // Show that we're not getting real data
+            const logContent = document.getElementById('logContent');
+            if (logContent) {
+                logContent.innerHTML = `
+                    <div class="log-entry log-error">
+                        <span class="log-timestamp">${new Date().toLocaleTimeString()}</span>
+                        <span class="log-type">SYS</span>
+                        <span class="log-message">❌ REAL-TIME BACKEND OFFLINE</span>
+                        <div class="log-details">Cannot connect to real APL backend. Run: ⎕FIX'file://RealTimeBackend/RealTimeBackend.dyalog' then RealTimeBackend.Demo</div>
+                    </div>
+                `;
+            }
+            
+            // Update header to show offline status
+            document.querySelector('.status').innerHTML = `
+                <div class="status-indicator status-alert">● OFFLINE - No Real Data</div>
+                <div class="status-indicator">Start APL Backend</div>
+            `;
+        }
+        
+        // Real-time updates (no simulation)
+        function startRealTimeMonitoring() {
+            // Fetch real data every 10 seconds
+            setInterval(fetchRealTimeData, 10000);
+            
+            // Initial fetch
+            fetchRealTimeData();
+            
+            addLogEntry('info', '🔄 Real-time monitoring started', 'Fetching data from APL backend every 10 seconds');
         }
         
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             updateConfig();
-            startRealTimeUpdates();
-            simulateLogActivity();
+            startRealTimeMonitoring();  // Use real data instead of simulation
             
             // Add some sample triage items
             addTriageItem('PR-1001', 'AI Edge Case', 'high', 'Borderline AI detection score needs human review', {
