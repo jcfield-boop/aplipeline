@@ -23,10 +23,52 @@
     ⍝ Ultra-Concise AI Detection (18 characters)
     ⍝ ═══════════════════════════════════════════════════════════════
     
-    AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)
+    ∇ result ← AI text
+    ⍝ Statistical AI detection - as specified in CLAUDE.md
+        ⍝ Handle empty text
+        :If 0=≢text
+            result ← 0
+            →0
+        :EndIf
+        
+        ⍝ Lexical diversity: unique words ÷ total words
+        words ← (' '∘≠⊆⊢)text
+        :If 0=≢words
+            result ← 0
+            →0
+        :EndIf
+        lexical ← (≢∪words) ÷ ≢words
+        
+        ⍝ N-gram frequency analysis
+        :If 2≤≢words
+            bigrams ← 2,/words
+            bigram_diversity ← (≢∪bigrams) ÷ ≢bigrams
+        :Else
+            bigram_diversity ← 1
+        :EndIf
+        
+        :If 3≤≢words
+            trigrams ← 3,/words
+            trigram_diversity ← (≢∪trigrams) ÷ ≢trigrams
+        :Else
+            trigram_diversity ← 1
+        :EndIf
+        
+        ⍝ Statistical features
+        avgWordLen ← (+/≢¨words) ÷ ≢words
+        sentences ← ('.'∘≠⊆⊢)text
+        :If 0<≢sentences
+            sentenceVar ← 1⌊(+/(≢¨sentences)*2)÷(≢sentences)⌈1
+        :Else
+            sentenceVar ← 0
+        :EndIf
+        
+        ⍝ Combine features (weights tuned for AI detection)
+        result ← 0.3×(1-lexical) + 0.2×(avgWordLen÷10)⌊1 + 0.3×(1-bigram_diversity) + 0.2×(sentenceVar÷100)⌊1
+    ∇
 
     ∇ result ← Detect text
-    ⍝ Detect AI content in text using keyword matching
+    ⍝ Detect AI content using statistical analysis (CLAUDE.md compliant)
     ⍝ 
     ⍝ Arguments:
     ⍝   text (character): Text content to analyze
@@ -35,9 +77,8 @@
     ⍝   result (numeric): AI probability score 0-1
     ⍝ 
     ⍝ Example:
-    ⍝   score ← Detect 'Generated using Claude AI'  ⍝ Returns: ~0.4
-        keywords ← 'AI' 'ai' 'generated' 'Claude' 'GPT' 'assistant' 'however'
-        result ← (AI text keywords) ÷ ≢keywords
+    ⍝   score ← Detect 'Generated using Claude AI'  ⍝ Returns statistical score
+        result ← AI text
     ∇
 
     ∇ result ← Enhanced text

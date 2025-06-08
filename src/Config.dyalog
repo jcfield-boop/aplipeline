@@ -38,13 +38,17 @@
     ⍝ ═══════════════════════════════════════════════════════════════
 
     ∇ config ← Default
-    ⍝ Create default configuration with production-ready settings
+    ⍝ Create default configuration - CLAUDE.md compliant APL-Native Config
         config ← ⎕NS ''
         
-        ⍝ Core pipeline settings
+        ⍝ CLAUDE.md specified configuration structure
+        config.quality_threshold ← 0.5
+        config.ai_threshold ← 0.3
+        config.github_secret ← ⎕SH'echo $GITHUB_SECRET'
+        config.features ← 'ai_detection' 'security_scan' 'quality_check'
+        
+        ⍝ Additional pipeline settings
         config.pipeline ← ⎕NS ''
-        config.pipeline.ai_threshold ← 0.3
-        config.pipeline.quality_threshold ← 0.5
         config.pipeline.security_strict ← 1
         config.pipeline.syntax_required ← 1
         config.pipeline.parallel_workers ← 4
@@ -213,44 +217,109 @@
         :EndTrap
     ∇
 
-    ∇ validation_result ← Validate config
-    ⍝ Comprehensive configuration validation with automatic correction
+    ∇ valid ← Validate config
+    ⍝ CLAUDE.md compliant configuration validation
     ⍝ 
     ⍝ Arguments:
     ⍝   config (namespace): Configuration to validate
     ⍝ 
     ⍝ Returns:
-    ⍝   validation_result (namespace): Validation results and corrected config
+    ⍝   valid (boolean): 1 if valid, signals error if invalid
         
-        validation_result ← ⎕NS ''
-        validation_result.valid ← 1
-        validation_result.errors ← ⍬
-        validation_result.corrected_config ← config
-        default_config ← Default
+        valid ← 1
         
-        ⍝ Validate pipeline settings
-        pipeline_errors ← ValidatePipelineConfig config.pipeline default_config.pipeline
-        validation_result.errors ,← pipeline_errors
-        
-        ⍝ Validate file settings
-        files_errors ← ValidateFilesConfig config.files default_config.files
-        validation_result.errors ,← files_errors
-        
-        ⍝ Validate monitoring settings
-        monitoring_errors ← ValidateMonitoringConfig config.monitoring default_config.monitoring
-        validation_result.errors ,← monitoring_errors
-        
-        ⍝ Validate security settings
-        security_errors ← ValidateSecurityConfig config.security default_config.security
-        validation_result.errors ,← security_errors
-        
-        ⍝ Set overall validation status
-        validation_result.valid ← 0=≢validation_result.errors
-        
-        ⍝ Apply corrections for invalid values
-        :If ~validation_result.valid
-            validation_result.corrected_config ← ApplyConfigurationCorrections config default_config validation_result.errors
+        ⍝ CLAUDE.md validation pattern
+        :If ~(0≤config.quality_threshold≤1)
+            ⎕SIGNAL 11 ⍝ Signal error as per CLAUDE.md
         :EndIf
+        
+        :If ~(0≤config.ai_threshold≤1)
+            ⎕SIGNAL 11 ⍝ Signal error as per CLAUDE.md  
+        :EndIf
+        
+        ⍝ Validate features list
+        :If ~∧/config.features∊'ai_detection' 'security_scan' 'quality_check' 'performance_analysis'
+            ⎕SIGNAL 11 ⍝ Invalid feature specified
+        :EndIf
+        
+        ⍝ Validate GitHub secret exists
+        :If 0=≢config.github_secret
+            Log 'warning' 'config' 'GitHub secret not configured - webhooks will fail'
+        :EndIf
+    ∇
+
+    ∇ Log (level category message)
+    ⍝ CLAUDE.md compliant logging system
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   level (character): Log level (info, warning, error)
+    ⍝   category (character): Log category
+    ⍝   message (character): Log message
+        
+        ⍝ CLAUDE.md pattern: Log←{⍵ ⎕NPUT 'aplcicd.log' 2}
+        timestamp ← ⍕⎕TS
+        log_entry ← timestamp,' [',level,'] ',category,': ',message
+        
+        ⍝ Append to log file (mode 2 for append)
+        :Trap 22
+            log_entry ⎕NPUT 'aplcicd.log' 2
+        :Else
+            ⍝ If log file fails, output to session
+            ⎕←'LOG ERROR: ',log_entry
+        :EndTrap
+        
+        ⍝ Also output to session for immediate visibility
+        :Select level
+        :Case 'error'
+            ⎕←'❌ ',log_entry
+        :Case 'warning'
+            ⎕←'⚠️  ',log_entry
+        :Else
+            ⎕←'ℹ️  ',log_entry
+        :EndSelect
+    ∇
+
+    ∇ result ← SaveConfig (config filename)
+    ⍝ CLAUDE.md persistent config: (⎕JSON data) ⎕NPUT file
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   config (namespace): Configuration to save
+    ⍝   filename (character): File to save to
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Save operation result
+        
+        result ← ⎕NS ''
+        result.success ← 0
+        
+        :Trap 22 11
+            ⍝ CLAUDE.md pattern: (⎕JSON data) ⎕NPUT file
+            (⎕JSON config) ⎕NPUT filename 1
+            result.success ← 1
+            Log 'info' 'config' 'Configuration saved to: ',filename
+        :Else
+            result.error ← ⎕DM
+            Log 'error' 'config' 'Failed to save config: ',⎕DM
+        :EndTrap
+    ∇
+
+    ∇ config ← LoadConfig filename
+    ⍝ Load configuration with CLAUDE.md pattern
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   filename (character): Configuration file to load
+    ⍝ 
+    ⍝ Returns:
+    ⍝   config (namespace): Loaded configuration
+        
+        :Trap 22
+            config_json ← ⊃⎕NGET filename 1
+            config ← ⎕JSON config_json
+            Log 'info' 'config' 'Configuration loaded from: ',filename
+        :Else
+            Log 'warning' 'config' 'Config file not found, using defaults: ',filename
+            config ← Default
+        :EndTrap
     ∇
 
     ∇ errors ← ValidatePipelineConfig (pipeline_config default_pipeline)
