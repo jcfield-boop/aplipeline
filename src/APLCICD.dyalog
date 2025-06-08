@@ -43,30 +43,37 @@
     ⍝ Load the 4 core modules with proper error handling
         ⎕←'  Loading Core module...'
         :Trap 22
-            ⎕FIX'file://Core/CoreConsolidated.dyalog'
+            ⎕FIX'file://src/Core.dyalog'
         :Else
             ⎕SIGNAL 22⊣'Failed to load Core module'
         :EndTrap
         
         ⎕←'  Loading Pipeline module...'
         :Trap 22
-            ⎕FIX'file://Pipeline/PipelineConsolidated.dyalog'
+            ⎕FIX'file://src/Pipeline.dyalog'
         :Else
             ⎕SIGNAL 22⊣'Failed to load Pipeline module'
         :EndTrap
         
         ⎕←'  Loading Monitor module...'
         :Trap 22
-            ⎕FIX'file://Monitor/MonitorConsolidated.dyalog'
+            ⎕FIX'file://src/Monitor.dyalog'
         :Else
             ⎕SIGNAL 22⊣'Failed to load Monitor module'
         :EndTrap
         
         ⎕←'  Loading Config module...'
         :Trap 22
-            ⎕FIX'file://Config/ConfigConsolidated.dyalog'
+            ⎕FIX'file://src/Config.dyalog'
         :Else
             ⎕SIGNAL 22⊣'Failed to load Config module'
+        :EndTrap
+        
+        ⎕←'  Loading SelfOptimizer module...'
+        :Trap 22
+            ⎕FIX'file://src/SelfOptimizer.dyalog'
+        :Else
+            ⎕SIGNAL 22⊣'Failed to load SelfOptimizer module'
         :EndTrap
         
         ⍝ Initialize all modules
@@ -74,6 +81,7 @@
         Pipeline.Initialize
         Monitor.Initialize
         Config.Initialize
+        SelfOptimizer.Initialize
     ∇
 
     ∇ ValidateInstallation
@@ -220,6 +228,16 @@
         ⎕←'==================================='
         files ← '*.dyalog' ⎕NINFO ⍠1⊢'.'
         result ← Pipeline files
+    ∇
+
+    ∇ SelfOptimize
+    ⍝ Run self-optimization process
+        SelfOptimizer.RunSelfOptimizationDemo
+    ∇
+
+    ∇ result ← SelfAnalyze
+    ⍝ Analyze system performance and identify improvements
+        result ← SelfOptimizer.AnalyzeSelf
     ∇
 
     ∇ Status
