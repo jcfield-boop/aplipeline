@@ -41,10 +41,10 @@
     ∇
 
     ∇ result ← Enhanced text
-    ⍝ Advanced AI detection with multiple factors
+    ⍝ Advanced AI detection with comprehensive statistical analysis
     ⍝ 
-    ⍝ Uses phrase detection, politeness analysis, formality indicators,
-    ⍝ and vocabulary diversity for comprehensive AI detection
+    ⍝ Multi-factor analysis using linguistic patterns, statistical measures,
+    ⍝ and behavioral indicators specific to AI-generated content
     ⍝ 
     ⍝ Arguments:
     ⍝   text (character): Text content to analyze
@@ -52,27 +52,58 @@
     ⍝ Returns:
     ⍝   result (numeric): AI probability score 0-1
         
-        ⍝ Advanced phrase detection - vectorized approach
-        phrases ← 'as an ai' 'i apologize' 'i''m sorry' 'however' 'furthermore'
-        phrases ,← 'generated' 'claude' 'gpt' 'assistant' 'ai' 'thank you for'
-        phrase_score ← (AI (⎕C text) (⎕C¨phrases)) ÷ ≢phrases
+        :If 0=≢text ⋄ result←0 ⋄ :Return ⋄ :EndIf
         
-        ⍝ Politeness indicators - vectorized
-        polite ← 'please' 'thank' 'apologize' 'sorry' 'appreciate' 'understand'
-        polite_score ← (AI (⎕C text) (⎕C¨polite)) ÷ ≢polite
-        
-        ⍝ Formality indicators - vectorized
-        formal ← 'however' 'furthermore' 'additionally' 'therefore' 'consequently'
-        formal_score ← (AI (⎕C text) (⎕C¨formal)) ÷ ≢formal
-        
-        ⍝ Word repetition analysis - APL array approach
+        ⍝ Tokenize and prepare text for analysis
         words ← ' '(≠⊆⊢)text
-        repetition_score ← (2≤≢words)×((≢words - ≢∪words) ÷ ≢words⌈1)
+        sentences ← ('.' '!' '?')(≠⊆⊢)text
         
-        ⍝ Weighted combination using APL inner product
-        weights ← 0.4 0.25 0.2 0.15
-        factors ← phrase_score polite_score formal_score repetition_score
-        result ← 1⌊weights +.× factors
+        ⍝ Multi-factor detection metrics
+        metrics ← ⎕NS ''
+        
+        ⍝ 1. Enhanced keyword detection (original method improved)
+        ai_keywords ← 'ai' 'assistant' 'generated' 'claude' 'gpt' 'apologize' 'however' 'furthermore'
+        metrics.keywords ← (+/∨/¨ai_keywords⍷¨⊂⎕C text) ÷ ≢ai_keywords
+        
+        ⍝ 2. Vocabulary diversity (AI tends to be repetitive)
+        :If 0<≢words
+            metrics.diversity ← 1 - (≢∪⎕C¨words) ÷ ≢words  ⍝ Invert so higher = more AI-like
+        :Else
+            metrics.diversity ← 0
+        :EndIf
+        
+        ⍝ 3. Sentence length consistency (AI has uniform patterns)
+        :If 1<≢sentences
+            sent_lengths ← ≢¨sentences
+            avg_length ← (+/sent_lengths) ÷ ≢sent_lengths
+            variance ← (+/(sent_lengths - avg_length)*2) ÷ ≢sent_lengths
+            metrics.consistency ← 1 - (variance ÷ avg_length⌈1)⌊1  ⍝ Low variance = high consistency = AI-like
+        :Else
+            metrics.consistency ← 0
+        :EndIf
+        
+        ⍝ 4. Formal language indicators (AI uses formal transitions)
+        formal_words ← 'however' 'furthermore' 'additionally' 'moreover' 'therefore' 'consequently'
+        metrics.formality ← (+/∨/¨formal_words⍷¨⊂⎕C text) ÷ ≢words⌈1
+        
+        ⍝ 5. Punctuation patterns (AI uses more commas, semicolons)
+        punctuation_chars ← ',;:'
+        metrics.punctuation ← (+/punctuation_chars∊text) ÷ ≢text⌈1
+        
+        ⍝ 6. Politeness indicators (AI is excessively polite)
+        polite_words ← 'please' 'thank' 'appreciate' 'understand' 'sorry'
+        metrics.politeness ← (+/∨/¨polite_words⍷¨⊂⎕C text) ÷ ≢words⌈1
+        
+        ⍝ 7. Hedge words (AI is often uncertain)
+        hedge_words ← 'might' 'could' 'possibly' 'perhaps' 'may' 'generally'
+        metrics.hedging ← (+/∨/¨hedge_words⍷¨⊂⎕C text) ÷ ≢words⌈1
+        
+        ⍝ Weighted scoring using competition-ready coefficients
+        weights ← 0.20 0.15 0.15 0.15 0.10 0.15 0.10
+        factors ← metrics.(keywords diversity consistency formality punctuation politeness hedging)
+        
+        ⍝ Apply weights and normalize to 0-1 range
+        result ← 1⌊0⌈weights +.× factors
     ∇
 
     ∇ result ← LinguisticAI text
@@ -285,21 +316,46 @@
         ⎕←'Quick Benchmark: ',⍕⌊ops_per_sec,' ops/sec (',⍕n,' iterations)'
     ∇
 
-    ∇ ProcessBatch texts
-    ⍝ Process multiple texts efficiently using vectorized operations
+    ∇ results ← ProcessBatch texts
+    ⍝ Competition-ready batch processing with performance optimization
     ⍝ 
     ⍝ Arguments:
     ⍝   texts (character vector): Vector of texts to process
     ⍝ 
     ⍝ Returns:
-    ⍝   results (numeric vector): AI detection scores
+    ⍝   results (namespace): Comprehensive batch analysis results
         
-        ⍝ Vectorized processing - pure APL approach
-        results ← Detect¨texts
+        results ← ⎕NS ''
+        results.timestamp ← ⎕TS
+        results.input_count ← ≢texts
         
-        ⎕←'Processed ',⍕≢texts,' texts'
-        ⎕←'Average AI score: ',⍕(+/results)÷≢results
-        ⎕←'AI detected (>0.3): ',⍕+/results>0.3
+        ⍝ Vectorized processing using enhanced detection
+        start_time ← ⎕AI[3]
+        scores ← Enhanced¨texts
+        results.processing_time_ms ← ⎕AI[3] - start_time
+        
+        ⍝ Statistical analysis
+        results.scores ← scores
+        results.avg_score ← (+/scores) ÷ ≢scores
+        results.min_score ← ⌊/scores
+        results.max_score ← ⌈/scores
+        results.ai_detected_count ← +/scores > 0.3
+        results.ai_percentage ← 100 × (results.ai_detected_count ÷ ≢scores)
+        
+        ⍝ Performance metrics
+        results.texts_per_second ← (≢texts) ÷ (results.processing_time_ms ÷ 1000)⌈0.001
+        
+        ⍝ Sorted results for analysis
+        sort_indices ← ⍒scores
+        results.sorted_texts ← texts[sort_indices]
+        results.sorted_scores ← scores[sort_indices]
+        
+        ⍝ Competition display
+        ⎕←'📊 Batch Processing Results:'
+        ⎕←'  Texts processed: ',⍕≢texts
+        ⎕←'  Average AI score: ',⍕results.avg_score
+        ⎕←'  AI detected: ',⍕results.ai_detected_count,' (',⍕results.ai_percentage,'%)'
+        ⎕←'  Processing speed: ',⍕⌊results.texts_per_second,' texts/second'
         
         results
     ∇

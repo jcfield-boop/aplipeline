@@ -168,58 +168,109 @@
     ∇
 
     ∇ validation_result ← ValidateSingleFile file
-    ⍝ Validate syntax of a single APL file
+    ⍝ Competition-grade APL syntax validation with comprehensive checks
     ⍝ 
     ⍝ Arguments:
     ⍝   file (character): File path to validate
     ⍝ 
     ⍝ Returns:
-    ⍝   validation_result (mixed): (success_flag error_message)
+    ⍝   validation_result (namespace): Detailed validation results
+        
+        validation_result ← ⎕NS ''
+        validation_result.file ← file
+        validation_result.valid ← 0
+        validation_result.errors ← ⍬
+        validation_result.warnings ← ⍬
+        validation_result.metrics ← ⎕NS ''
         
         :Trap 22 11
             ⍝ Read file content
             content ← ⊃⎕NGET file 1
+            validation_result.lines ← ≢(⎕UCS 10)(≠⊆⊢)content
             
-            ⍝ Simple syntax validation for APL files
+            ⍝ APL file validation
             :If '.dyalog'≡¯7↑file
-                ⍝ Check for basic APL syntax issues
-                syntax_ok ← ValidateAPLSyntax content
-                validation_result ← syntax_ok ''
+                ⍝ Comprehensive APL syntax validation
+                apl_result ← ValidateAPLSyntax content
+                validation_result.valid ← apl_result.valid
+                validation_result.errors ← apl_result.errors
+                validation_result.warnings ← apl_result.warnings
+                validation_result.metrics ← apl_result.metrics
+                
+            :ElseIf '.apl'≡¯4↑file
+                ⍝ Script file validation
+                script_result ← ValidateAPLScript content
+                validation_result.valid ← script_result.valid
+                validation_result.errors ← script_result.errors
+                validation_result.warnings ← script_result.warnings
+                
             :Else
                 ⍝ Non-APL files pass by default
-                validation_result ← 1 ''
+                validation_result.valid ← 1
+                validation_result.warnings ,← ⊂'Non-APL file - basic validation only'
             :EndIf
             
         :Case 22
-            validation_result ← 0 ('FILE_ERROR: Cannot read ',file)
+            validation_result.errors ,← ⊂'FILE_ERROR: Cannot read ',file
         :Case 11
-            validation_result ← 0 ('SYNTAX_ERROR: Invalid APL syntax in ',file)
+            validation_result.errors ,← ⊂'SYNTAX_ERROR: Invalid APL syntax in ',file
         :Else
-            validation_result ← 0 ('UNKNOWN_ERROR: ',⎕DM,' in ',file)
+            validation_result.errors ,← ⊂'UNKNOWN_ERROR: ',⎕DM,' in ',file
         :EndTrap
     ∇
 
-    ∇ is_valid ← ValidateAPLSyntax content
-    ⍝ Basic APL syntax validation
+    ∇ result ← ValidateAPLSyntax content
+    ⍝ Competition-grade comprehensive APL syntax validation
     ⍝ 
     ⍝ Arguments:
     ⍝   content (character): File content to validate
     ⍝ 
     ⍝ Returns:
-    ⍝   is_valid (boolean): 1 if syntax appears valid, 0 otherwise
+    ⍝   result (namespace): Detailed validation results with metrics
         
-        ⍝ Basic checks for APL syntax
+        result ← ⎕NS ''
+        result.valid ← 0
+        result.errors ← ⍬
+        result.warnings ← ⍬
+        result.metrics ← ⎕NS ''
+        
+        ⍝ Parse content into lines
         lines ← (⎕UCS 10)(≠⊆⊢)content
+        result.metrics.line_count ← ≢lines
         
-        ⍝ Check for balanced parentheses, brackets, etc.
-        parens_balanced ← CheckBalanced content '()'
-        brackets_balanced ← CheckBalanced content '[]'
-        braces_balanced ← CheckBalanced content '{}'
-        
-        ⍝ Check for proper namespace structure if present
-        namespace_ok ← ValidateNamespaceStructure lines
-        
-        is_valid ← parens_balanced ∧ brackets_balanced ∧ braces_balanced ∧ namespace_ok
+        :Trap 11 16
+            ⍝ 1. Structural validation
+            structure_result ← ValidateAPLStructure content lines
+            result.errors ,← structure_result.errors
+            result.warnings ,← structure_result.warnings
+            
+            ⍝ 2. Syntax attempt with ⎕FX
+            syntax_result ← ValidateWithFX content
+            result.errors ,← syntax_result.errors
+            result.warnings ,← syntax_result.warnings
+            
+            ⍝ 3. Security and best practices
+            security_result ← ValidateAPLSecurity content
+            result.warnings ,← security_result.warnings
+            
+            ⍝ 4. Code quality indicators
+            quality_result ← AnalyzeAPLCodeStructure content lines
+            result.metrics.functions ← quality_result.function_count
+            result.metrics.comments ← quality_result.comment_count
+            result.metrics.array_operations ← quality_result.array_ops
+            result.metrics.loops ← quality_result.loops
+            result.warnings ,← quality_result.warnings
+            
+            ⍝ Overall validity
+            result.valid ← 0 = ≢result.errors
+            
+        :Case 11
+            result.errors ,← ⊂'DOMAIN_ERROR during validation: ',⎕DM
+        :Case 16
+            result.errors ,← ⊂'NONCE_ERROR during validation: ',⎕DM
+        :Else
+            result.errors ,← ⊂'UNEXPECTED_ERROR during validation: ',⎕DM
+        :EndTrap
     ∇
 
     ∇ balanced ← CheckBalanced (text delimiters)
@@ -393,50 +444,103 @@
     ∇
 
     ∇ score ← CalculateReadability content
-    ⍝ Calculate readability score (0-1, higher is better)
+    ⍝ Competition-grade APL readability analysis
+    ⍝ Considers APL-specific idioms and best practices
         lines ← (⎕UCS 10)(≠⊆⊢)content
         :If 0=≢lines ⋄ score←0 ⋄ :Return ⋄ :EndIf
         
-        ⍝ Average line length (shorter lines are more readable)
-        avg_line_length ← (+/≢¨lines) ÷ ≢lines
-        length_score ← 1 - (avg_line_length ÷ 100)⌊1
+        ⍝ 1. Line length appropriateness (APL can be concise)
+        line_lengths ← ≢¨lines
+        avg_line_length ← (+/line_lengths) ÷ ≢lines
+        ⍝ APL optimal range: 20-80 characters
+        length_score ← 1 - |((avg_line_length - 50) ÷ 50)⌊1
         
-        ⍝ Comment density (more comments = more readable)
+        ⍝ 2. Comment density and quality
         comment_lines ← +/∨/¨'⍝'∊¨lines
         comment_density ← comment_lines ÷ ≢lines
+        ⍝ Bonus for function documentation
+        doc_comments ← +/∨/¨('Arguments:' 'Returns:' 'Example:')⍷¨⊂content
+        enhanced_comment_score ← comment_density + (doc_comments ÷ 20)⌊0.3
         
-        ⍝ Complexity indicators (fewer complex symbols = more readable)
-        complex_symbols ← '⌽⊖⍉∊⊥⊤∇⍺⍵⍶⍹⍨⍤⍣⍡'
-        complexity_density ← (+/complex_symbols∊content) ÷ ≢content⌈1
-        complexity_score ← 1 - complexity_density⌊1
+        ⍝ 3. APL idiom usage vs complexity
+        ⍝ Good APL symbols (readable and idiomatic)
+        good_apl ← '⍴≢⍳⊃↑↓⊂⊆∊⌊⌈×÷+-'
+        good_count ← +/good_apl∊content
         
-        ⍝ Weighted combination
-        weights ← 0.4 0.3 0.3
-        factors ← length_score comment_density complexity_score
-        score ← weights +.× factors
+        ⍝ Advanced but legitimate APL
+        advanced_apl ← '⌽⊖⍉⊥⊤∘⍨⍤⍣⌿⌿/'
+        advanced_count ← +/advanced_apl∊content
+        
+        ⍝ Overly complex or obscure
+        complex_apl ← '⍶⍹⍡⍢⌺'
+        complex_count ← +/complex_apl∊content
+        
+        ⍝ Calculate symbol score
+        total_chars ← ≢content⌈1
+        symbol_score ← ((good_count × 1) + (advanced_count × 0.7) - (complex_count × 0.5)) ÷ total_chars
+        symbol_score ← 1⌊0⌈symbol_score
+        
+        ⍝ 4. Function organization
+        function_count ← +/'∇'=⊃¨lines
+        function_score ← (function_count > 0) × (1 - (≢lines ÷ (function_count⌈1) ÷ 50)⌊1)
+        
+        ⍝ Competition-weighted combination
+        weights ← 0.25 0.35 0.25 0.15
+        factors ← length_score enhanced_comment_score symbol_score function_score
+        score ← 1⌊0⌈weights +.× factors
     ∇
 
     ∇ score ← CalculateComplexity content
-    ⍝ Calculate complexity score (0-1, lower complexity = higher score)
+    ⍝ APL-specific complexity analysis (0-1, lower complexity = higher score)
         :If 0=≢content ⋄ score←1 ⋄ :Return ⋄ :EndIf
         
-        ⍝ Nesting depth (count nested structures)
-        nesting_chars ← '()[]{}⍺⍵∇⎕'
-        nesting_density ← (+/nesting_chars∊content) ÷ ≢content
+        lines ← (⎕UCS 10)(≠⊆⊢)content
         
-        ⍝ Control structure complexity
-        control_structures ← ':If' ':For' ':While' ':Select' ':Trap'
-        control_count ← +/∨/¨control_structures∘.⍷⊂content
-        control_density ← control_count ÷ 20  ⍝ Normalize
+        ⍝ 1. Nesting depth analysis (APL can handle deeper nesting elegantly)
+        paren_depth ← MaxNestingDepth content '()'
+        bracket_depth ← MaxNestingDepth content '[]'
+        brace_depth ← MaxNestingDepth content '{}'
+        max_nesting ← ⌈/paren_depth bracket_depth brace_depth
+        nesting_score ← 1 - (max_nesting ÷ 8)⌊1  ⍝ Up to 8 levels acceptable
         
-        ⍝ APL operator complexity
-        complex_operators ← '∘⌸∘.⍨⍤⍣'
-        operator_density ← (+/complex_operators∊content) ÷ ≢content⌈1
+        ⍝ 2. Control structure density (loops are less APL-idiomatic)
+        imperative_structures ← ':For' ':While' ':Repeat'
+        imperative_count ← +/∨/¨imperative_structures∘.⍷⊂content
+        functional_structures ← ':If' ':Select' ':Trap'
+        functional_count ← +/∨/¨functional_structures∘.⍷⊂content
         
-        ⍝ Inverse scoring (lower complexity = higher score)
-        weights ← 0.4 0.3 0.3
-        complexities ← nesting_density control_density operator_density
-        score ← 1 - (weights +.× complexities)⌊1
+        total_structures ← imperative_count + functional_count
+        imperative_ratio ← imperative_count ÷ total_structures⌈1
+        structure_score ← 1 - imperative_ratio
+        
+        ⍝ 3. APL operator sophistication (advanced operators can be elegant)
+        simple_ops ← '+-×÷⌊⌈|'
+        moderate_ops ← '⍴≢⍳⊃↑↓⊂⊆∊'
+        advanced_ops ← '⌽⊖⍉⊥⊤∘⍨⍤⍣'
+        complex_ops ← '⍶⍹⍡⌸⌺'
+        
+        simple_count ← +/simple_ops∊content
+        moderate_count ← +/moderate_ops∊content
+        advanced_count ← +/advanced_ops∊content
+        complex_count ← +/complex_ops∊content
+        
+        total_ops ← simple_count + moderate_count + advanced_count + complex_count⌈1
+        sophistication ← (simple_count×1 + moderate_count×2 + advanced_count×3 + complex_count×5) ÷ total_ops
+        sophistication_score ← 1 - ((sophistication - 2) ÷ 3)⌊1  ⍝ Optimal around level 2
+        
+        ⍝ 4. Function size and modularity
+        function_count ← +/'∇'=⊃¨lines
+        :If function_count > 0
+            avg_function_size ← (≢lines) ÷ function_count
+            size_score ← 1 - ((avg_function_size - 15) ÷ 35)⌊1  ⍝ Optimal ~15 lines
+        :Else
+            size_score ← 0.5  ⍝ No functions detected
+        :EndIf
+        
+        ⍝ Competition-grade weighted combination
+        weights ← 0.3 0.3 0.25 0.15
+        factors ← nesting_score structure_score sophistication_score size_score
+        score ← 1⌊0⌈weights +.× factors
     ∇
 
     ∇ score ← CalculateMaintainability content
@@ -520,6 +624,167 @@
         ⎕←'  Syntax: ',(syntax_ok⊃'FAIL' 'PASS')
         ⎕←'  Security: ',(security_ok⊃'FAIL' 'PASS')  
         ⎕←'  Quality: ',(quality_ok⊃'FAIL' 'PASS')
+    ∇
+
+    ⍝ ═══════════════════════════════════════════════════════════════
+    ⍝ Competition-Grade Validation Support Functions
+    ⍝ ═══════════════════════════════════════════════════════════════
+
+    ∇ result ← ValidateAPLStructure (content lines)
+    ⍝ Validate APL structural elements
+        result ← ⎕NS ''
+        result.errors ← ⍬
+        result.warnings ← ⍬
+        
+        ⍝ Check balanced delimiters
+        parens_ok ← CheckBalanced content '()'
+        brackets_ok ← CheckBalanced content '[]'
+        braces_ok ← CheckBalanced content '{}'
+        
+        :If ~parens_ok ⋄ result.errors ,← ⊂'Unbalanced parentheses' ⋄ :EndIf
+        :If ~brackets_ok ⋄ result.errors ,← ⊂'Unbalanced brackets' ⋄ :EndIf
+        :If ~braces_ok ⋄ result.errors ,← ⊂'Unbalanced braces' ⋄ :EndIf
+        
+        ⍝ Check namespace structure
+        ns_ok ← ValidateNamespaceStructure lines
+        :If ~ns_ok ⋄ result.errors ,← ⊂'Invalid namespace structure' ⋄ :EndIf
+    ∇
+
+    ∇ result ← ValidateWithFX content
+    ⍝ Attempt to validate using ⎕FX
+        result ← ⎕NS ''
+        result.errors ← ⍬
+        result.warnings ← ⍬
+        
+        :Trap 11 16
+            ⍝ Extract function definitions for testing
+            functions ← ExtractFunctions content
+            :For fn :In functions
+                :Trap 11
+                    {}⎕FX fn
+                :Else
+                    result.errors ,← ⊂'Function syntax error: ',1⊃fn
+                :EndTrap
+            :EndFor
+        :Else
+            result.warnings ,← ⊂'Unable to perform ⎕FX validation'
+        :EndTrap
+    ∇
+
+    ∇ result ← ValidateAPLSecurity content
+    ⍝ Check for security issues and dangerous operations
+        result ← ⎕NS ''
+        result.warnings ← ⍬
+        
+        ⍝ Dangerous system functions
+        dangerous ← '⎕SH' '⎕CMD' '⎕NERASE' '⎕NMOVE' '⎕NRENAME'
+        :For danger :In dangerous
+            :If ∨/danger⍷content
+                result.warnings ,← ⊂'Uses dangerous function: ',danger
+            :EndIf
+        :EndFor
+        
+        ⍝ Execute function
+        :If ∨/'⍎'∊content
+            result.warnings ,← ⊂'Uses execute (⍎) - potential security risk'
+        :EndIf
+        
+        ⍝ Format function  
+        :If ∨/'⍕'∊content
+            result.warnings ,← ⊂'Uses format (⍕) - verify input validation'
+        :EndIf
+    ∇
+
+    ∇ result ← AnalyzeAPLCodeStructure (content lines)
+    ⍝ Analyze APL code structure and quality indicators
+        result ← ⎕NS ''
+        result.warnings ← ⍬
+        
+        ⍝ Count functions
+        result.function_count ← +/'∇'=⊃¨lines
+        
+        ⍝ Count comments
+        result.comment_count ← +/∨/¨'⍝'∊¨lines
+        
+        ⍝ Array operations (good APL)
+        array_ops ← '⍴' '≢' '⍳' '⌿' '⌽' '⊃' '↑' '↓' '⊂' '⊆' '∊' '∘' '⍨' '⍤'
+        result.array_ops ← +/+/∨/¨array_ops⍷¨⊂content
+        
+        ⍝ Loop constructs (less idiomatic APL)
+        loop_constructs ← ':For' ':While' ':Repeat'
+        result.loops ← +/+/∨/¨loop_constructs⍷¨⊂content
+        
+        ⍝ Quality warnings
+        :If result.comment_count = 0
+            result.warnings ,← ⊂'No comments found - consider adding documentation'
+        :EndIf
+        
+        :If result.loops > result.array_ops ÷ 2
+            result.warnings ,← ⊂'High loop to array operation ratio - consider vectorization'
+        :EndIf
+        
+        :If result.function_count = 0
+            result.warnings ,← ⊂'No functions detected - may not be APL code'
+        :EndIf
+    ∇
+
+    ∇ functions ← ExtractFunctions content
+    ⍝ Extract function definitions from content
+        lines ← (⎕UCS 10)(≠⊆⊢)content
+        functions ← ⍬
+        
+        ⍝ Find function start/end pairs
+        starts ← ⍸∨/¨'∇'∊¨lines
+        :If 0<≢starts
+            ⍝ For simplicity, assume single-line headers
+            :For i :In starts
+                :If i≤≢lines
+                    header ← i⊃lines
+                    :If '∇'=⊃header
+                        functions ,← ⊂header
+                    :EndIf
+                :EndIf
+            :EndFor
+        :EndIf
+    ∇
+
+    ∇ result ← ValidateAPLScript content
+    ⍝ Validate APL script files (.apl)
+        result ← ⎕NS ''
+        result.valid ← 1
+        result.errors ← ⍬
+        result.warnings ← ⍬
+        
+        ⍝ Basic script validation
+        :If 0=≢content
+            result.errors ,← ⊂'Empty script file'
+            result.valid ← 0
+        :EndIf
+        
+        ⍝ Check for potential issues
+        :If ∨/')OFF'⍷content
+            result.warnings ,← ⊂'Script contains )OFF - may terminate session'
+        :EndIf
+    ∇
+
+    ∇ depth ← MaxNestingDepth (content delimiters)
+    ⍝ Calculate maximum nesting depth for delimiter pairs
+        open ← ⊃delimiters
+        close ← 1⊃delimiters
+        
+        current_depth ← 0
+        max_depth ← 0
+        
+        :For char :In content
+            :If char = open
+                current_depth +← 1
+                max_depth ← current_depth⌈max_depth
+            :ElseIf char = close
+                current_depth -← 1
+            :EndIf
+        :EndFor
+        
+        depth ← max_depth
     ∇
 
 :EndNamespace
