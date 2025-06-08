@@ -1,0 +1,38 @@
+{
+  "version": "2.0.0",
+  "environment": "development",
+  "pipeline": {
+    "ai_threshold": 0.2,
+    "quality_threshold": 0.5,
+    "security_strict": false,
+    "parallel_workers": 2,
+    "timeout_seconds": 60
+  },
+  "security": {
+    "rate_limiting": {
+      "enabled": false,
+      "requests_per_window": 1000,
+      "window_minutes": 5
+    },
+    "webhook_verification": false,
+    "input_validation": "relaxed",
+    "audit_logging": false
+  },
+  "monitoring": {
+    "log_level": "debug",
+    "metrics_enabled": true,
+    "export_format": "json",
+    "retention_days": 7
+  },
+  "github": {
+    "webhook_secret_env": "GITHUB_WEBHOOK_SECRET_DEV",
+    "token_env": "GITHUB_TOKEN_DEV",
+    "verify_ssl": false,
+    "api_timeout_seconds": 30
+  },
+  "deployment": {
+    "max_memory_mb": 256,
+    "enable_debug": true,
+    "gc_threshold": 500
+  }
+}
