@@ -54,56 +54,32 @@
         
         :If 0=≢text ⋄ result←0 ⋄ :Return ⋄ :EndIf
         
-        ⍝ Tokenize and prepare text for analysis
+        ⍝ Simple but effective multi-factor analysis
+        text_lower ← ⎕C text
         words ← ' '(≠⊆⊢)text
-        sentences ← ('.' '!' '?')(≠⊆⊢)text
+        word_count ← 1⌈≢words
         
-        ⍝ Multi-factor detection metrics
-        metrics ← ⎕NS ''
+        ⍝ 1. AI keyword detection
+        ai_score ← (+/'ai'⍷text_lower) + (+/'assistant'⍷text_lower) + (+/'generated'⍷text_lower)
+        keyword_factor ← (ai_score ÷ 10)⌊1
         
-        ⍝ 1. Enhanced keyword detection (original method improved)
-        ai_keywords ← 'ai' 'assistant' 'generated' 'claude' 'gpt' 'apologize' 'however' 'furthermore'
-        metrics.keywords ← (+/∨/¨ai_keywords⍷¨⊂⎕C text) ÷ ≢ai_keywords
+        ⍝ 2. Formal language patterns
+        formal_score ← (+/'however'⍷text_lower) + (+/'furthermore'⍷text_lower)
+        formal_factor ← (formal_score ÷ 5)⌊1
         
-        ⍝ 2. Vocabulary diversity (AI tends to be repetitive)
-        :If 0<≢words
-            metrics.diversity ← 1 - (≢∪⎕C¨words) ÷ ≢words  ⍝ Invert so higher = more AI-like
-        :Else
-            metrics.diversity ← 0
-        :EndIf
+        ⍝ 3. Politeness indicators
+        polite_score ← (+/'please'⍷text_lower) + (+/'thank'⍷text_lower)
+        polite_factor ← (polite_score ÷ 3)⌊1
         
-        ⍝ 3. Sentence length consistency (AI has uniform patterns)
-        :If 1<≢sentences
-            sent_lengths ← ≢¨sentences
-            avg_length ← (+/sent_lengths) ÷ ≢sent_lengths
-            variance ← (+/(sent_lengths - avg_length)*2) ÷ ≢sent_lengths
-            metrics.consistency ← 1 - (variance ÷ avg_length⌈1)⌊1  ⍝ Low variance = high consistency = AI-like
-        :Else
-            metrics.consistency ← 0
-        :EndIf
+        ⍝ 4. Punctuation density
+        punct_count ← (+/text∊',;:')
+        punct_factor ← (punct_count ÷ 1⌈≢text)⌊1
         
-        ⍝ 4. Formal language indicators (AI uses formal transitions)
-        formal_words ← 'however' 'furthermore' 'additionally' 'moreover' 'therefore' 'consequently'
-        metrics.formality ← (+/∨/¨formal_words⍷¨⊂⎕C text) ÷ ≢words⌈1
+        ⍝ Weighted combination
+        weights ← 0.4 0.3 0.2 0.1
+        factors ← keyword_factor formal_factor polite_factor punct_factor
         
-        ⍝ 5. Punctuation patterns (AI uses more commas, semicolons)
-        punctuation_chars ← ',;:'
-        metrics.punctuation ← (+/punctuation_chars∊text) ÷ ≢text⌈1
-        
-        ⍝ 6. Politeness indicators (AI is excessively polite)
-        polite_words ← 'please' 'thank' 'appreciate' 'understand' 'sorry'
-        metrics.politeness ← (+/∨/¨polite_words⍷¨⊂⎕C text) ÷ ≢words⌈1
-        
-        ⍝ 7. Hedge words (AI is often uncertain)
-        hedge_words ← 'might' 'could' 'possibly' 'perhaps' 'may' 'generally'
-        metrics.hedging ← (+/∨/¨hedge_words⍷¨⊂⎕C text) ÷ ≢words⌈1
-        
-        ⍝ Weighted scoring using competition-ready coefficients
-        weights ← 0.20 0.15 0.15 0.15 0.10 0.15 0.10
-        factors ← metrics.(keywords diversity consistency formality punctuation politeness hedging)
-        
-        ⍝ Apply weights and normalize to 0-1 range
-        result ← 1⌊0⌈weights +.× factors
+        result ← weights +.× factors
     ∇
 
     ∇ result ← LinguisticAI text

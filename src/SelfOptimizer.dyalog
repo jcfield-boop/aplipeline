@@ -80,7 +80,7 @@
         ⍝ Benchmark current AI detection speed
         test_texts ← 'Fix bug' 'AI generated content' 'Human written' 'Automated response'
         start_time ← ⎕AI[3]
-        scores ← Core.Enhanced¨test_texts
+        scores ← APLCICD.Core.Enhanced¨test_texts
         elapsed ← (⎕AI[3] - start_time) ÷ 1000
         
         analysis.ai_speed_ms ← elapsed
@@ -107,7 +107,7 @@
         
         ⍝ Analyze our own source files
         files ← 'src/APLCICD.dyalog' 'src/Core.dyalog' 'src/Pipeline.dyalog'
-        quality_results ← Pipeline.QualityAnalysis files
+        quality_results ← APLCICD.Pipeline.QualityAnalysis files
         
         analysis.avg_quality ← quality_results.avg_quality
         analysis.file_count ← ≢files
@@ -127,8 +127,8 @@
         human_samples ← 'Fix bug' 'Update deps' 'Refactor code'
         ai_samples ← 'As an AI, I can help' 'Thank you for your question' 'I apologize for confusion'
         
-        human_scores ← Core.Enhanced¨human_samples
-        ai_scores ← Core.Enhanced¨ai_samples
+        human_scores ← APLCICD.Core.Enhanced¨human_samples
+        ai_scores ← APLCICD.Core.Enhanced¨ai_samples
         
         ⍝ Calculate discrimination capability
         human_avg ← (+/human_scores) ÷ ≢human_scores
@@ -153,7 +153,7 @@
         ⍝ Test pipeline on sample files
         test_files ← 'src/Core.dyalog'
         start_time ← ⎕AI[3]
-        pipeline_result ← Pipeline.Run test_files
+        pipeline_result ← APLCICD.Pipeline.Run test_files
         elapsed ← (⎕AI[3] - start_time) ÷ 1000
         
         analysis.pipeline_time_ms ← elapsed
@@ -291,7 +291,7 @@
         :EndIf
         
         ⍝ Check 4: System health check
-        :Try
+        :Trap 0
             health ← APLCICD.HealthCheck
             :If ~health.status≡'OK'
                 safe ← 0
@@ -300,7 +300,7 @@
         :Else
             safe ← 0
             ⎕←'  ⚠️  Cannot perform health check'
-        :EndTry
+        :EndTrap
     ∇
 
     ∇ result ← SimulateTests improvement
@@ -349,35 +349,35 @@
         log_entry.system_version ← '2.0.0'
         
         ⍝ Capture system state
-        :Try
+        :Trap 0
             log_entry.system_health ← APLCICD.HealthCheck
         :Else
             log_entry.system_health ← 'UNAVAILABLE'
-        :EndTry
+        :EndTrap
         
         ⍝ Format log entry
         log_line ← (⍕⎕TS),' | ',status,' | ',improvement.category,' | ',improvement.description
         
         ⍝ Append to log file (create if doesn't exist)
-        :Try
+        :Trap 22
             log_line ⎕NPUT 'self_optimization.log' 1
             ⎕←'  📝 Logged to self_optimization.log'
         :Else
             ⎕←'  ⚠️  Could not write to log file'
-        :EndTry
+        :EndTrap
     ∇
 
     ∇ history ← GetOptimizationHistory
     ⍝ Retrieve history of self-optimization attempts
         history ← ⍬
         
-        :Try
+        :Trap 22
             log_lines ← ⊃⎕NGET 'self_optimization.log' 1
             history ← log_lines
             ⎕←'Retrieved ',⍕≢history,' optimization log entries'
         :Else
             ⎕←'No optimization history found (new system)'
-        :EndTry
+        :EndTrap
     ∇
 
     ∇ ShowOptimizationSummary

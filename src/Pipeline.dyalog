@@ -153,7 +153,7 @@
         validation_results ← ValidateSingleFile¨files
         
         ⍝ Aggregate results using APL array operations
-        valid_flags ← ⊃¨validation_results
+        valid_flags ← validation_results.valid
         valid_count ← +/valid_flags
         
         result.validation_results ← validation_results

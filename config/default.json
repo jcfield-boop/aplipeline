@@ -1,0 +1,38 @@
+{
+  "pipeline": {
+    "ai_threshold": 0.3,
+    "quality_threshold": 0.5,
+    "security_strict": true,
+    "syntax_required": true,
+    "parallel_workers": 4,
+    "timeout_seconds": 300
+  },
+  "files": {
+    "include_patterns": ["*.dyalog", "*.apl"],
+    "exclude_patterns": ["*.tmp", "*.bak", "*.log"],
+    "max_file_size_mb": 10,
+    "encoding": "UTF-8"
+  },
+  "monitoring": {
+    "enabled": true,
+    "log_level": "info",
+    "max_log_entries": 10000,
+    "export_format": "json"
+  },
+  "security": {
+    "validate_inputs": true,
+    "webhook_verification": true,
+    "rate_limit_requests": 100,
+    "rate_limit_window_minutes": 60
+  },
+  "performance": {
+    "cache_enabled": true,
+    "cache_ttl_minutes": 30,
+    "memory_limit_mb": 512,
+    "gc_threshold": 1000
+  },
+  "metadata": {
+    "version": "2.0.0",
+    "config_format": "aplcicd_v2"
+  }
+}
