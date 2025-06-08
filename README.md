@@ -20,8 +20,19 @@
 3. **Real-World Impact**: Solves actual problems in software development
 4. **Live Demo Ready**: Working system with measurable improvements
 
-## 🏗️ Architecture
+## 🏗️ Clean Architecture
 
+```
+aplipeline/
+├── 📦 src/                    # Production modules (6 core files)
+├── 🧪 tests/                  # Comprehensive test suites  
+├── 🎯 demo/                   # Competition demonstrations
+├── ⚙️ config/                 # System configuration
+├── 🗂️ tmp/                    # Development workspace (gitignored)
+└── 📋 docs/                   # Documentation
+```
+
+**Core System Modules:**
 ```
 src/
 ├── APLCICD.dyalog       # Main system entry point
@@ -86,7 +97,7 @@ APLCICD.SelfOptimize
 
 ### System Integration Test
 ```bash
-/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl -script test_aplcicd_system.apl
+/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl -script tests/system_integration_test.apl
 ```
 
 ### 10-Iteration Self-Improvement Test
