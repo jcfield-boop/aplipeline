@@ -56,21 +56,25 @@
     ∇ result ← StartCongaServer port
     ⍝ Start real Conga HTTP server - CLAUDE.md compliant implementation
         
-        ⍝ Use Conga for real HTTP server (CLAUDE.md pattern)
-        DRC ← Conga.Init ''
-        srv ← DRC.Srv 'APLCICD' '' port 'Text' 64000
-        :If 0≠⊃srv
-            ⎕SIGNAL 11 ⍝ Server start failed (CLAUDE.md pattern)
-        :EndIf
-        
-        server_running ← 1
-        server_port ← port
-        server_name ← 'APLCICD'
-        
-        ⍝ Start server loop
-        {} ServerLoop&srv
-        
-        result ← 'CLAUDE.md compliant Conga server started on port ',⍕port
+        :Trap 0
+            ⍝ Use Conga for real HTTP server (CLAUDE.md pattern)
+            DRC ← Conga.Init ⍬
+            srv ← DRC.Srv 'APLCICD' '' port 'Text' 64000
+            :If 0≠⊃srv
+                ⎕SIGNAL 11 ⍝ Server start failed (CLAUDE.md pattern)
+            :EndIf
+            
+            server_running ← 1
+            server_port ← port
+            server_name ← 'APLCICD'
+            
+            ⍝ Start server loop in background
+            {} ProcessRequests&0
+            
+            result ← 'Real Conga server started on port ',⍕port
+        :Else
+            ⎕SIGNAL 11⊣'Conga server failed to start: ',⎕DM
+        :EndTrap
     ∇
 
     ∇ result ← StartSimulatedServer port
@@ -251,18 +255,28 @@
         path ← '/'
         :If 2=⎕NC'request' ⋄ path ← request ⋄ :EndIf
         
-        ⍝ Route requests
+        ⍝ Route requests to real endpoints - no mocks!
         :Select path
         :Case '/'
-            response.content ← DashboardHTML
+            response.content ← DashboardHTML  ⍝ Real dashboard with live data
         :Case '/demo'
             response.content ← DemoHTML
         :Case '/api/demo/run'
-            response ← RunDemoAPI request
+            response ← RunRealDemoAPI request
+        :Case '/api/metrics'
+            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/metrics'
+        :Case '/api/pipeline/run'
+            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/pipeline/run'
+        :Case '/api/ai/detect'
+            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/ai/detect'
+        :Case '/api/git/status'
+            response ← RealGitStatusAPI
+        :Case '/api/git/log'
+            response ← RealGitLogAPI
         :Case '/webhook'
             response ← WebhookHandler request
         :Case '/api/status'
-            response ← StatusAPI
+            response ← StatusAPI  ⍝ Real system status
         :Else
             response.status ← 404
             response.content ← NotFoundHTML path
@@ -271,41 +285,104 @@
         response
     ∇
 
-    ∇ response ← RunDemoAPI request
-    ⍝ API endpoint for running demo functions
+    ∇ response ← RunRealDemoAPI request
+    ⍝ Real API endpoint using actual APLCICD functions - no mocks!
         response ← ⎕NS ''
         response.status ← 200
         response.headers ← ⎕NS ''
         response.headers.content_type ← 'application/json'
         
         :Trap 0
-            ⍝ Run AI detection demo
-            test_text ← 'Generated using AI assistance for demonstration'
-            score ← APLCICD.Core.Enhanced test_text
+            ⍝ Run real AI detection on multiple samples
+            test_texts ← 'Fix authentication bug' 'As an AI assistant, I can help you implement comprehensive functionality'
+            scores ← APLCICD.Core.AI¨test_texts
+            
+            ⍝ Run real pipeline validation
+            :Trap 22
+                src_files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
+                pipeline_result ← APLCICD.RealPipeline.ValidateFiles 1↑src_files
+                pipeline_success ← pipeline_result.success
+            :Else
+                pipeline_success ← 0
+            :EndTrap
+            
+            ⍝ Get real system metrics
+            real_metrics ← APLCICD.RealMonitor.CollectRealMetrics
             
             result ← ⎕NS ''
             result.success ← 1
-            result.score ← score
-            result.message ← 'AI detection successful - Score: ',⍕score
-            result.classification ← (score>0.3)⊃'Human-authored' 'AI-generated'
+            result.ai_scores ← scores
+            result.ai_separation ← |(⊃⌽scores) - (⊃scores)
+            result.pipeline_success ← pipeline_success
+            result.memory_usage ← real_metrics.memory_usage
+            result.functions_loaded ← real_metrics.functions
+            result.timestamp ← ⎕TS
+            result.message ← 'Real APLCICD demo executed successfully'
             
-            response.content ← 'Demo Result: Score=',⍕score
+            response.content ← ⎕JSON result
             
         :Else
-            response.content ← 'Demo execution failed: ',⎕DM
+            error_result ← ⎕NS ''
+            error_result.success ← 0
+            error_result.error ← ⎕DM
+            response.content ← ⎕JSON error_result
             response.status ← 500
         :EndTrap
     ∇
 
-    ∇ response ← StatusAPI
-    ⍝ API endpoint for system status
+    ∇ response ← RealGitStatusAPI
+    ⍝ Real Git status API using APLCICD.GitAPL
         response ← ⎕NS ''
         response.status ← 200
         response.headers ← ⎕NS ''
         response.headers.content_type ← 'application/json'
         
-        status_text ← 'APLCICD Status: Running, Port: ',⍕server_port,', Modules: 6'
-        response.content ← status_text
+        :Trap 0
+            git_status ← APLCICD.GitAPL.GitStatus
+            
+            result ← ⎕NS ''
+            result.clean ← git_status.clean
+            result.changes ← ≢git_status.changes
+            result.modified ← ≢git_status.modified
+            result.untracked ← ≢git_status.untracked
+            result.timestamp ← ⎕TS
+            
+            response.content ← ⎕JSON result
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response.content ← ⎕JSON error_result
+            response.status ← 500
+        :EndTrap
+    ∇
+
+    ∇ response ← RealGitLogAPI
+    ⍝ Real Git log API using APLCICD.GitAPL
+        response ← ⎕NS ''
+        response.status ← 200
+        response.headers ← ⎕NS ''
+        response.headers.content_type ← 'application/json'
+        
+        :Trap 0
+            commits ← APLCICD.GitAPL.GitLog 5
+            
+            result ← ⎕NS ''
+            result.commits ← commits
+            result.count ← ≢commits
+            result.timestamp ← ⎕TS
+            
+            response.content ← ⎕JSON result
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response.content ← ⎕JSON error_result
+            response.status ← 500
+        :EndTrap
+    ∇
+
+    ∇ response ← StatusAPI
+    ⍝ API endpoint for real system status - no mocks!
+        response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/status'
     ∇
 
     ∇ response ← WebhookHandler request
@@ -326,15 +403,8 @@
     ⍝ ═══════════════════════════════════════════════════════════════
 
     ∇ html ← DashboardHTML
-    ⍝ Generate main dashboard HTML using APL
-        
-        ⍝ Load HTML from file if available, otherwise create simple version
-        :Trap 22
-            html ← ⊃⎕NGET 'tmp/dashboard.html' 1
-        :Else
-            ⍝ Simple fallback HTML
-            html ← CreateSimpleDashboard
-        :EndTrap
+    ⍝ Generate main dashboard HTML with REAL APLCICD data - no mocks!
+        html ← APLCICD.RealDashboard.GenerateHTML
     ∇
 
     ∇ html ← DemoHTML

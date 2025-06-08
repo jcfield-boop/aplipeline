@@ -22,7 +22,7 @@ CMD=${1:-help}
 
 case $CMD in
     "demo")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Demo
 )off" | $DYALOG -script
@@ -33,7 +33,7 @@ APLCICD.Demo
             echo "Usage: ./aplcicd.sh ai \"text to analyze\""
             exit 1
         fi
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 result ← APLCICD.AI '$2'
 ⎕←'AI Detection Result: ',⍕result
 ⎕←'Classification: ',(result>0.3)⊃'Human' 'AI-Generated'
@@ -41,84 +41,84 @@ result ← APLCICD.AI '$2'
         ;;
     
     "benchmark")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Performance
 )off" | $DYALOG -script
         ;;
     
     "github")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.GitHub
 )off" | $DYALOG -script
         ;;
     
     "test")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 Tests.RunAll
 )off" | $DYALOG -script
         ;;
     
     "status")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Status
 )off" | $DYALOG -script
         ;;
     
     "recursive")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Recursive
 )off" | $DYALOG -script
         ;;
     
     "enhanced")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Enhanced
 )off" | $DYALOG -script
         ;;
     
     "dashboard")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Dashboard
 )off" | $DYALOG -script
         ;;
     
     "pipeline")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Pipeline
 )off" | $DYALOG -script
         ;;
     
     "validate")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Validate
 )off" | $DYALOG -script
         ;;
     
     "security")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Security
 )off" | $DYALOG -script
         ;;
     
     "quality")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.Quality
 )off" | $DYALOG -script
         ;;
     
     "testci")
-        echo "⎕FIX'file://APLCICD.dyalog'
+        echo "⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
 APLCICD.TestCI
 )off" | $DYALOG -script
@@ -177,7 +177,7 @@ Installation:
   3. ./aplcicd.sh demo
 
 For RIDE/interactive use:
-  ⎕FIX'file://APLCICD.dyalog'
+  ⎕FIX'file://src/APLCICD.dyalog'
   APLCICD.Initialize
   APLCICD.Demo
 EOF

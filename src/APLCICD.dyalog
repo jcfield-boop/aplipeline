@@ -112,6 +112,13 @@
             ⎕SIGNAL 22⊣'Failed to load APLPatterns module'
         :EndTrap
         
+        ⎕←'  Loading RealDashboard module...'
+        :Trap 22
+            ⎕FIX'file://src/RealDashboard.dyalog'
+        :Else
+            ⎕SIGNAL 22⊣'Failed to load RealDashboard module'
+        :EndTrap
+        
         ⍝ Initialize all modules
         Core.Initialize
         Pipeline.Initialize
@@ -123,6 +130,7 @@
         RealMonitor.Initialize
         GitAPL.Initialize
         APLPatterns.Initialize
+        RealDashboard.Initialize
     ∇
 
     ∇ ValidateInstallation
