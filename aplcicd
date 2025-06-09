@@ -214,28 +214,54 @@ initialize() {
     log_success "System initialized"
 }
 
-# Generate dashboard with real data
+# Start web server and launch interactive dashboard
 generate_dashboard() {
-    log_header "Generating Real-Time Dashboard"
+    log_header "Starting APLCICD Web Dashboard"
     
-    local apl_dashboard_code="⎕FIX'file://src/APLCICD.dyalog'
+    log_info "Initializing APLCICD and starting web server..."
+    
+    # APL code to start web server and dashboard
+    local apl_webserver_code="⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
-⎕←'🔄 Generating dashboard with real APLCICD data...'
-html ← APLCICD.RealDashboard.GenerateHTML
-html ⎕NPUT 'web/dashboard.html' 1
-⎕←'✅ Dashboard generated: ',⍕≢html,' characters'
-⎕←'📁 Saved to: web/dashboard.html'
-⎕←'📊 Contains REAL data - no mocks or simulations!'
-⎕OFF"
+⎕←''
+⎕←'🌐 APLCICD Web Server & Dashboard'
+⎕←'================================='
+⎕←'Starting web server on port 8081...'
+server_result ← APLCICD.WebServer.Start 8081
+:If APLCICD.WebServer.server_running
+    ⎕←'✅ Web server started successfully'
+    ⎕←'📊 Dashboard: http://localhost:8081'
+    ⎕←'🎵 Live vibe compression controls available'
+    ⎕←'⚡ Interactive toggle, real git data, system metrics'
+    ⎕←''
+    ⎕←'🌐 Opening dashboard in browser...'
+    ⎕DL 2
+    {} ⎕SH 'open http://localhost:8081'
+    ⎕←'✅ Dashboard opened - server running'
+    ⎕←''
+    ⎕←'Dashboard Features:'
+    ⎕←'• Live vibe compression toggle'
+    ⎕←'• Real git repository data'
+    ⎕←'• Interactive system controls'
+    ⎕←'• Auto-refreshing metrics'
+    ⎕←''
+    ⎕←'Press Ctrl+C to stop server'
+    ⍝ Keep server running
+    :While APLCICD.WebServer.server_running
+        ⎕DL 1
+    :EndWhile
+:Else
+    ⎕←'⚠️  Web server failed - opening file-based dashboard'
+    dashboard_path ← ⊃⎕SH 'pwd'
+    {} ⎕SH 'open file://',dashboard_path,'/web/dashboard.html'
+    ⎕←'📁 File-based dashboard opened'
+:EndIf"
     
-    if run_apl "$apl_dashboard_code" "Dashboard generation" 3; then
-        log_success "Dashboard generated successfully!"
-        
-        # Try to open in browser
-        open_dashboard
+    if run_apl "$apl_webserver_code" "Web dashboard startup" 15; then
+        log_success "Dashboard server completed"
     else
-        log_error "Dashboard generation failed"
-        return 1
+        log_warning "APL web server failed - trying file-based dashboard"
+        open_dashboard
     fi
 }
 
@@ -456,7 +482,7 @@ Usage: ./aplcicd [command] [options]
 Essential Commands:
   complete          - Full system demonstration (recommended)
   demo              - Contest demonstration
-  dashboard         - Generate and launch real-time dashboard
+  dashboard         - Start web server and launch interactive dashboard
   ai TEXT           - Detect AI in text (ultra-concise algorithm)
 
 Pipeline Commands:

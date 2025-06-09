@@ -32,6 +32,9 @@
             ⎕←''
             ⎕←'🎵 APLCICD v2.0 ready for vibe coding & self-improvement!'
             ⎕←''
+            ⍝ Auto-start web server and dashboard
+            StartDashboard
+            ⎕←''
             QuickHelp
         :Case 11
             ⎕←'❌ Domain error loading components: ',⎕DM
@@ -124,11 +127,11 @@
             ⎕SIGNAL 22⊣'Failed to load APLPatterns module'
         :EndTrap
         
-        ⎕←'  Loading RealDashboard module...'
+        ⎕←'  Loading Dashboard module...'
         :Trap 22
-            ⎕FIX'file://src/RealDashboard.dyalog'
+            ⎕FIX'file://src/Dashboard.dyalog'
         :Else
-            ⎕SIGNAL 22⊣'Failed to load RealDashboard module'
+            ⎕SIGNAL 22⊣'Failed to load Dashboard module'
         :EndTrap
         
         ⍝ Initialize all modules - Vibe and SelfOptimizer first (core philosophy)
@@ -143,7 +146,7 @@
         RealMonitor.Initialize
         GitAPL.Initialize
         APLPatterns.Initialize
-        RealDashboard.Initialize
+        Dashboard.Initialize
     ∇
 
     ∇ ValidateInstallation
@@ -568,6 +571,52 @@
         :Else
             ⎕←'❌ Competition server failed - ensure CompetitionWebServer module is loaded'
         :EndTrap
+    ∇
+
+    ∇ StartDashboard
+    ⍝ Auto-start web server and open dashboard when APLCICD runs
+        ⎕←'🌐 Starting APLCICD Web Dashboard...'
+        ⎕←'===================================='
+        
+        :Trap 11 22
+            ⍝ Start web server on port 8081
+            ⎕←'Starting web server on port 8081...'
+            server_result ← WebServer.Start 8081
+            
+            :If WebServer.server_running
+                ⎕←'✅ Web server started successfully'
+                ⎕←'📊 Dashboard: http://localhost:8081'
+                ⎕←'🎵 Revolutionary vibe coding dashboard ready!'
+                
+                ⍝ Open dashboard in browser after short delay
+                :Trap 0
+                    ⎕DL 2  ⍝ Wait 2 seconds for server to fully start
+                    ⎕←'🌐 Opening dashboard in browser...'
+                    {} ⎕SH 'open http://localhost:8081'
+                    ⎕←'✅ Dashboard opened in browser'
+                :Else
+                    ⎕←'⚠️  Could not auto-open browser'
+                    ⎕←'   Manual access: http://localhost:8081'
+                :EndTrap
+            :Else
+                ⎕←'⚠️  Web server failed to start - using file-based dashboard'
+                dashboard_path ← ⊃⎕SH 'pwd'
+                dashboard_file ← 'file://',dashboard_path,'/web/dashboard.html'
+                ⎕←'📁 Opening file-based dashboard...'
+                :Trap 0
+                    {} ⎕SH 'open ',dashboard_file
+                    ⎕←'✅ File-based dashboard opened'
+                :Else
+                    ⎕←'⚠️  Manual access: ',dashboard_file
+                :EndTrap
+            :EndIf
+            
+        :Else
+            ⎕←'❌ Dashboard startup failed: ',⎕DM
+            ⎕←'💡 Try manual startup: ./aplcicd dashboard'
+        :EndTrap
+        
+        ⎕←''
     ∇
 
     ∇ result ← CompleteCompetitionDemo
