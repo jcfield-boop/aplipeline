@@ -37,6 +37,7 @@ benchmark_results/
 
 # Claude development files
 .claude/
+CLAUDE.md
 
 # Old/deprecated files
 old/
