@@ -255,10 +255,12 @@
             
             ⍝ Create improvement plan file
             ⎕←'  📝 Creating improvement plan...'
-            plan_content ← 'Improvement: ',improvement.description
-            plan_content ,← ⎕UCS 10,'Category: ',improvement.category
-            plan_content ,← ⎕UCS 10,'Impact: ',⍕improvement.expected_impact
-            plan_content ,← ⎕UCS 10,'Timestamp: ',⍕⎕TS
+            plan_lines ← ⍬
+            plan_lines ,← ⊂'Improvement: ',improvement.description
+            plan_lines ,← ⊂'Category: ',improvement.category
+            plan_lines ,← ⊂'Impact: ',⍕improvement.expected_impact
+            plan_lines ,← ⊂'Timestamp: ',⍕⎕TS
+            plan_content ← ∊plan_lines,¨⎕UCS 10
             
             plan_file ← 'tmp/improvement_plan_',⍕⎕TS[3 4 5 6],'.txt'
             plan_content ⎕NPUT plan_file 1

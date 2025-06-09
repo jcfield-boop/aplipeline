@@ -772,8 +772,8 @@
         response ← ⎕NS ''
         response.Status ← status
         response.Headers ← ⎕NS ''
-        response.Headers.('Content-Type') ← content_type
-        response.Headers.('Content-Length') ← ⍕≢content
+        response.Headers.ContentType ← content_type
+        response.Headers.ContentLength ← ⍕≢content
         response.Headers.Connection ← 'close'
         response.Body ← content
     ∇
