@@ -281,11 +281,25 @@ async function loadVibeStatus() {
         
         // Update compression status
         const compressionStatus = document.getElementById('vibeCompressionStatus');
-        compressionStatus.innerHTML = data.vibe_mode ? '✅ Operational' : '⚠️ Disabled';
+        if (compressionStatus) {
+            compressionStatus.innerHTML = data.vibe_mode ? '✅ Operational' : '⚠️ Disabled';
+        }
         
     } catch (error) {
-        document.getElementById('vibeStatus').textContent = 'Error';
-        console.error('Error loading vibe status:', error);
+        // Fallback for offline mode
+        const toggle = document.getElementById('vibeToggle');
+        const status = document.getElementById('vibeStatus');
+        
+        toggle.checked = true; // Default to enabled
+        status.textContent = 'OFFLINE MODE';
+        status.style.color = '#d29922'; // Orange for offline
+        
+        const compressionStatus = document.getElementById('vibeCompressionStatus');
+        if (compressionStatus) {
+            compressionStatus.innerHTML = '📁 File Mode';
+        }
+        
+        console.log('API not available - using offline mode');
     }
 }
 

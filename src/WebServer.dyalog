@@ -36,9 +36,17 @@
         ⎕←'🌐 Starting APLCICD Web Server on port ',⍕port
         ⎕←'========================================='
         
-        ⍝ Use file-based dashboard serving
-        ⎕←'📁 Using file-based dashboard serving'
-        result ← StartFileDashboard port
+        ⍝ Try real Conga HTTP server first
+        :Trap 0
+            ⎕←'🌐 Attempting Conga HTTP server...'
+            result ← StartCongaHTTPServer port
+            ⎕←'✅ Conga HTTP server started successfully'
+            →0
+        :Else
+            ⎕←'⚠️  Conga server failed, falling back to file-based serving'
+            ⎕←'📁 Using file-based dashboard serving'
+            result ← StartFileDashboard port
+        :EndTrap
         
         :If server_running
             ⎕←'✅ Web server started successfully'
@@ -89,9 +97,8 @@
                 {} DRC.Close 'APLCICD'
             :EndTrap
             
-            ⍝ Use simple TCP server - proper APL syntax
-            args ← ('APLCICD')('')(port)('TCP')
-            srv ← DRC.Srv args
+            ⍝ Use simple TCP server - proper APL syntax  
+            srv ← DRC.Srv 'APLCICD' '' port 'TCP'
             :If 0≠⊃srv
                 ⎕SIGNAL 11⊣'TCP Server creation failed: ',⍕srv
             :EndIf
