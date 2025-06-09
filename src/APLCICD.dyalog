@@ -614,7 +614,7 @@
         :EndTrap
         
         ⎕←''
-        ⎕←'🏆 Self-committing demonstrates APL''s meta-programming power!'
+        ⎕←'🏆 Self-committing demonstrates APL''s revolutionary meta-programming power!'
     ∇
 
     ∇ RecursiveDemo

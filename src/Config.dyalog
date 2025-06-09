@@ -718,8 +718,8 @@
     ⍝   result (character): Command output
         
         :Trap 11 22 16
-            ⍝ Only allow alphanumeric, space, dash, slash, dot, equals
-            safe_chars ← 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -/.='
+            ⍝ Only allow alphanumeric, space, dash, slash, dot, equals, quotes, colon, etc
+            safe_chars ← 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -/.=":()[]{}*%_@,'
             
             :If ~∧/cmd∊safe_chars
                 ⎕SIGNAL 11⊣'SafeShell: Unsafe characters in command: ',cmd

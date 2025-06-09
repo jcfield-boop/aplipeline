@@ -191,7 +191,8 @@
         result ← ⎕NS ''
         
         :Trap 0
-            result.current ← ⎕SH 'git branch --show-current'
+            ⍝ Use compatible git commands for older git versions
+            result.current ← ⎕SH 'git rev-parse --abbrev-ref HEAD'
             result.all ← (⎕UCS 10)(≠⊆⊢)⎕SH 'git branch'
             result.remote ← (⎕UCS 10)(≠⊆⊢)⎕SH 'git branch -r'
         :Else
