@@ -704,4 +704,48 @@
         :EndTrap
     ∇
 
+    ⍝ ═══════════════════════════════════════════════════════════════
+    ⍝ SafeShell Wrapper
+    ⍝ ═══════════════════════════════════════════════════════════════
+
+    ∇ result ← SafeShell cmd
+    ⍝ Safe shell command wrapper to prevent injection attacks
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   cmd (character): Shell command to execute
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (character): Command output
+        
+        :Trap 11 22 16
+            ⍝ Only allow alphanumeric, space, dash, slash, dot, equals
+            safe_chars ← 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 -/.='
+            
+            :If ~∧/cmd∊safe_chars
+                ⎕SIGNAL 11⊣'SafeShell: Unsafe characters in command: ',cmd
+            :EndIf
+            
+            :If 200<≢cmd
+                ⎕SIGNAL 11⊣'SafeShell: Command too long (>200 chars): ',⍕≢cmd
+            :EndIf
+            
+            ⍝ Block dangerous commands
+            dangerous_patterns ← 'rm -rf' 'dd if=' 'mkfs' 'fdisk' '>/etc/' 'sudo' 'su '
+            :If ∨/dangerous_patterns⍷¨⊂cmd
+                ⎕SIGNAL 11⊣'SafeShell: Dangerous command pattern detected'
+            :EndIf
+            
+            result ← ⎕SH cmd
+            
+        :Case 11
+            result ← 'SafeShell DOMAIN_ERROR: ',⎕DM
+        :Case 22  
+            result ← 'SafeShell FILE_ERROR: ',⎕DM
+        :Case 16
+            result ← 'SafeShell NETWORK_ERROR: ',⎕DM
+        :Else
+            result ← 'SafeShell UNEXPECTED_ERROR: ',⎕DM
+        :EndTrap
+    ∇
+
 :EndNamespace

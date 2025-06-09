@@ -32,8 +32,8 @@
     ⍝   result (matrix): (status filename) matrix
         
         :Trap 0
-            ⍝ Real git diff using ⎕SH
-            res ← ⎕SH 'git diff --name-status ',files
+            ⍝ Real git diff using SafeShell
+            res ← ##.Config.SafeShell 'git diff --name-status ',files
             :If 0=≢res
                 result ← 0 2⍴''  ⍝ Empty matrix if no changes
             :Else
@@ -58,7 +58,7 @@
         :Trap 0
             ⍝ Get structured commit data
             fmt ← '--pretty=format:{"hash":"%H","author":"%an","date":"%ad","message":"%s"},'
-            raw_json ← ⎕SH 'git log ',fmt,' -n ',⍕count
+            raw_json ← ##.Config.SafeShell 'git log ',fmt,' -n ',⍕count
             
             :If 0=≢raw_json
                 result ← ⍬
@@ -83,7 +83,7 @@
     ⍝   result (character vector): Author names per line
         
         :Trap 0
-            blame_output ← ⎕SH 'git blame ',file
+            blame_output ← ##.Config.SafeShell 'git blame ',file
             :If 0=≢blame_output
                 result ← ⍬
             :Else
@@ -110,7 +110,7 @@
         result.staged ← ⍬
         
         :Trap 0
-            status_output ← ⎕SH 'git status --porcelain'
+            status_output ← ##.Config.SafeShell 'git status --porcelain'
             
             :If 0<≢status_output
                 result.clean ← 0
@@ -164,14 +164,14 @@
         result.error ← ''
         
         :Trap 0
-            ⍝ Add all changes
-            add_result ← ⎕SH 'git add .'
+            ⍝ Add all changes using SafeShell
+            add_result ← ##.Config.SafeShell 'git add .'
             
-            ⍝ Create commit
-            commit_result ← ⎕SH 'git commit -m "',msg,'"'
+            ⍝ Create commit using SafeShell
+            commit_result ← ##.Config.SafeShell 'git commit -m "',msg,'"'
             
-            ⍝ Get new commit hash
-            result.commit_hash ← ⎕SH 'git rev-parse HEAD'
+            ⍝ Get new commit hash using SafeShell
+            result.commit_hash ← ##.Config.SafeShell 'git rev-parse HEAD'
             result.success ← 1
             
             ⎕←'✅ Git commit successful: ',8↑result.commit_hash

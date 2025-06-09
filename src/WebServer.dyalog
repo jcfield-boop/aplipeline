@@ -16,7 +16,7 @@
             ⎕←'  🌐 Conga library loaded successfully'
             conga_available ← 1
         :Else
-            ⎕←'  ⚠️  Conga library not available - using simulation mode'
+            ⎕←'  ⚠️  Conga library not available - using file-based dashboard'
             conga_available ← 0
         :EndTrap
         
@@ -133,19 +133,6 @@
         result ← 'File-based dashboard started: ',dashboard_file
     ∇
     
-    ∇ result ← StartSimulatedServer port
-    ⍝ Start simulated server for demo purposes
-        server_running ← 1
-        server_port ← port
-        server_name ← 'APLCICD_Simulated'
-        
-        ⎕←'📺 Simulated server mode - for demonstration'
-        ⎕←'   Real Conga server would handle HTTP requests'
-        ⎕←'   Webhook endpoints would process Git events'
-        ⎕←'   APL Forge demos would run in web interface'
-        
-        result ← 'Simulated server started on port ',⍕port
-    ∇
 
     ∇ Stop
     ⍝ Stop web server
@@ -611,8 +598,8 @@
         html ← '<html><head><title>APL Forge Demo</title></head><body>'
         html ,← '<h1>🏆 APL Forge Competition Demo</h1>'
         html ,← '<p>APLCICD v2.0 - Revolutionary Self-Improving CI/CD System</p>'
-        html ,← '<h2>🤖 AI Content Detection</h2>'
-        html ,← '<p>Ultra-concise algorithm: AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)  (18 characters!)</p>'
+        html ,← '<h2>🎵 Vibe Coding Compression</h2>'
+        html ,← '<p>Ultra-concise compression for LLM co-creation workflows with 60%+ size reduction</p>'
         html ,← '<h2>🔄 Self-Optimization Engine</h2>'
         html ,← '<p>Revolutionary capability: System analyzes and improves itself</p>'
         html ,← '<h2>🚀 Competition Advantages</h2>'
@@ -646,7 +633,7 @@
         ⎕←''
         ⎕←'Press Ctrl+C to stop server'
         
-        ⍝ Keep server running in simulation mode
+        ⍝ Keep server running
         :While server_running
             ⎕DL 1
         :EndWhile

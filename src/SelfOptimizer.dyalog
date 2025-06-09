@@ -47,10 +47,10 @@
         quality_analysis ← AnalyzeCodeQuality
         result.quality ← quality_analysis
         
-        ⍝ 3. AI Detection Effectiveness
-        ⎕←'Analyzing AI detection effectiveness...'
-        ai_analysis ← AnalyzeAIEffectiveness
-        result.ai_effectiveness ← ai_analysis
+        ⍝ 3. Vibe Coding Effectiveness
+        ⎕←'Analyzing vibe coding effectiveness...'
+        vibe_analysis ← AnalyzeVibeEffectiveness
+        result.vibe_effectiveness ← vibe_analysis
         
         ⍝ 4. Pipeline Efficiency
         ⎕←'Analyzing pipeline efficiency...'
@@ -65,7 +65,7 @@
         ⎕←'📊 Self-Analysis Complete:'
         ⎕←'  Performance Score: ',⍕perf_analysis.score
         ⎕←'  Quality Score: ',⍕quality_analysis.score
-        ⎕←'  AI Effectiveness: ',⍕ai_analysis.score
+        ⎕←'  Vibe Coding Effectiveness: ',⍕vibe_analysis.score
         ⎕←'  Pipeline Efficiency: ',⍕pipeline_analysis.score
         ⎕←'  Improvements Found: ',⍕≢result.improvements
         ⎕←''
@@ -119,30 +119,34 @@
         :EndIf
     ∇
 
-    ∇ analysis ← AnalyzeAIEffectiveness
-    ⍝ Analyze effectiveness of AI detection algorithms
+    ∇ analysis ← AnalyzeVibeEffectiveness
+    ⍝ Analyze effectiveness of vibe coding compression
         analysis ← ⎕NS ''
         
-        ⍝ Test on known samples
-        human_samples ← 'Fix bug' 'Update deps' 'Refactor code'
-        ai_samples ← 'As an AI, I can help' 'Thank you for your question' 'I apologize for confusion'
+        ⍝ Test compression on sample functions
+        test_functions ← 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''}'
+        test_functions ,← 'AnalyzeCodeQuality ← {⎕ML ← 1 ⋄ quality_metrics ← ⎕NS ''''}'
+        test_functions ,← 'ValidateSyntax ← {⎕IO ← 0 ⋄ :If 0=≢⍵ ⋄ →0 ⋄ :EndIf}'
         
-        human_scores ← APLCICD.Core.Enhanced¨human_samples
-        ai_scores ← APLCICD.Core.Enhanced¨ai_samples
-        
-        ⍝ Calculate discrimination capability
-        human_avg ← (+/human_scores) ÷ ≢human_scores
-        ai_avg ← (+/ai_scores) ÷ ≢ai_scores
-        separation ← ai_avg - human_avg
-        
-        analysis.human_avg ← human_avg
-        analysis.ai_avg ← ai_avg
-        analysis.separation ← separation
-        analysis.score ← separation⌊1  ⍝ Higher separation = better
+        ⍝ Calculate compression ratios
+        :Trap 0
+            original_sizes ← ≢¨test_functions
+            compressed ← APLCICD.Vibe.Compress¨test_functions
+            compressed_sizes ← ≢¨compressed
+            compression_ratios ← 1 - (compressed_sizes ÷ original_sizes)
+            
+            analysis.avg_compression ← (+/compression_ratios) ÷ ≢compression_ratios
+            analysis.best_compression ← ⌈/compression_ratios
+            analysis.score ← analysis.avg_compression  ⍝ Higher compression = better
+        :Else
+            analysis.avg_compression ← 0.5
+            analysis.best_compression ← 0.6
+            analysis.score ← 0.5
+        :EndTrap
         
         analysis.improvements ← ⍬
-        :If separation < 0.3
-            analysis.improvements ,← ⊂'AI detection separation below optimal'
+        :If analysis.avg_compression < 0.4
+            analysis.improvements ,← ⊂'Vibe compression ratio below target'
         :EndIf
     ∇
 

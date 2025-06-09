@@ -73,12 +73,8 @@ find_dyalog() {
 restart_dyalog() {
     log_info "Restarting Dyalog APL for clean execution..."
     
-    # Kill any hanging Dyalog processes
-    if pgrep -f "dyalog\|mapl" &> /dev/null; then
-        log_warning "Terminating existing Dyalog processes..."
-        pkill -f "dyalog\|mapl" 2>/dev/null || true
-        sleep 2
-    fi
+    # More robust process cleanup
+    find_and_kill_dyalog
     
     # Clean up any APL workspace files
     find "$SCRIPT_DIR" -name "aplcore" -delete 2>/dev/null || true
@@ -87,11 +83,33 @@ restart_dyalog() {
     log_success "Dyalog environment cleaned"
 }
 
-# Robust APL command execution with retry logic
+# Improved process cleanup with waiting
+find_and_kill_dyalog() {
+    if pgrep -f "dyalog\|mapl\|aplcicd" &> /dev/null; then
+        log_warning "Terminating existing APL processes..."
+        pkill -f "dyalog\|mapl\|aplcicd" 2>/dev/null || true
+        sleep 3
+        
+        # Wait for processes to actually die
+        local wait_count=0
+        while pgrep -f "dyalog\|mapl" >/dev/null 2>&1; do
+            if [[ $wait_count -ge 10 ]]; then
+                log_warning "Force killing stubborn processes..."
+                pkill -9 -f "dyalog\|mapl" 2>/dev/null || true
+                break
+            fi
+            sleep 1
+            wait_count=$((wait_count + 1))
+        done
+    fi
+}
+
+# Robust APL command execution with retry logic and exponential backoff
 run_apl() {
     local apl_code="$1"
     local description="${2:-Running APL command}"
     local max_retries="${3:-2}"
+    local timeout="${4:-30}"
     local retry_count=0
     
     while [[ $retry_count -le $max_retries ]]; do
@@ -102,21 +120,69 @@ run_apl() {
             restart_dyalog
         fi
         
-        # Execute APL code and check for success indicators
-        if bash -c "echo '$apl_code' | '$DYALOG_PATH' 2>&1" | grep -q "APLCICD.*System Status\|✅.*ready\|🚀.*APLCICD"; then
-            log_success "$description completed"
-            return 0
+        # Execute APL code with timeout and improved error detection
+        local output
+        if output=$(timeout "$timeout" bash -c "echo '$apl_code' | '$DYALOG_PATH' 2>&1"); then
+            # Check for success indicators and absence of error indicators
+            if echo "$output" | grep -q "APLCICD.*System Status\|✅.*ready\|🚀.*APLCICD\|✅.*loaded\|🎵.*Vibe" && \
+               ! echo "$output" | grep -q "ERROR\|SYNTAX ERROR\|VALUE ERROR\|WS FULL\|INTERRUPT"; then
+                log_success "$description completed"
+                return 0
+            fi
         fi
         
         retry_count=$((retry_count + 1))
         if [[ $retry_count -le $max_retries ]]; then
-            log_warning "$description failed, retrying..."
-            sleep 1
+            # Exponential backoff: 2^retry_count seconds
+            local wait_time=$((2 ** retry_count))
+            log_warning "$description failed, retrying in ${wait_time}s..."
+            sleep "$wait_time"
         fi
     done
     
     log_error "$description failed after $((max_retries + 1)) attempts"
     return 1
+}
+
+# Validate demo environment before running
+validate_demo_environment() {
+    log_info "Validating demo environment..."
+    
+    # Check all required files exist
+    local required_files=("src/APLCICD.dyalog" "src/vibe.dyalog" "src/Core.dyalog" "config/default.json")
+    for file in "${required_files[@]}"; do
+        if [[ ! -e "$file" ]]; then
+            log_error "Required file missing: $file"
+            return 1
+        fi
+    done
+    
+    # Check required directories exist
+    local required_dirs=("src" "web" "config")
+    for dir in "${required_dirs[@]}"; do
+        if [[ ! -d "$dir" ]]; then
+            log_error "Required directory missing: $dir"
+            return 1
+        fi
+    done
+    
+    # Test Dyalog responds
+    log_info "Testing Dyalog APL response..."
+    if ! echo "⎕←'APLCICD_TEST'" | timeout 10 "$DYALOG_PATH" 2>/dev/null | grep -q "APLCICD_TEST"; then
+        log_error "Dyalog APL not responding correctly"
+        return 1
+    fi
+    
+    # Check source files are valid APL
+    local apl_files=(src/*.dyalog)
+    for file in "${apl_files[@]}"; do
+        if [[ -f "$file" ]] && ! grep -q ":Namespace\|∇" "$file"; then
+            log_warning "APL file may be invalid: $file"
+        fi
+    done
+    
+    log_success "Demo environment validation passed"
+    return 0
 }
 
 # Initialize system and check requirements
@@ -136,11 +202,8 @@ initialize() {
     
     log_success "Found Dyalog APL: $DYALOG_PATH"
     
-    # Check required files
-    if [[ ! -f "src/APLCICD.dyalog" ]]; then
-        log_error "APLCICD source files not found in src/ directory"
-        exit 1
-    fi
+    # Validate demo environment
+    validate_demo_environment
     
     # Ensure directories exist
     mkdir -p web logs config
