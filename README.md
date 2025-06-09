@@ -22,6 +22,8 @@
 2. **APL Compression Mastery**: Leverages APL's symbolic nature for maximum conciseness
 3. **Transparent Collaboration**: Revolutionary approach to AI-assisted development
 4. **Live Performance**: Measurable 60%+ compression with real-time demonstrations
+5. **Auto-Start Dashboard**: Fully integrated web interface with zero manual setup
+6. **Interactive Controls**: Live vibe compression toggle, real git data, system monitoring
 
 ## 🏗️ Production-Ready Architecture
 
@@ -42,7 +44,7 @@ src/
 ├── Core.dyalog          # Legacy utilities (superseded by vibe.dyalog)  
 ├── RealPipeline.dyalog  # Production CI/CD automation
 ├── RealMonitor.dyalog   # Live system monitoring
-├── RealDashboard.dyalog # Real-time web dashboard generation
+├── Dashboard.dyalog     # Unified interactive web dashboard
 ├── GitAPL.dyalog        # Native APL Git integration
 ├── WebServer.dyalog     # Conga-based HTTP server
 ├── SelfOptimizer.dyalog # Autonomous improvement engine
@@ -53,6 +55,18 @@ src/
 ```
 
 ## 🚀 Instant Demo
+
+### 🌐 **Zero-Setup Interactive Dashboard**
+```bash
+# One command - auto-starts web server and opens dashboard
+./aplcicd complete
+```
+**Result**: Web server on http://localhost:8081 with live dashboard featuring:
+- 🎛️ **Interactive Vibe Toggle**: Enable/disable compression via web interface
+- 📊 **Live Git Data**: Real commit counts, branch info, AI collaboration stats  
+- ⚡ **System Monitoring**: Memory usage, APL functions, variables, health status
+- 🔄 **Auto-Refresh**: Updates every 10 seconds with fresh data
+- 📝 **Real Controls**: Run compression, commit improvements, view metrics
 
 ### One-Command Setup
 ```bash
@@ -67,7 +81,7 @@ chmod +x aplcicd
 ### Individual Commands
 ```bash
 ./aplcicd demo                              # Contest demonstration
-./aplcicd dashboard                         # Launch real-time dashboard  
+./aplcicd dashboard                         # Start web server + interactive dashboard  
 ./aplcicd vibe "ProcessPipelineStage"       # Demo vibe compression
 ./aplcicd pipeline                          # Run CI/CD on repository
 ./aplcicd status                            # System health check
@@ -91,7 +105,7 @@ APLCICD.Vibe.Compress 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status
 APLCICD.TestCI
 
 ⍝ Generate live dashboard
-APLCICD.RealDashboard.GenerateHTML
+APLCICD.Dashboard.GenerateUnifiedDashboard
 
 ⍝ Self-optimization demonstration
 APLCICD.SelfOptimize
@@ -104,11 +118,11 @@ APLCICD.SelfOptimize
 ```
 **Showcases**: All revolutionary capabilities in one comprehensive demonstration
 
-#### 2. **Real-Time Dashboard**
+#### 2. **Interactive Web Dashboard**
 ```bash
 ./aplcicd dashboard
 ```
-**Showcases**: Live metrics, zero-mock implementation, production-ready UI
+**Showcases**: Auto-start web server, interactive vibe toggle, live git data, real-time metrics
 
 #### 3. **Self-Committing Demo**
 ```bash
@@ -156,11 +170,13 @@ GitAPL.Commit vibe_compressed commit_msg
 - **📊 Quality Metrics**: APL-specific best practices and optimization
 - **📚 Git Integration**: Native APL implementation of Git operations
 
-### 🌐 **Real-Time Dashboard**
-- **📊 Live Metrics**: Real system data, not simulated
-- **🔄 Auto-Generation**: Dashboard updates with actual system changes
-- **💻 Production UI**: Professional web interface with real API endpoints
-- **📈 Performance Analytics**: Live monitoring of system improvements
+### 🌐 **Interactive Web Dashboard**
+- **🚀 Auto-Start**: Web server and dashboard launch automatically  
+- **📊 Live Data**: Real-time git info, system metrics, vibe compression status
+- **🎛️ Interactive Controls**: Toggle vibe mode, run compression, commit changes
+- **🔄 Auto-Refresh**: Updates every 10 seconds with fresh data
+- **⚡ Zero Setup**: Runs on http://localhost:8081 with one command
+- **💻 Production UI**: Professional interface with real API endpoints
 
 ## 📊 Proven Performance Metrics
 
@@ -232,8 +248,8 @@ APLCICD.Vibe.DemoVibeCompression                          ⍝ Full compression d
 ⍝ Show live self-improvement
 APLCICD.SelfOptimize                          ⍝ System improves itself!
 
-⍝ Generate real-time dashboard
-APLCICD.RealDashboard.GenerateHTML           ⍝ Live data, zero mocks
+⍝ Generate interactive dashboard  
+APLCICD.Dashboard.GenerateUnifiedDashboard   ⍝ Auto-start web server + live data
 ```
 
 ## 🏆 **APL Forge 2025 Competition Value**
@@ -273,8 +289,9 @@ APLCICD.RealDashboard.GenerateHTML           ⍝ Live data, zero mocks
 
 **This will demonstrate:**
 - ✅ Ultra-concise vibe coding compression (60%+ size reduction)
+- ✅ Auto-start web server and interactive dashboard
+- ✅ Live vibe compression toggle and git repository data
 - ✅ Self-improving CI/CD pipeline execution  
-- ✅ Real-time dashboard with live system metrics
 - ✅ Meta-programming: system commits its own improvements
 - ✅ Zero-mock implementation across all features
 
