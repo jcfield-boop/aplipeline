@@ -24,32 +24,26 @@
     ⍝ ═══════════════════════════════════════════════════════════════
     
     ∇ result ← AI text
-    ⍝ Statistical AI detection - as specified in CLAUDE.md
-        ⍝ Handle empty text
+    ⍝ Statistical AI detection - Working baseline version
         :If 0=≢text
             result ← 0
             →0
         :EndIf
         
-        ⍝ Lexical diversity: unique words ÷ total words
         words ← (' '∘≠⊆⊢)text
         :If 0=≢words
             result ← 0
             →0
         :EndIf
+        
+        ⍝ Lexical diversity
         lexical ← (≢∪words) ÷ ≢words
         
-        ⍝ N-gram frequency analysis
-        :If 2≤≢words
-            bigrams ← 2,/words
-            bigram_diversity ← (≢∪bigrams) ÷ ≢bigrams
-        :Else
-            bigram_diversity ← 1
-        :EndIf
+        ⍝ N-gram analysis using APL conditional selection
+        bigram_diversity ← (2≤≢words)⊃1((≢∪2,/words) ÷ ≢2,/words)
         
         :If 3≤≢words
-            trigrams ← 3,/words
-            trigram_diversity ← (≢∪trigrams) ÷ ≢trigrams
+            trigram_diversity ← (≢∪3,/words) ÷ ≢3,/words
         :Else
             trigram_diversity ← 1
         :EndIf
@@ -57,14 +51,12 @@
         ⍝ Statistical features
         avgWordLen ← (+/≢¨words) ÷ ≢words
         sentences ← ('.'∘≠⊆⊢)text
-        :If 0<≢sentences
-            sentenceVar ← 1⌊(+/(≢¨sentences)*2)÷(≢sentences)⌈1
-        :Else
-            sentenceVar ← 0
-        :EndIf
+        sentenceVar ← (0<≢sentences)⊃0(1⌊(+/(≢¨sentences)*2)÷(≢sentences)⌈1)
         
-        ⍝ Combine features (weights tuned for AI detection)
-        result ← 0.3×(1-lexical) + 0.2×(avgWordLen÷10)⌊1 + 0.3×(1-bigram_diversity) + 0.2×(sentenceVar÷100)⌊1
+        ⍝ Weighted combination
+        weights ← 0.3 0.2 0.3 0.2
+        features ← (1-lexical)((avgWordLen÷10)⌊1)(1-bigram_diversity)((sentenceVar÷100)⌊1)
+        result ← weights +.× features
     ∇
 
     ∇ result ← Detect text
@@ -93,34 +85,29 @@
     ⍝ Returns:
     ⍝   result (numeric): AI probability score 0-1
         
-        :If 0=≢text ⋄ result←0 ⋄ :Return ⋄ :EndIf
-        
-        ⍝ Simple but effective multi-factor analysis
+        ⍝ Vectorized multi-factor analysis with APL conditionals
         text_lower ← ⎕C text
         words ← ' '(≠⊆⊢)text
-        word_count ← 1⌈≢words
         
-        ⍝ 1. AI keyword detection
+        ⍝ Keyword detection using array operations
         ai_score ← (+/'ai'⍷text_lower) + (+/'assistant'⍷text_lower) + (+/'generated'⍷text_lower)
         keyword_factor ← (ai_score ÷ 10)⌊1
         
-        ⍝ 2. Formal language patterns
+        ⍝ Formal language pattern detection
         formal_score ← (+/'however'⍷text_lower) + (+/'furthermore'⍷text_lower)
         formal_factor ← (formal_score ÷ 5)⌊1
         
-        ⍝ 3. Politeness indicators
+        ⍝ Politeness detection
         polite_score ← (+/'please'⍷text_lower) + (+/'thank'⍷text_lower)
         polite_factor ← (polite_score ÷ 3)⌊1
         
-        ⍝ 4. Punctuation density
-        punct_count ← (+/text∊',;:')
-        punct_factor ← (punct_count ÷ 1⌈≢text)⌊1
+        ⍝ Punctuation density using array membership
+        punct_factor ← ((+/text∊',;:') ÷ 1⌈≢text)⌊1
         
-        ⍝ Weighted combination
+        ⍝ Weighted combination using pure APL
         weights ← 0.4 0.3 0.2 0.1
         factors ← keyword_factor formal_factor polite_factor punct_factor
-        
-        result ← weights +.× factors
+        result ← (0<≢text)⊃0(weights +.× factors)
     ∇
 
     ∇ result ← LinguisticAI text
@@ -153,10 +140,9 @@
     ∇ score ← SemanticComplexity text
     ⍝ Measure semantic complexity (AI tends to be more complex)
         words ← ' '(≠⊆⊢)text
-        :If 0=≢words ⋄ score←0 ⋄ :Return ⋄ :EndIf
         
-        ⍝ Average word length (AI uses longer words) - vectorized
-        avg_length ← (+/≢¨words) ÷ ≢words
+        ⍝ Calculate features with APL guards against empty input
+        avg_length ← (+/≢¨words) ÷ (≢words)⌈1
         
         ⍝ Syllable complexity (approximated by vowel clusters) - vectorized
         vowels ← 'aeiouAEIOU'
@@ -166,16 +152,19 @@
         tech_terms ← 'implementation' 'functionality' 'optimization' 'configuration'
         tech_score ← (AI (⎕C text) (⎕C¨tech_terms)) ÷ ≢tech_terms
         
-        ⍝ Weighted combination
+        ⍝ Weighted combination with APL conditional
         weights ← 0.4 0.3 0.3
         factors ← (avg_length÷8)⌊1 (syllable_density÷3)⌊1 tech_score
-        score ← weights +.× factors
+        score ← (0<≢words)⊃0(weights +.× factors)
     ∇
 
     ∇ score ← SentenceStructure text
     ⍝ Analyze sentence structure patterns
         sentences ← '.'(≠⊆⊢)text
-        :If 0=≢sentences ⋄ score←0 ⋄ :Return ⋄ :EndIf
+        :If 0=≢sentences
+            score ← 0
+            →0
+        :EndIf
         
         ⍝ Average sentence length (AI tends toward optimal length) - vectorized
         avg_sentence ← (+/≢¨sentences) ÷ ≢sentences
@@ -198,7 +187,10 @@
     ∇ score ← VocabularyDiversity text
     ⍝ Measure vocabulary diversity (AI often has lower diversity)
         words ← ' '(≠⊆⊢)text
-        :If 2>≢words ⋄ score←0 ⋄ :Return ⋄ :EndIf
+        :If 2>≢words
+            score ← 0
+            →0
+        :EndIf
         
         ⍝ Type-token ratio (unique words / total words) - pure APL
         unique_words ← ≢∪⎕C¨words
@@ -241,6 +233,160 @@
         weights ← (text_length<50)⊃(0.2 0.3 0.5)(text_length<200)⊃(0.3 0.4 0.3)(0.6 0.3 0.1)
         
         result ← weights +.× scores
+    ∇
+
+    ∇ result ← AdvancedAI text
+    ⍝ Advanced AI detection with sophisticated linguistic analysis
+    ⍝ Implements research-based features: perplexity, burstiness, semantic depth
+        :If 0=≢text
+            result ← 0
+            →0
+        :EndIf
+        
+        ⍝ Get base analysis
+        enhanced_score ← Enhanced text
+        
+        ⍝ Advanced linguistic features
+        perplexity_score ← CalculatePerplexity text
+        burstiness_score ← CalculateBurstiness text
+        semantic_depth ← AnalyzeSemanticDepth text
+        discourse_coherence ← AnalyzeDiscourseCoherence text
+        stylistic_consistency ← AnalyzeStyleConsistency text
+        
+        ⍝ Weighted ensemble of advanced features
+        weights ← 0.3 0.2 0.15 0.15 0.1 0.1
+        features ← enhanced_score perplexity_score burstiness_score semantic_depth discourse_coherence stylistic_consistency
+        result ← weights +.× features
+    ∇
+
+    ∇ score ← CalculatePerplexity text
+    ⍝ Calculate perplexity - measure of predictability (AI is more predictable)
+        words ← ' '(≠⊆⊢)⎕C text
+        :If 2>≢words
+            score ← 0
+            →0
+        :EndIf
+        
+        ⍝ Word frequency analysis for predictability
+        unique_words ← ∪words
+        frequencies ← {+/words≡¨⊂⍵}¨unique_words
+        total_words ← ≢words
+        
+        ⍝ Calculate entropy-based perplexity approximation
+        probabilities ← frequencies ÷ total_words
+        entropy ← -+/probabilities × 2⍟probabilities
+        max_entropy ← 2⍟≢unique_words
+        
+        ⍝ Normalized perplexity (higher = more predictable = more AI-like)
+        score ← 1 - (entropy ÷ max_entropy⌈0.001)
+    ∇
+
+    ∇ score ← CalculateBurstiness text
+    ⍝ Calculate burstiness - sentence variety (AI has lower burstiness)
+        sentences ← ('.'∘≠⊆⊢)text
+        :If 2>≢sentences
+            score ← 0
+            →0
+        :EndIf
+        →(2>≢sentences)/0
+        
+        ⍝ Sentence length variance as burstiness measure
+        sentence_lengths ← ≢¨sentences
+        mean_length ← (+/sentence_lengths) ÷ ≢sentence_lengths
+        variance ← (+/(sentence_lengths - mean_length)*2) ÷ ≢sentence_lengths
+        coefficient_variation ← (variance*0.5) ÷ mean_length⌈1
+        
+        ⍝ Low burstiness indicates AI (convert to AI probability)
+        score ← 1 - (coefficient_variation⌊1)
+    ∇
+
+    ∇ score ← AnalyzeSemanticDepth text
+    ⍝ Analyze semantic depth and contextual richness
+        words ← ' '(≠⊆⊢)⎕C text
+        :If 3>≢words
+            score ← 0
+            →0
+        :EndIf
+        →(3>≢words)/0
+        
+        ⍝ Semantic richness indicators
+        ⍝ 1. Abstract vs concrete word ratio
+        abstract_words ← 'concept' 'idea' 'theory' 'principle' 'approach' 'method' 'strategy'
+        concrete_words ← 'file' 'code' 'function' 'variable' 'data' 'system' 'process'
+        
+        abstract_count ← +/+/abstract_words⍷¨⊂∊' ',text,' '
+        concrete_count ← +/+/concrete_words⍷¨⊂∊' ',text,' '
+        abstract_ratio ← abstract_count ÷ (abstract_count + concrete_count)⌈1
+        
+        ⍝ 2. Semantic complexity via word length and syllable approximation
+        avg_word_length ← (+/≢¨words) ÷ ≢words
+        vowel_density ← (+/+/'aeiouAEIOU'∊¨words) ÷ (≢words)⌈1
+        
+        ⍝ 3. Context switching (topic coherence)
+        topic_keywords ← ('software' 'technical')('business' 'management')('general' 'common')
+        topic_scores ← {+/+/(⊃⍵)⍷¨⊂text}¨topic_keywords
+        topic_diversity ← (≢⍸0<topic_scores) ÷ ≢topic_keywords
+        
+        ⍝ Combine semantic depth indicators
+        weights ← 0.4 0.3 0.2 0.1
+        factors ← abstract_ratio ((avg_word_length÷8)⌊1) ((vowel_density÷3)⌊1) topic_diversity
+        
+        ⍝ AI tends toward medium semantic depth (not too simple, not too complex)
+        raw_depth ← weights +.× factors
+        score ← |raw_depth - 0.5| × 2  ⍝ Distance from optimal AI range
+    ∇
+
+    ∇ score ← AnalyzeDiscourseCoherence text
+    ⍝ Analyze discourse structure and coherence patterns
+        sentences ← ('.'∘≠⊆⊢)text
+        :If 2>≢sentences
+            score ← 0
+            →0
+        :EndIf
+        →(2>≢sentences)/0
+        
+        ⍝ Discourse markers analysis
+        transition_markers ← 'however' 'therefore' 'furthermore' 'moreover' 'consequently' 'nevertheless'
+        addition_markers ← 'also' 'additionally' 'furthermore' 'moreover' 'besides'
+        contrast_markers ← 'however' 'but' 'nevertheless' 'nonetheless' 'yet'
+        
+        text_lower ← ⎕C text
+        transition_density ← (+/+/transition_markers⍷¨⊂text_lower) ÷ ≢sentences
+        addition_density ← (+/+/addition_markers⍷¨⊂text_lower) ÷ ≢sentences
+        contrast_density ← (+/+/contrast_markers⍷¨⊂text_lower) ÷ ≢sentences
+        
+        ⍝ AI tends to overuse discourse markers
+        total_markers ← transition_density + addition_density + contrast_density
+        score ← (total_markers ÷ 3)⌊1  ⍝ Normalize to [0,1]
+    ∇
+
+    ∇ score ← AnalyzeStyleConsistency text
+    ⍝ Analyze stylistic consistency patterns
+        sentences ← ('.'∘≠⊆⊢)text
+        :If 2>≢sentences
+            score ← 0
+            →0
+        :EndIf
+        →(2>≢sentences)/0
+        
+        ⍝ Sentence structure consistency
+        sentence_lengths ← ≢¨sentences
+        length_variance ← (+/(sentence_lengths - (+/sentence_lengths)÷≢sentence_lengths)*2) ÷ ≢sentence_lengths
+        length_consistency ← 1 - ((length_variance*0.5)÷10)⌊1
+        
+        ⍝ Punctuation pattern consistency
+        punct_per_sentence ← {+/⍵∊',:;!?'}¨sentences
+        punct_variance ← (+/(punct_per_sentence - (+/punct_per_sentence)÷≢punct_per_sentence)*2) ÷ ≢punct_per_sentence
+        punct_consistency ← 1 - ((punct_variance*0.5)÷2)⌊1
+        
+        ⍝ Word choice consistency (repetition patterns)
+        words ← ∊(' '∘≠⊆⊢)¨⎕C¨sentences
+        unique_ratio ← (≢∪words) ÷ ≢words⌈1
+        
+        ⍝ AI tends toward high consistency
+        weights ← 0.4 0.3 0.3
+        factors ← length_consistency punct_consistency (1-unique_ratio)
+        score ← weights +.× factors
     ∇
 
     ⍝ ═══════════════════════════════════════════════════════════════

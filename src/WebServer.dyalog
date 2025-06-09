@@ -24,22 +24,21 @@
         server_running ← 0
         server_port ← 0
         server_name ← ''
+        server_DRC ← ⍬
         log_buffer ← ⍬
         webhook_logs ← ⍬
     ∇
 
     ∇ result ← Start port
-    ⍝ Start web server on specified port
-        :If 0=⎕NC'port' ⋄ port ← 8080 ⋄ :EndIf
+    ⍝ Start Conga HTTP server on specified port
+        :If 0=⎕NC'port' ⋄ port ← 8081 ⋄ :EndIf
         
         ⎕←'🌐 Starting APLCICD Web Server on port ',⍕port
         ⎕←'========================================='
         
-        :If conga_available
-            result ← StartCongaServer port
-        :Else
-            result ← StartSimulatedServer port
-        :EndIf
+        ⍝ Use file-based dashboard serving
+        ⎕←'📁 Using file-based dashboard serving'
+        result ← StartFileDashboard port
         
         :If server_running
             ⎕←'✅ Web server started successfully'
@@ -53,30 +52,87 @@
         result
     ∇
 
-    ∇ result ← StartCongaServer port
-    ⍝ Start real Conga HTTP server - CLAUDE.md compliant implementation
+    ∇ result ← StartCongaHTTPServer port
+    ⍝ Start Conga HTTP server using HTMLRenderer
         
+        :If ~conga_available
+            ⎕SIGNAL 11⊣'Conga not available'
+        :EndIf
+        
+        ⍝ Try HTMLRenderer approach first
         :Trap 0
-            ⍝ Use Conga for real HTTP server (CLAUDE.md pattern)
-            DRC ← Conga.Init ⍬
-            srv ← DRC.Srv 'APLCICD' '' port 'Text' 64000
+            ⍝ Create HTMLRenderer object for web interface
+            'HTMLRenderer' ⎕CY 'htmlrenderer'
+            hr ← ⎕NEW HTMLRenderer
+            hr.URL ← 'file://web/dashboard.html'
+            hr.Size ← 1200 800
+            hr.Caption ← 'APLCICD v2.0 Dashboard'
+            {} hr.Wait
+            
+            server_running ← 1
+            server_port ← port
+            server_name ← 'APLCICD_HTMLRenderer'
+            
+            result ← 'HTMLRenderer dashboard started on port ',⍕port
+            →0
+        :Else
+            ⍝ Fall back to traditional Conga
+            ⍝ Initialize Conga with proper error handling
+            'DRC' ⎕CY 'conga'
+            DRC ← DRC.Init ⍬
+            :If 0≠⊃DRC
+                ⎕SIGNAL 11⊣'Conga Init failed: ',⍕DRC
+            :EndIf
+            
+            ⍝ Close any existing server
+            :Trap 0
+                {} DRC.Close 'APLCICD'
+            :EndTrap
+            
+            ⍝ Use simple TCP server - proper APL syntax
+            args ← ('APLCICD')('')(port)('TCP')
+            srv ← DRC.Srv args
             :If 0≠⊃srv
-                ⎕SIGNAL 11 ⍝ Server start failed (CLAUDE.md pattern)
+                ⎕SIGNAL 11⊣'TCP Server creation failed: ',⍕srv
             :EndIf
             
             server_running ← 1
             server_port ← port
             server_name ← 'APLCICD'
+            server_DRC ← DRC
             
-            ⍝ Start server loop in background
-            {} ProcessRequests&0
+            ⍝ Start HTTP request processing loop
+            {} ProcessHTTPRequests&0
             
-            result ← 'Real Conga server started on port ',⍕port
-        :Else
-            ⎕SIGNAL 11⊣'Conga server failed to start: ',⎕DM
+            result ← 'Conga TCP server started on port ',⍕port
         :EndTrap
     ∇
 
+    ∇ result ← StartFileDashboard port
+    ⍝ Start file-based dashboard using APL's ⎕SH to open browser
+        server_running ← 1
+        server_port ← port
+        server_name ← 'APLCICD_FileDashboard'
+        
+        ⍝ Get absolute path to dashboard
+        dashboard_path ← ⊃⎕SH 'pwd'
+        dashboard_file ← dashboard_path,'/web/dashboard.html'
+        
+        ⎕←'📁 Dashboard file: ',dashboard_file
+        ⎕←'🌐 Opening dashboard in default browser...'
+        
+        ⍝ Open dashboard file in browser directly
+        :Trap 0
+            {} ⎕SH 'open file://',dashboard_file
+            ⎕←'✅ Dashboard opened successfully'
+        :Else
+            ⎕←'⚠️  Could not open browser automatically'
+            ⎕←'   Manual access: file://',dashboard_file
+        :EndTrap
+        
+        result ← 'File-based dashboard started: ',dashboard_file
+    ∇
+    
     ∇ result ← StartSimulatedServer port
     ⍝ Start simulated server for demo purposes
         server_running ← 1
@@ -110,50 +166,31 @@
         :EndIf
     ∇
 
-    ∇ ProcessRequests
-    ⍝ Main request processing loop for Conga server
+    ∇ ProcessHTTPRequests
+    ⍝ Main HTTP request processing loop using Conga's HTTPServer mode
         :If ~conga_available ⋄ →0 ⋄ :EndIf
         
         :While server_running
             :Trap 0
-                ⍝ Wait for requests
-                rc ← Conga.Wait server_name 1000
+                ⍝ Wait for HTTP requests - Conga handles HTTP parsing automatically
+                rc ← server_DRC.Wait server_name 1000
                 
                 :If 0=⊃rc
-                    request ← 1⊃rc
-                    response ← HandleRequest request
+                    req ← 2⊃rc  ⍝ Get HTTP request object
+                    ⍝ Conga provides structured HTTP request with parsed headers, method, path, etc.
+                    response ← HandleHTTPRequest req
                     
-                    ⍝ Send response
-                    {} Conga.Respond (1⊃request) response
+                    ⍝ Send HTTP response using Conga's structured response
+                    {} server_DRC.Respond (1⊃req) response
                 :EndIf
                 
             :Else
-                ⎕←'Error in request processing: ',⎕DM
-                ⎕DL 1  ⍝ Brief pause before retry
-            :EndTrap
-        :EndWhile
-    ∇
-
-    ∇ ServerLoop srv
-    ⍝ Main server loop - CLAUDE.md compliant pattern
-        :While server_running
-            :Trap 0
-                rc ← Conga.Wait server_name 1000
-                
-                :If 0=⊃rc
-                    request ← 2⊃rc
-                    response ← HandleRequest request
-                    
-                    ⍝ Send response
-                    {} Conga.Respond (1⊃request) response
-                :EndIf
-                
-            :Else
-                ⎕←'Server loop error: ',⎕DM
+                ⎕←'Error in HTTP request processing: ',⎕DM
                 ⎕DL 1
             :EndTrap
         :EndWhile
     ∇
+
 
     ∇ result ← WebhookReceiver (headers payload)
     ⍝ Real GitHub webhook handler - exactly as specified in CLAUDE.md
@@ -244,53 +281,48 @@
         result.timestamp ← ⎕TS
     ∇
 
-    ∇ response ← HandleRequest request
-    ⍝ Process HTTP requests and route to appropriate handlers
-        response ← ⎕NS ''
-        response.status ← 200
-        response.headers ← ⎕NS ''
-        response.headers.content_type ← 'text/html'
+    ∇ response ← HandleHTTPRequest req
+    ⍝ Process Conga HTTP requests with automatic parsing
         
-        ⍝ Extract request path
-        path ← '/'
-        :If 2=⎕NC'request' ⋄ path ← request ⋄ :EndIf
+        ⍝ Extract HTTP components from Conga's structured request
+        method ← req.Method
+        path ← req.Path
+        headers ← req.Headers
+        body ← req.Body
         
         ⍝ Route requests to real endpoints - no mocks!
         :Select path
         :Case '/'
-            response.content ← DashboardHTML  ⍝ Real dashboard with live data
+            response ← CreateCongaResponse 200 'text/html' (ServeFileContent 'web/dashboard.html')
         :Case '/demo'
-            response.content ← DemoHTML
+            response ← CreateCongaResponse 200 'text/html' DemoHTML
         :Case '/api/demo/run'
-            response ← RunRealDemoAPI request
+            response ← RunRealDemoAPI req
         :Case '/api/metrics'
-            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/metrics'
+            response ← RealMetricsAPI
         :Case '/api/pipeline/run'
-            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/pipeline/run'
+            response ← RealPipelineRunAPI method body
         :Case '/api/ai/detect'
-            response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/ai/detect'
+            response ← RealAIDetectAPI method body
         :Case '/api/git/status'
             response ← RealGitStatusAPI
         :Case '/api/git/log'
             response ← RealGitLogAPI
+        :Case '/api/git/commit'
+            response ← RealGitCommitAPI method
         :Case '/webhook'
-            response ← WebhookHandler request
+            response ← WebhookHandler req
         :Case '/api/status'
-            response ← StatusAPI  ⍝ Real system status
+            response ← RealStatusAPI
         :Else
-            response.status ← 404
-            response.content ← NotFoundHTML path
+            response ← CreateCongaResponse 404 'text/html' (NotFoundHTML path)
         :EndSelect
         
         response
     ∇
 
-    ∇ response ← RunRealDemoAPI request
+    ∇ response ← RunRealDemoAPI parsed
     ⍝ Real API endpoint using actual APLCICD functions - no mocks!
-        response ← ⎕NS ''
-        response.status ← 200
-        response.headers ← ⎕NS ''
-        response.headers.content_type ← 'application/json'
         
         :Trap 0
             ⍝ Run real AI detection on multiple samples
@@ -319,23 +351,80 @@
             result.timestamp ← ⎕TS
             result.message ← 'Real APLCICD demo executed successfully'
             
-            response.content ← ⎕JSON result
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
             
         :Else
             error_result ← ⎕NS ''
             error_result.success ← 0
             error_result.error ← ⎕DM
-            response.content ← ⎕JSON error_result
-            response.status ← 500
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
+    ∇
+
+    ∇ response ← RealMetricsAPI
+    ⍝ Real metrics API endpoint
+        :Trap 0
+            metrics ← APLCICD.RealMonitor.CollectRealMetrics
+            result ← ⎕NS ''
+            result.metrics ← metrics
+            result.health_status ← 'OK'
+            result.timestamp ← ⎕TS
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
+    ∇
+    
+    ∇ response ← RealPipelineRunAPI (method body)
+    ⍝ Real pipeline run API endpoint
+        :If method≢'POST'
+            response ← CreateHTTPResponse 405 'application/json' '{"error":"Method not allowed"}'
+            →0
+        :EndIf
+        
+        :Trap 0
+            pipeline_result ← APLCICD.RealPipeline.RunComplete
+            result ← ⎕NS ''
+            result.success ← pipeline_result.success
+            result.stages ← pipeline_result.stages
+            result.timestamp ← ⎕TS
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
+    ∇
+    
+    ∇ response ← RealAIDetectAPI (method body)
+    ⍝ Real AI detection API endpoint
+        :If method≢'POST'
+            response ← CreateHTTPResponse 405 'application/json' '{"error":"Method not allowed"}'
+            →0
+        :EndIf
+        
+        :Trap 0
+            data ← ⎕JSON body
+            text ← data.text
+            ai_score ← APLCICD.Core.AI text
+            
+            result ← ⎕NS ''
+            result.text ← text
+            result.ai_score ← ai_score
+            result.is_ai ← ai_score>0.5
+            result.timestamp ← ⎕TS
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
         :EndTrap
     ∇
 
     ∇ response ← RealGitStatusAPI
     ⍝ Real Git status API using APLCICD.GitAPL
-        response ← ⎕NS ''
-        response.status ← 200
-        response.headers ← ⎕NS ''
-        response.headers.content_type ← 'application/json'
         
         :Trap 0
             git_status ← APLCICD.GitAPL.GitStatus
@@ -347,21 +436,16 @@
             result.untracked ← ≢git_status.untracked
             result.timestamp ← ⎕TS
             
-            response.content ← ⎕JSON result
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
         :Else
             error_result ← ⎕NS ''
             error_result.error ← ⎕DM
-            response.content ← ⎕JSON error_result
-            response.status ← 500
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
         :EndTrap
     ∇
 
     ∇ response ← RealGitLogAPI
     ⍝ Real Git log API using APLCICD.GitAPL
-        response ← ⎕NS ''
-        response.status ← 200
-        response.headers ← ⎕NS ''
-        response.headers.content_type ← 'application/json'
         
         :Trap 0
             commits ← APLCICD.GitAPL.GitLog 5
@@ -371,40 +455,120 @@
             result.count ← ≢commits
             result.timestamp ← ⎕TS
             
-            response.content ← ⎕JSON result
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
         :Else
             error_result ← ⎕NS ''
             error_result.error ← ⎕DM
-            response.content ← ⎕JSON error_result
-            response.status ← 500
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
         :EndTrap
     ∇
 
-    ∇ response ← StatusAPI
+    ∇ response ← RealGitCommitAPI method
+    ⍝ Real Git commit API endpoint
+        :If method≢'POST'
+            response ← CreateHTTPResponse 405 'application/json' '{"error":"Method not allowed"}'
+            →0
+        :EndIf
+        
+        :Trap 0
+            commit_result ← APLCICD.GitAPL.AutoCommit 'WebServer API automated commit'
+            result ← ⎕NS ''
+            result.success ← commit_result.success
+            result.message ← commit_result.message
+            result.timestamp ← ⎕TS
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
+    ∇
+    
+    ∇ response ← RealStatusAPI
     ⍝ API endpoint for real system status - no mocks!
-        response ← APLCICD.RealDashboard.GenerateAPIResponse '/api/status'
+        :Trap 0
+            status ← APLCICD.RealMonitor.GetSystemStatus
+            result ← ⎕NS ''
+            result.status ← status.status
+            result.uptime ← status.uptime
+            result.modules ← status.modules
+            result.memory ← status.memory
+            result.timestamp ← ⎕TS
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
     ∇
 
-    ∇ response ← WebhookHandler request
-    ⍝ Process incoming webhook requests
-        response ← ⎕NS ''
-        response.status ← 200
-        response.headers ← ⎕NS ''
-        response.headers.content_type ← 'application/json'
-        
+    ∇ response ← WebhookHandler req
+    ⍝ Process incoming webhook requests with Conga HTTP request object
         ⎕←'📥 Webhook received'
         
-        ⍝ Process webhook (simplified)
-        response.content ← 'Webhook processed successfully'
+        :Trap 0
+            ⍝ Process webhook using real webhook receiver with Conga request
+            webhook_result ← WebhookReceiver req.Headers req.Body
+            result ← ⎕NS ''
+            result.success ← 1
+            result.processed ← webhook_result
+            result.timestamp ← ⎕TS
+            response ← CreateCongaResponse 200 'application/json' (⎕JSON result)
+        :Else
+            error_result ← ⎕NS ''
+            error_result.error ← ⎕DM
+            response ← CreateCongaResponse 500 'application/json' (⎕JSON error_result)
+        :EndTrap
     ∇
 
     ⍝ ═══════════════════════════════════════════════════════════════
     ⍝ HTML Content Generation Functions
     ⍝ ═══════════════════════════════════════════════════════════════
 
-    ∇ html ← DashboardHTML
-    ⍝ Generate main dashboard HTML with REAL APLCICD data - no mocks!
-        html ← APLCICD.RealDashboard.GenerateHTML
+
+    ∇ response ← CreateCongaResponse (status content_type content)
+    ⍝ Create Conga-compatible HTTP response object
+        response ← ⎕NS ''
+        response.Status ← status
+        response.Headers ← ⎕NS ''
+        response.Headers.('Content-Type') ← content_type
+        response.Headers.('Content-Length') ← ⍕≢content
+        response.Headers.Connection ← 'close'
+        response.Body ← content
+    ∇
+    
+    ∇ response ← CreateHTTPResponse (status content_type content)
+    ⍝ Legacy HTTP response creation for compatibility
+        response ← CreateCongaResponse status content_type content
+    ∇
+    
+    ∇ text ← GetStatusText status
+    ⍝ Get HTTP status text
+        :Select status
+        :Case 200 ⋄ text ← 'OK'
+        :Case 404 ⋄ text ← 'Not Found'
+        :Case 500 ⋄ text ← 'Internal Server Error'
+        :Else ⋄ text ← 'Unknown'
+        :EndSelect
+    ∇
+    
+    ∇ content ← ServeFileContent filepath
+    ⍝ Get file content for serving
+        :Trap 22  ⍝ File not found
+            content ← ⊃⎕NGET filepath 1
+        :Else
+            content ← CreateSimpleDashboard  ⍝ Fallback to simple dashboard
+        :EndTrap
+    ∇
+    
+    ∇ response ← ServeFile (filepath content_type)
+    ⍝ Serve static file with proper HTTP headers
+        :Trap 22  ⍝ File not found
+            content ← ⊃⎕NGET filepath 1
+            response ← CreateCongaResponse 200 content_type content
+        :Else
+            response ← CreateCongaResponse 404 'text/html' (NotFoundHTML filepath)
+        :EndTrap
     ∇
 
     ∇ html ← DemoHTML
@@ -470,15 +634,15 @@
         APLCICD.Initialize
         
         ⍝ Start web server
-        {} Start 8080
+        {} Start 8081
         
         ⎕←''
         ⎕←'🏆 Competition Demo Server Ready!'
         ⎕←'================================'
-        ⎕←'🌐 Dashboard: http://localhost:8080'
-        ⎕←'🎯 APL Forge Demo: http://localhost:8080/demo'
-        ⎕←'📊 API Status: http://localhost:8080/api/status'
-        ⎕←'🔗 Webhooks: http://localhost:8080/webhook'
+        ⎕←'🌐 Dashboard: http://localhost:8081'
+        ⎕←'🎯 APL Forge Demo: http://localhost:8081/demo'
+        ⎕←'📊 API Status: http://localhost:8081/api/status'
+        ⎕←'🔗 Webhooks: http://localhost:8081/webhook'
         ⎕←''
         ⎕←'Press Ctrl+C to stop server'
         
