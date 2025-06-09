@@ -533,16 +533,88 @@
     
     ∇ SelfOptimize
     ⍝ Demonstrate self-optimization capabilities
-        :If 0=⎕NC'SelfOptimizer.DemoSelfOptimization'
+        :If 0=⎕NC'SelfOptimizer.RunSelfOptimizationDemo'
             ⎕←'⚠️  SelfOptimizer module not loaded, attempting to initialize...'
             SelfOptimizer.Initialize
         :EndIf
         
         :Trap 11
-            SelfOptimizer.DemoSelfOptimization
+            SelfOptimizer.RunSelfOptimizationDemo
         :Else
             ⎕←'❌ Self-optimization demo failed - ensure SelfOptimizer module is loaded'
         :EndTrap
+    ∇
+
+    ∇ result ← SelfCommit msg
+    ⍝ Use the project to commit itself using GitAPL integration
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   msg (character): Commit message
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Commit operation result
+        
+        ⎕←'🤖 APLCICD Self-Commit System'
+        ⎕←'============================='
+        ⎕←'Using integrated GitAPL module for autonomous commits...'
+        ⎕←''
+        
+        :Trap 11 22
+            ⍝ Check current git status
+            ⎕←'📊 Checking repository status...'
+            status ← GitAPL.GitStatus
+            
+            :If status.clean
+                ⎕←'✅ Repository is clean - no changes to commit'
+                result ← ⎕NS ''
+                result.success ← 0
+                result.message ← 'No changes to commit'
+                →0
+            :EndIf
+            
+            ⎕←'📝 Found changes:'
+            ⎕←'  Modified: ',⍕≢status.modified
+            ⎕←'  Untracked: ',⍕≢status.untracked
+            ⎕←'  Staged: ',⍕≢status.staged
+            ⎕←''
+            
+            ⍝ Create AI collaboration commit message
+            ai_msg ← msg
+            ai_msg ,← ⎕UCS 10 10
+            ai_msg ,← '🤖 Generated with [Claude Code](https://claude.ai/code)'
+            ai_msg ,← ⎕UCS 10 10
+            ai_msg ,← 'Co-Authored-By: Claude <noreply@anthropic.com>'
+            
+            ⍝ Commit using GitAPL
+            ⎕←'🚀 Creating self-commit...'
+            result ← GitAPL.GitCommit ai_msg
+            
+            :If result.success
+                ⎕←'✅ Self-commit successful!'
+                ⎕←'📋 Commit hash: ',8↑result.commit_hash
+                ⎕←'📝 Message: ',msg
+                ⎕←'🤝 AI collaboration flagged transparently'
+                
+                ⍝ Display git log to show the commit
+                ⎕←''
+                ⎕←'📚 Recent commits:'
+                recent ← GitAPL.GitLog 3
+                :For commit :In recent
+                    ⎕←'  ',8↑commit.hash,' - ',commit.message
+                :EndFor
+            :Else
+                ⎕←'❌ Self-commit failed: ',result.error
+            :EndIf
+            
+        :Else
+            ⎕←'❌ Self-commit system error: ',⎕DM
+            result ← ⎕NS ''
+            result.success ← 0
+            result.error ← ⎕DM
+        :EndTrap
+        
+        ⎕←''
+        ⎕←'🏆 Self-committing demonstrates APL''s meta-programming power!'
     ∇
 
     ∇ RecursiveDemo
