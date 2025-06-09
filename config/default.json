@@ -33,6 +33,7 @@
   },
   "vibe": {
     "enabled": true,
+    "vibe_mode": true,
     "compression_level": "standard",
     "auto_glossary": true,
     "target_compression": 0.6

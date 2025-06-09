@@ -5,13 +5,13 @@
 ⍝ Note: Main functionality moved to vibe.dyalog for LLM co-creation optimization
 ⍝ 
 ⍝ Public Functions:
-⍝   Initialize                 - Module initialization
-⍝   BenchmarkPerformance n     - Performance benchmarking utilities
+⍝   ∆I                 - Module initialization
+⍝   ∆B n     - Performance benchmarking utilities
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
-    ∇ Initialize
-    ⍝ Initialize Core module (legacy)
+    ∇ ∆I
+    ⍝ ∆I Core module (legacy)
         ⎕←'  ✅ Core legacy utilities loaded (main functionality in vibe.dyalog)'
     ∇
 
@@ -31,7 +31,7 @@
     ⍝ Performance Analysis and Benchmarking
     ⍝ ═══════════════════════════════════════════════════════════════
 
-    ∇ BenchmarkPerformance iterations
+    ∇ ∆B iterations
     ⍝ Basic performance benchmark utilities
     ⍝ 
     ⍝ Arguments:
@@ -67,7 +67,7 @@
         elapsed ← (⎕AI[3]-start_time)÷1000
         ops_per_sec ← n÷elapsed⌈0.001
         
-        result ← ⎕NS ''
+        result←⎕ns ''
         result.iterations ← n
         result.elapsed_seconds ← elapsed
         result.operations_per_second ← ops_per_sec
