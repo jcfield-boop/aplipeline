@@ -381,7 +381,55 @@ async function runVibeCompression() {
 
 async function runSelfOptimization() {
     showRefreshIndicator();
-    alert('🔄 Self-optimization would analyze and improve the system!');
+    
+    try {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = '🔄 Running...';
+        button.disabled = true;
+        
+        const response = await fetch('/api/selfoptimize', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            let message = `✅ Self-optimization completed!\n\n`;
+            message += `📊 Performance Score: ${data.performance_score}\n`;
+            message += `📈 Quality Score: ${data.quality_score}\n`;
+            message += `🎵 Vibe Effectiveness: ${data.vibe_effectiveness}\n`;
+            message += `⚡ Pipeline Efficiency: ${data.pipeline_efficiency}\n`;
+            message += `🔧 Improvements Found: ${data.improvements_found}\n`;
+            if (data.improvement_applied) {
+                message += `\n📝 Applied: ${data.improvement_applied}`;
+            }
+            alert(message);
+            
+            // Refresh dashboard data
+            setTimeout(() => {
+                loadAllData();
+            }, 1000);
+        } else {
+            alert('❌ Self-optimization failed: ' + data.message);
+        }
+        
+        // Restore button
+        button.textContent = originalText;
+        button.disabled = false;
+        
+    } catch (error) {
+        alert('❌ Error running self-optimization: ' + error.message);
+        console.error('Self-optimization error:', error);
+        
+        // Restore button in case of error
+        if (event && event.target) {
+            event.target.textContent = '🔄 Self-Optimize System';
+            event.target.disabled = false;
+        }
+    }
 }
 
 async function commitImprovements() {

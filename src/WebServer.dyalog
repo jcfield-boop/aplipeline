@@ -313,6 +313,8 @@
             response ← GitInfoAPI
         :Case '/api/system/live'
             response ← SystemLiveAPI
+        :Case '/api/selfoptimize'
+            response ← SelfOptimizeAPI method
         :Else
             response ← CreateCongaResponse 404 'text/html' (NotFoundHTML path)
         :EndSelect
@@ -698,6 +700,66 @@
             error_result.error ← ⎕DM
             response ← CreateCongaResponse 500 'application/json' (⎕JSON error_result)
         :EndTrap
+    ∇
+
+    ∇ response ← SelfOptimizeAPI method
+    ⍝ Run self-optimization analysis and improvements
+        :If method≡'POST'
+            :Trap 0
+                result ← ⎕NS ''
+                result.status ← 'running'
+                result.message ← 'Self-optimization started'
+                result.timestamp ← ⎕TS
+                
+                ⍝ Run actual self-optimization
+                :Trap 0
+                    ⎕FIX'file://src/SelfOptimizer.dyalog'
+                    SelfOptimizer.Initialize
+                    
+                    ⍝ Run real analysis
+                    analysis ← SelfOptimizer.AnalyzeSelf
+                    
+                    ⍝ Get improvement results
+                    improvements_count ← ≢analysis.improvements
+                    
+                    result.status ← 'completed'
+                    result.message ← 'Self-optimization analysis completed'
+                    result.performance_score ← analysis.performance.score
+                    result.quality_score ← analysis.quality.score
+                    result.vibe_effectiveness ← analysis.vibe_effectiveness.score
+                    result.pipeline_efficiency ← analysis.pipeline.score
+                    result.improvements_found ← improvements_count
+                    result.success ← 1
+                    
+                    ⍝ Apply safe improvements
+                    :If improvements_count > 0
+                        first_improvement ← ⊃analysis.improvements
+                        improvement_result ← SelfOptimizer.CommitImprovement first_improvement
+                        result.improvement_applied ← improvement_result
+                    :Else
+                        result.improvement_applied ← 'No improvements needed'
+                    :EndIf
+                    
+                :Else
+                    result.status ← 'error'
+                    result.message ← 'Self-optimization failed: ',⎕DM
+                    result.success ← 0
+                :EndTrap
+                
+                response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+            :Else
+                error_result ← ⎕NS ''
+                error_result.error ← 'Self-optimization API error: ',⎕DM
+                response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
+            :EndTrap
+        :Else
+            ⍝ GET request - return current optimization status
+            result ← ⎕NS ''
+            result.available ← 1
+            result.last_run ← 'Available'
+            result.message ← 'Self-optimization API ready'
+            response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
+        :EndIf
     ∇
 
     ⍝ ═══════════════════════════════════════════════════════════════
