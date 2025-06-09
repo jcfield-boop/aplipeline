@@ -31,6 +31,12 @@
     "memory_limit_mb": 512,
     "gc_threshold": 1000
   },
+  "vibe": {
+    "enabled": true,
+    "compression_level": "standard",
+    "auto_glossary": true,
+    "target_compression": 0.6
+  },
   "metadata": {
     "version": "2.0.0",
     "config_format": "aplcicd_v2"

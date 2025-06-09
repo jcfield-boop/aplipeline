@@ -295,6 +295,55 @@ APLCICD.SelfOptimize
     run_apl "$apl_optimize_code" "Self-optimization process"
 }
 
+run_vibe_demo() {
+    log_header "Vibe Coding Demonstration"
+    
+    local apl_vibe_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.LoadAdvancedModules
+APLCICD.VibeDemo
+⎕OFF"
+    
+    run_apl "$apl_vibe_code" "Vibe coding demonstration"
+}
+
+run_recursive_demo() {
+    log_header "Recursive Self-Testing"
+    
+    local apl_recursive_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.LoadAdvancedModules
+APLCICD.RecursiveDemo
+⎕OFF"
+    
+    run_apl "$apl_recursive_code" "Recursive self-testing"
+}
+
+run_competition_server() {
+    log_header "Competition Web Server"
+    
+    local apl_server_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.LoadAdvancedModules
+APLCICD.CompetitionServer
+⎕OFF"
+    
+    run_apl "$apl_server_code" "Competition web server"
+}
+
+run_complete_competition_demo() {
+    log_header "Complete Competition Demonstration"
+    
+    local apl_complete_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.LoadAdvancedModules
+result ← APLCICD.CompleteCompetitionDemo
+⎕←'🏆 Competition demonstration complete!'
+⎕OFF"
+    
+    run_apl "$apl_complete_code" "Complete competition demo"
+}
+
 # Complete system demonstration (combination of key features)
 run_complete_demo() {
     log_header "Complete APLCICD System Demonstration"
@@ -354,12 +403,20 @@ Pipeline Commands:
   status            - System status and health check
   benchmark         - Performance benchmark
 
+Competition Commands:
+  vibe              - Vibe coding compression demonstration
+  recursive         - Recursive self-testing demonstration
+  competition       - Launch competition web server
+  complete-demo     - Complete competition demonstration
+
 Examples:
   ./aplcicd complete                              # Full demo
   ./aplcicd dashboard                             # Launch dashboard
   ./aplcicd ai "Generated using Claude AI"        # AI detection
   ./aplcicd demo                                  # Contest demo
   ./aplcicd pipeline                              # CI/CD test
+  ./aplcicd complete-demo                         # Competition demo
+  ./aplcicd vibe                                  # Code compression demo
 
 Key Features:
   🤖 Ultra-concise AI detection (18 characters)
@@ -426,6 +483,18 @@ main() {
             ;;
         "selfoptimize")
             run_self_optimize
+            ;;
+        "vibe")
+            run_vibe_demo
+            ;;
+        "recursive")
+            run_recursive_demo
+            ;;
+        "competition")
+            run_competition_server
+            ;;
+        "complete-demo")
+            run_complete_competition_demo
             ;;
         "restart")
             restart_dyalog

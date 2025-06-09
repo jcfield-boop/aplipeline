@@ -56,6 +56,16 @@
         opt_results ← TestSelfOptimizer
         result ← CombineResults result opt_results
         
+        ⍝ Vibe Module Tests
+        ⎕←'Testing Vibe Compression Module...'
+        vibe_results ← TestVibeModule
+        result ← CombineResults result vibe_results
+        
+        ⍝ Vibe Integration Tests
+        ⎕←'Testing Vibe Integration...'
+        vibe_integration_results ← TestVibeIntegration
+        result ← CombineResults result vibe_integration_results
+        
         ⍝ Integration Tests
         ⎕←'Testing Integration Scenarios...'
         integration_results ← TestIntegration
@@ -324,6 +334,195 @@
         result
     ∇
 
+    ∇ result ← TestVibeModule
+    ⍝ Comprehensive tests for Vibe compression module
+        result ← ⎕NS ''
+        result.total_tests ← 0
+        result.passed_tests ← 0
+        result.failed_tests ← 0
+        result.errors ← ⍬
+        
+        ⎕←'  Testing Vibe module functionality...'
+        
+        ⍝ Load Vibe module for testing
+        :Trap 22
+            ⎕FIX'file://src/vibe.dyalog'
+            Vibe.Initialize
+        :Else
+            test_fail ← Assert 'Vibe module loads' 1 0
+            result ← UpdateTestResults result test_fail
+            →0
+        :EndTrap
+        
+        ⍝ Test 1: JSON extraction functions
+        ⎕←'    Testing JSON extraction...'
+        test_json ← '{"enabled": true, "compression_level": "standard", "target_compression": 0.75}'
+        
+        bool_result ← Vibe.ExtractJSONBoolean test_json 'enabled'
+        test1 ← Assert 'ExtractJSONBoolean works' 1 bool_result
+        result ← UpdateTestResults result test1
+        
+        string_result ← Vibe.ExtractJSONString test_json 'compression_level'
+        test2 ← Assert 'ExtractJSONString works' 'standard' string_result
+        result ← UpdateTestResults result test2
+        
+        number_result ← Vibe.ExtractJSONNumber test_json 'target_compression'
+        test3 ← Assert 'ExtractJSONNumber works' 0.75 number_result
+        result ← UpdateTestResults result test3
+        
+        ⍝ Test 2: String replacement functionality
+        ⎕←'    Testing string replacement...'
+        original ← 'hello world hello universe'
+        replaced ← Vibe.StringReplace ('hi' 'hello' original)
+        test4 ← Assert 'StringReplace works' 'hi world hi universe' replaced
+        result ← UpdateTestResults result test4
+        
+        ⍝ Test edge case: empty replacement
+        edge_case ← Vibe.StringReplace ('' 'test' 'test string test')
+        test5 ← Assert 'StringReplace removes text' ' string ' edge_case
+        result ← UpdateTestResults result test5
+        
+        ⍝ Test 3: Compression functionality
+        ⎕←'    Testing compression...'
+        sample_code ← 'ProcessPipelineStage ← {pipeline_status ← ⎕NS '''' ⋄ file_contents ← data}'
+        
+        ⍝ Enable compression for testing
+        original_enabled ← Vibe.Config.enabled
+        Vibe.Config.enabled ← 1
+        
+        compressed ← Vibe.Compress sample_code
+        test6 ← Assert 'Compression produces shorter code' 1 (≢compressed) < ≢sample_code
+        result ← UpdateTestResults result test6
+        
+        test7 ← Assert 'Compression maintains non-empty result' 1 0<≢compressed
+        result ← UpdateTestResults result test7
+        
+        ⍝ Test 4: Decompression functionality
+        ⎕←'    Testing decompression...'
+        :Trap 0
+            decompressed ← Vibe.Decompress compressed
+            test8 ← Assert 'Decompression works' 1 0<≢decompressed
+            result ← UpdateTestResults result test8
+        :Else
+            test8 ← Assert 'Decompression executes without error' 1 0
+            result ← UpdateTestResults result test8
+        :EndTrap
+        
+        ⍝ Test 5: Compression ratio calculation
+        ⎕←'    Testing compression ratio...'
+        ratio ← Vibe.CompressionRatio sample_code compressed
+        test9 ← AssertRange 'Compression ratio reasonable' 0.1 1.0 ratio
+        result ← UpdateTestResults result test9
+        
+        ⍝ Test 6: Configuration management
+        ⎕←'    Testing configuration...'
+        status ← Vibe.GetVibeStatus
+        test10 ← Assert 'GetVibeStatus returns valid config' 1 (9=⎕NC'status.enabled')
+        result ← UpdateTestResults result test10
+        
+        test11 ← Assert 'Config has compression level' 1 0<≢status.compression_level
+        result ← UpdateTestResults result test11
+        
+        ⍝ Test 7: Compression levels
+        ⎕←'    Testing compression levels...'
+        :For level :In 'minimal' 'standard' 'maximum'
+            Vibe.SetCompressionLevel level
+            level_compressed ← Vibe.Compress sample_code
+            test_desc ← 'Compression level ',level,' works'
+            level_test ← Assert test_desc 1 0<≢level_compressed
+            result ← UpdateTestResults result level_test
+        :EndFor
+        
+        ⍝ Test 8: Toggle functionality
+        ⎕←'    Testing toggle functionality...'
+        current_state ← Vibe.Config.enabled
+        Vibe.ToggleVibeCompression
+        new_state ← Vibe.Config.enabled
+        test12 ← Assert 'Toggle changes state' 1 current_state≠new_state
+        result ← UpdateTestResults result test12
+        
+        ⍝ Restore state
+        Vibe.Config.enabled ← current_state
+        
+        ⍝ Test 9: Edge cases
+        ⎕←'    Testing edge cases...'
+        empty_compression ← Vibe.Compress ''
+        test13 ← Assert 'Empty string compression works' '' empty_compression
+        result ← UpdateTestResults result test13
+        
+        single_char ← Vibe.Compress 'a'
+        test14 ← Assert 'Single character compression works' 1 0<≢single_char
+        result ← UpdateTestResults result test14
+        
+        ⍝ Restore original settings
+        Vibe.Config.enabled ← original_enabled
+        
+        result
+    ∇
+    
+    ∇ result ← TestVibeIntegration
+    ⍝ Test Vibe integration with other modules
+        result ← ⎕NS ''
+        result.total_tests ← 0
+        result.passed_tests ← 0
+        result.failed_tests ← 0
+        result.errors ← ⍬
+        
+        ⎕←'  Testing Vibe integration...'
+        
+        ⍝ Test integration with Core module functions
+        :Trap 0
+            ⍝ Test compression of actual APL functions
+            core_function ← '∇ result ← AI text ⋄ words ← ('' ''∘≠⊆⊢)text ⋄ result ← (≢∪words) ÷ ≢words ∇'
+            
+            ⍝ Enable Vibe for testing
+            original_enabled ← Vibe.Config.enabled
+            Vibe.Config.enabled ← 1
+            
+            compressed_function ← Vibe.Compress core_function
+            test1 ← Assert 'Real function compression works' 1 (≢compressed_function) < ≢core_function
+            result ← UpdateTestResults result test1
+            
+            ⍝ Test that compressed function maintains structure
+            test2 ← Assert 'Compressed function not empty' 1 0<≢compressed_function
+            result ← UpdateTestResults result test2
+            
+            ⍝ Restore settings
+            Vibe.Config.enabled ← original_enabled
+            
+        :Else
+            test1 ← Assert 'Vibe integration test executes' 1 0
+            result ← UpdateTestResults result test1
+        :EndTrap
+        
+        ⍝ Test glossary generation
+        :Trap 0
+            test_glossary_path ← 'test_glossary.md'
+            Vibe.GenerateGlossary test_glossary_path
+            
+            ⍝ Check if file was created
+            :Trap 22
+                glossary_content ← ⊃⎕NGET test_glossary_path 1
+                test3 ← Assert 'Glossary file created' 1 0<≢glossary_content
+                result ← UpdateTestResults result test3
+                
+                test4 ← Assert 'Glossary contains mappings' 1 ∨/'Variable Mappings'⍷∊glossary_content
+                result ← UpdateTestResults result test4
+                
+                ⍝ Clean up test file
+                ⎕NDELETE test_glossary_path
+            :Else
+                test3 ← Assert 'Glossary generation works' 1 0
+                result ← UpdateTestResults result test3
+            :EndTrap
+        :Else
+            test3 ← Assert 'Glossary generation executes' 1 0
+            result ← UpdateTestResults result test3
+        :EndTrap
+        
+        result
+    ∇
+
     ∇ result ← TestIntegration
     ⍝ Integration tests for complete workflows
         result ← ⎕NS ''
@@ -401,6 +600,51 @@
         :EndTrap
     ∇
 
+    ∇ result ← RunVibeTests
+    ⍝ Run comprehensive Vibe module tests only
+        ⎕←''
+        ⎕←'🎵 Vibe Module Test Suite'
+        ⎕←'========================'
+        ⎕←''
+        
+        result ← ⎕NS ''
+        result.timestamp ← ⎕TS
+        result.total_tests ← 0
+        result.passed_tests ← 0
+        result.failed_tests ← 0
+        result.errors ← ⍬
+        
+        ⍝ Vibe Module Tests
+        ⎕←'Testing Vibe Compression Module...'
+        vibe_results ← TestVibeModule
+        result ← CombineResults result vibe_results
+        
+        ⍝ Vibe Integration Tests
+        ⎕←'Testing Vibe Integration...'
+        vibe_integration_results ← TestVibeIntegration
+        result ← CombineResults result vibe_integration_results
+        
+        ⍝ Final Report
+        ⎕←''
+        ⎕←'📊 Vibe Test Results:'
+        ⎕←'  Total Tests: ',⍕result.total_tests
+        ⎕←'  Passed: ',⍕result.passed_tests,' (',⍕⌊100×result.passed_tests÷result.total_tests⌈1,'%)'
+        ⎕←'  Failed: ',⍕result.failed_tests
+        
+        success_rate ← result.passed_tests ÷ result.total_tests⌈1
+        status ← (success_rate≥0.95)⊃'❌ FAILING' '✅ PASSING'
+        ⎕←'  Status: ',status
+        
+        ⍝ Show errors if any
+        :If 0<≢result.errors
+            ⎕←''
+            ⎕←'❌ Failed Tests:'
+            {⎕←'  ',⍵}¨result.errors
+        :EndIf
+        
+        result
+    ∇
+
     ∇ RunQuickTests
     ⍝ Quick smoke tests for basic functionality
         ⎕←'🏃 Quick Smoke Tests'
@@ -430,8 +674,19 @@
             ⎕←'System health: ❌ Failed (error)'
         :EndTrap
         
+        ⍝ Quick Vibe test
+        :Trap 0
+            ⎕FIX'file://src/vibe.dyalog'
+            Vibe.Initialize
+            test_compression ← Vibe.Compress 'test code'
+            ⎕←'Vibe compression: ',(0<≢test_compression)⊃'❌ Failed' '✅ Passed'
+        :Else
+            ⎕←'Vibe compression: ❌ Failed (error)'
+        :EndTrap
+        
         ⎕←''
         ⎕←'Use Tests.RunAllTests for comprehensive testing'
+        ⎕←'Use Tests.RunVibeTests for Vibe-specific testing'
     ∇
 
 :EndNamespace

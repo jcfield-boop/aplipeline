@@ -1,0 +1,618 @@
+:Namespace Vibe
+⍝ APLCICD.Vibe - Ultra-Concise Code Compression System
+⍝ "Vibe Coding" - coined Feb 2025
+⍝ 
+⍝ Transforms verbose APL into ultra-concise forms using symbolic mappings
+⍝ Enables maximum APL expressiveness while maintaining human readability via glossary
+
+    ⎕IO ← 0 ⋄ ⎕ML ← 1
+
+    ∇ Initialize
+    ⍝ Initialize vibe compression system
+        LoadConfiguration
+        :If Config.enabled
+            ⎕←'  ✅ Vibe coding compression system loaded (enabled)'
+            InitializeCompressionMaps
+        :Else
+            ⎕←'  ⚠️  Vibe coding compression system loaded (disabled)'
+        :EndIf
+    ∇
+
+    ∇ LoadConfiguration
+    ⍝ Load vibe configuration using elegant APL JSON parsing
+        ⍝ Default configuration
+        Config ← ⎕NS ''
+        Config.enabled ← 1  ⍝ Enabled - StringReplace issues fixed
+        Config.compression_level ← 'standard'
+        Config.auto_glossary ← 1
+        Config.target_compression ← 0.6
+        Config.glossary_path ← 'config/GLOSSARY.md'
+        
+        :Trap 22 11 1000
+            config_text ← ⊃⎕NGET 'config/default.json' 1
+            
+            ⍝ Simple elegant extraction using APL text processing  
+            config_string ← ∊config_text  ⍝ Flatten to single string
+            :If ∨/'"vibe"'⍷config_string  ⍝ Check if vibe appears in config
+                ⍝ Extract values using APL pattern matching
+                Config.enabled ← ExtractJSONBoolean config_string 'enabled'
+                Config.compression_level ← ExtractJSONString config_string 'compression_level'
+                Config.auto_glossary ← ExtractJSONBoolean config_string 'auto_glossary'
+                Config.target_compression ← ExtractJSONNumber config_string 'target_compression'
+            :EndIf
+            
+        :Else
+            ⎕←'⚠️  Using default vibe configuration'
+        :EndTrap
+    ∇
+
+    ∇ value ← ExtractJSONBoolean (text field)
+    ⍝ Extract boolean value using elegant APL text processing
+        pattern ← '"',field,'":\s*(true|false)'
+        :Trap 11
+            matches ← pattern ⎕S '\1' ⊣text
+            value ← (0<≢matches)∧'true'≡⊃matches
+        :Else
+            value ← 0
+        :EndTrap
+    ∇
+
+    ∇ value ← ExtractJSONString (text field)
+    ⍝ Extract string value using elegant APL text processing
+        pattern ← '"',field,'":\s*"([^"]*)"'
+        :Trap 11
+            matches ← pattern ⎕S '\1' ⊣text
+            value ← (0<≢matches)⊃(⊂⊃matches),⊂'standard'
+        :Else
+            value ← 'standard'
+        :EndTrap
+    ∇
+
+    ∇ value ← ExtractJSONNumber (text field)
+    ⍝ Extract numeric value using elegant APL text processing
+        pattern ← '"',field,'":\s*([0-9.]+)'
+        :Trap 11
+            matches ← pattern ⎕S '\1' ⊣text
+            value ← (0<≢matches)⊃(⍎⊃matches),0.6
+        :Else
+            value ← 0.6
+        :EndTrap
+    ∇
+
+    ∇ InitializeCompressionMaps
+    ⍝ Create bidirectional compression mappings
+        
+        ⍝ Variable name compression (human → vibe)
+        VarMap ← ⎕NS ''
+        VarMap.ai_detection_result ← '⍺'
+        VarMap.pipeline_status ← '⍵'
+        VarMap.file_contents ← '⍳'
+        VarMap.error_messages ← '⍴'
+        VarMap.performance_metrics ← '⍨'
+        VarMap.configuration_data ← '⍣'
+        VarMap.test_results ← '⍤'
+        VarMap.git_commit_hash ← '⍢'
+        VarMap.quality_score ← '⌸'
+        VarMap.security_analysis ← '⌺'
+        VarMap.self_optimization ← '⍠'
+        VarMap.webhook_payload ← '⍞'
+        VarMap.dashboard_metrics ← '⍟'
+        VarMap.monitoring_data ← '⍫'
+        VarMap.system_health ← '⍬'
+        
+        ⍝ Function name compression
+        FuncMap ← ⎕NS ''
+        FuncMap.ProcessPipelineStage ← '∆P'
+        FuncMap.AnalyzeCodeQuality ← '∆Q'
+        FuncMap.DetectAIContent ← '∆A'
+        FuncMap.ValidateSyntax ← '∆S'
+        FuncMap.ExecuteTests ← '∆T'
+        FuncMap.OptimizePerformance ← '∆O'
+        FuncMap.GenerateReport ← '∆R'
+        FuncMap.HandleWebhook ← '∆W'
+        FuncMap.CollectMetrics ← '∆M'
+        FuncMap.UpdateDashboard ← '∆D'
+        
+        ⍝ Extended function mappings from codebase analysis
+        FuncMap.Initialize ← '∆I'
+        FuncMap.LoadCoreModules ← '∆L'
+        FuncMap.GenerateHTML ← '∆H'
+        FuncMap.GetSystemMetrics ← '∆G'
+        FuncMap.StartServer ← '∆St'
+        FuncMap.StartCompetitionServer ← '∆Sc'
+        FuncMap.ApplyCompression ← '∆Ac'
+        FuncMap.StringReplace ← '∆Sr'
+        FuncMap.CompressionRatio ← '∆Cr'
+        FuncMap.DemoVibeCompression ← '∆Dv'
+        FuncMap.CreateReverseMaps ← '∆Cm'
+        FuncMap.GenerateGlossary ← '∆Gg'
+        
+        ⍝ Method-style function patterns (Class.Method → ∇M)
+        ⍝ Use variable names without dots for APL compatibility
+        FuncMap.ConfigLoadConfig ← '∇Cl'
+        FuncMap.MonitorGetMetrics ← '∇Mg'
+        FuncMap.PipelineRunStage ← '∇Pr'
+        FuncMap.WebServerStart ← '∇Ws'
+        FuncMap.VibeCompress ← '∇Vc'
+        FuncMap.VibeDecompress ← '∇Vd'
+        
+        ⍝ Add dotted method patterns using ⍎ for dynamic assignment
+        ⍎'FuncMap.VibeCompress_dot ← ''∇Vc'''
+        ⍎'FuncMap.VibeDecompress_dot ← ''∇Vd'''
+        ⍎'FuncMap.WebServerStart_dot ← ''∇Ws'''
+        ⍎'FuncMap.MonitorGetMetrics_dot ← ''∇Mg'''
+        
+        ⍝ Pattern compression maps: [find] [replace]
+        Patterns ← ⍬
+        ⍝ Patterns ,← ⊂('result ← ⎕NS ''''') ('result←⎕ns⍬')  ⍝ Temporarily disabled - quote issue
+        Patterns ,← ⊂(':If 0=≢') (':if 0=⍴')
+        Patterns ,← ⊂('⎕←''Error: ''') ('⎕←''❌''')
+        Patterns ,← ⊂('⎕←''Success: ''') ('⎕←''✅''')
+        Patterns ,← ⊂('timestamp ← ⎕TS') ('timestamp←⎕ts')
+        Patterns ,← ⊂('(⊃⍴⍴') ('(≡')
+        Patterns ,← ⊂('(⎕UCS 10)') ('⊃')
+        
+        ⍝ Method-style patterns (Class.Method → ∇Symbol)
+        Patterns ,← ⊂('Vibe.Compress') ('∇Vc')
+        Patterns ,← ⊂('Vibe.Decompress') ('∇Vd')
+        Patterns ,← ⊂('WebServer.Start') ('∇Ws')
+        Patterns ,← ⊂('Monitor.GetMetrics') ('∇Mg')
+        Patterns ,← ⊂('Config.LoadConfig') ('∇Cl')
+        Patterns ,← ⊂('Pipeline.RunStage') ('∇Pr')
+        
+        ⍝ Create reverse mappings for decompression
+        ⍝ CreateReverseMaps  ⍝ Temporarily disabled for testing
+    ∇
+
+    ∇ AddFunctionFromFile filename
+    ⍝ Scan APL file and add function definitions to compression map
+        :Trap 22
+            content ← ⊃⎕NGET filename 1
+            
+            ⍝ Find function definitions (∇ function_name)
+            :For line :In content
+                :If '∇'∊line
+                    ⍝ Extract function name after ∇
+                    parts ← ' '(≠⊆⊢)line
+                    :For part :In parts
+                        :If ∨/'∇'∊part
+                            func_name ← '∇'~⍨part
+                            :If (0<≢func_name)∧~∨/'←'∊func_name  ⍝ Skip result assignments
+                                ⍝ Generate compressed name if not exists
+                                :If 0=⎕NC'FuncMap.',func_name
+                                    compressed_name ← '∆',(⍕≢FuncMap.⎕NL 2)
+                                    FuncMap⍎func_name,'←',compressed_name
+                                    ⎕←'  Added function: ',func_name,' → ',compressed_name
+                                :EndIf
+                            :EndIf
+                        :EndIf
+                    :EndFor
+                :EndIf
+            :EndFor
+        :Else
+            ⎕←'Failed to read file: ',filename
+        :EndTrap
+    ∇
+
+    ∇ ScanCodebaseForFunctions
+    ⍝ Automatically discover functions from codebase files
+        ⎕←'🔍 Scanning codebase for function definitions...'
+        
+        ⍝ Scan all .dyalog files in src directory
+        files ← 'src/*.dyalog'
+        :Trap 22
+            :For file :In ⊃⎕NINFO⍠1⊢files
+                ⎕←'  Scanning: ',file
+                AddFunctionFromFile file
+            :EndFor
+        :Else
+            ⎕←'  Manual function list used (file scanning failed)'
+        :EndTrap
+        
+        ⎕←'✅ Function scanning complete'
+    ∇
+
+    ∇ result←StringReplace params
+    ⍝ Replace all occurrences using (new old text) format
+    ⍝ Simple string replacement without regex complications
+        new ← 0⊃params ⋄ old ← 1⊃params ⋄ text ← 2⊃params
+        
+        :If 0=≢old ⋄ result ← text ⋄ →0 ⋄ :EndIf
+        :If ~∨/old⍷text ⋄ result ← text ⋄ →0 ⋄ :EndIf
+        
+        ⍝ Simple iterative replacement to avoid complex position tracking
+        result ← text
+        :While ∨/old⍷result
+            pos ← ⍸old⍷result
+            :If 0<≢pos
+                first_pos ← ⊃pos
+                ⍝ Replace first occurrence
+                before ← first_pos↑result
+                after ← (first_pos+≢old)↓result
+                result ← before,new,after
+            :EndIf
+        :EndWhile
+    ∇
+
+    ∇ CreateReverseMaps
+    ⍝ Create reverse mappings for decompression
+        ReverseVarMap ← ⎕NS ''
+        ReverseFuncMap ← ⎕NS ''
+        ReversePatterns ← ⍬
+        
+        ⍝ Reverse variable mappings - create lookup table
+        var_names ← VarMap.⎕NL 2
+        VarLookup ← ⍬
+        :For name :In var_names
+            compressed ← VarMap⍎name
+            VarLookup ,← ⊂(compressed)(name)
+        :EndFor
+        
+        ⍝ Reverse function mappings - create lookup table
+        func_names ← FuncMap.⎕NL 2
+        FuncLookup ← ⍬
+        :For name :In func_names
+            compressed ← FuncMap⍎name
+            FuncLookup ,← ⊂(compressed)(name)
+        :EndFor
+        
+        ⍝ Reverse pattern mappings - swap find/replace order
+        :For pattern :In Patterns
+            ReversePatterns ,← ⊂(1⊃pattern)(0⊃pattern)
+        :EndFor
+    ∇
+
+    ∇ compressed ← Compress code
+    ⍝ Compress verbose APL code into ultra-concise "vibe" form
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   code (character): Verbose APL code
+    ⍝ 
+    ⍝ Returns:
+    ⍝   compressed (character): Ultra-concise vibe code
+        
+        :If ~Config.enabled
+            compressed ← code  ⍝ Return unchanged if disabled
+            →0
+        :EndIf
+        
+        compressed ← code
+        
+        ⍝ Apply compression based on level setting
+        :Select Config.compression_level
+        :Case 'minimal'
+            compressed ← ApplyMinimalCompression compressed
+        :Case 'standard'
+            compressed ← ApplyStandardCompression compressed
+        :Case 'maximum'
+            compressed ← ApplyMaximumCompression compressed
+        :Else
+            compressed ← ApplyStandardCompression compressed  ⍝ Default
+        :EndSelect
+        
+        ⍝ Auto-generate glossary if enabled
+        :If Config.auto_glossary
+            GenerateGlossary Config.glossary_path
+        :EndIf
+    ∇
+
+    ∇ compressed ← ApplyMinimalCompression code
+    ⍝ Apply minimal compression (variable names only)
+        compressed ← code
+        
+        ⍝ Apply only variable name compression for minimal mode
+        var_names ← VarMap.⎕NL 2
+        :For i :In ⍳1⌈≢var_names
+            :If i<≢var_names
+                var ← ∊(var_names[i;]≠' ')/var_names[i;]  ⍝ Get row and trim spaces
+                replacement ← VarMap⍎var
+                compressed ← StringReplace (replacement var compressed)
+            :EndIf
+        :EndFor
+    ∇
+
+    ∇ compressed ← ApplyStandardCompression code
+    ⍝ Apply standard compression (variable names + functions + patterns)
+        compressed ← code
+        
+        ⍝ Apply pattern compression first (includes method patterns)
+        :For pattern :In Patterns
+            :If 2=≢pattern
+                find ← 0⊃pattern
+                replace ← 1⊃pattern
+                compressed ← StringReplace (replace find compressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Apply variable name compression
+        var_names ← VarMap.⎕NL 2
+        :For i :In ⍳1⌈≢var_names
+            :If i<≢var_names
+                var ← ∊(var_names[i;]≠' ')/var_names[i;]  ⍝ Get row and trim spaces
+                replacement ← VarMap⍎var
+                compressed ← StringReplace (replacement var compressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Apply function name compression
+        func_names ← FuncMap.⎕NL 2
+        :For i :In ⍳1⌈≢func_names
+            :If i<≢func_names
+                func ← ∊(func_names[i;]≠' ')/func_names[i;]  ⍝ Get row and trim spaces
+                replacement ← FuncMap⍎func
+                compressed ← StringReplace (replacement func compressed)
+            :EndIf
+        :EndFor
+    ∇
+
+    ∇ compressed ← ApplyMaximumCompression code
+    ⍝ Apply maximum compression (patterns + variables + functions + whitespace)
+        compressed ← code
+        
+        ⍝ Apply pattern compression first (includes method patterns)
+        :For pattern :In Patterns
+            :If 2=≢pattern
+                find ← 0⊃pattern
+                replace ← 1⊃pattern
+                compressed ← StringReplace (replace find compressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Apply variable name compression
+        var_names ← VarMap.⎕NL 2
+        :For i :In ⍳1⌈≢var_names
+            :If i<≢var_names
+                var ← ∊(var_names[i;]≠' ')/var_names[i;]  ⍝ Get row and trim spaces
+                replacement ← VarMap⍎var
+                compressed ← StringReplace (replacement var compressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Apply function name compression
+        func_names ← FuncMap.⎕NL 2
+        :For i :In ⍳1⌈≢func_names
+            :If i<≢func_names
+                func ← ∊(func_names[i;]≠' ')/func_names[i;]  ⍝ Get row and trim spaces
+                replacement ← FuncMap⍎func
+                compressed ← StringReplace (replacement func compressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Apply whitespace optimization
+        compressed ← ApplyWhitespaceCompression compressed
+    ∇
+
+    ∇ compressed ← ApplyWhitespaceCompression code
+    ⍝ Apply simple whitespace compression using string replacement
+        compressed ← code
+        
+        ⍝ Remove extra spaces around common operators using StringReplace
+        compressed ← StringReplace ('←' ' ← ' compressed)
+        compressed ← StringReplace ('⋄' ' ⋄ ' compressed)
+        compressed ← StringReplace ('∘' ' ∘ ' compressed)
+        compressed ← StringReplace ('⍨' ' ⍨ ' compressed)
+        compressed ← StringReplace ('¨' ' ¨ ' compressed)
+        
+        ⍝ Remove multiple spaces
+        :While ∨/'  '⍷compressed
+            compressed ← StringReplace (' ' '  ' compressed)
+        :EndWhile
+    ∇
+
+    ∇ decompressed ← Decompress vibe_code
+    ⍝ Decompress vibe code back to human-readable form
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   vibe_code (character): Ultra-concise vibe code
+    ⍝ 
+    ⍝ Returns:
+    ⍝   decompressed (character): Human-readable APL code
+        
+        decompressed ← vibe_code
+        
+        ⍝ Reverse the compression process
+        
+        ⍝ Create reverse mappings if not already done
+        :If 0=⎕NC'VarLookup' ⋄ CreateReverseMaps ⋄ :EndIf
+        
+        ⍝ Decompress variables using lookup table
+        :For lookup :In VarLookup
+            :If 2=≢lookup
+                symbol ← 0⊃lookup
+                original ← 1⊃lookup
+                decompressed ← StringReplace (original symbol decompressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Decompress functions using lookup table
+        :For lookup :In FuncLookup
+            :If 2=≢lookup
+                symbol ← 0⊃lookup
+                original ← 1⊃lookup
+                decompressed ← StringReplace (original symbol decompressed)
+            :EndIf
+        :EndFor
+        
+        ⍝ Decompress patterns using reverse patterns
+        :For pattern :In ReversePatterns
+            :If 2=≢pattern
+                find ← 0⊃pattern
+                replace ← 1⊃pattern
+                decompressed ← StringReplace (replace find decompressed)
+            :EndIf
+        :EndFor
+    ∇
+
+
+    ∇ ratio ← CompressionRatio (original compressed)
+    ⍝ Calculate compression ratio achieved
+        ratio ← (≢compressed) ÷ (≢original)⌈1
+    ∇
+
+    ∇ GenerateGlossary filename
+    ⍝ Generate glossary.md file for vibe code reverse translation
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   filename (character): Output filename for glossary
+        
+        :If 0=⎕NC'filename' ⋄ filename ← Config.glossary_path ⋄ :EndIf
+        
+        ⍝ Ensure directory exists
+        dir ← ⊃,/'/'(≠⊆⊢)filename
+        :If ~⎕NEXISTS dir ⋄ ⎕MKDIR dir ⋄ :EndIf
+        
+        newline ← ⎕UCS 10
+        glossary ← '# APLCICD Vibe Code Glossary',newline
+        glossary ,← '## Ultra-Concise Code Compression Mappings',newline,newline
+        glossary ,← 'This glossary enables reverse translation of "vibe coded" APL back to human-readable form.',newline,newline
+        
+        ⍝ Variable mappings section
+        glossary ,← '## Variable Mappings',newline,newline
+        glossary ,← '| Vibe Symbol | Human Readable |',newline
+        glossary ,← '|-------------|----------------|',newline
+        
+        var_names ← VarMap.⎕NL 2
+        :For i :In ⍳1⌈≢var_names
+            :If i<≢var_names
+                name ← ∊(var_names[i;]≠' ')/var_names[i;]  ⍝ Get row and trim spaces
+                symbol ← VarMap⍎name
+                glossary ,← '| `',symbol,'` | `',name,'` |',newline
+            :EndIf
+        :EndFor
+        
+        ⍝ Function mappings section
+        glossary ,← newline,'## Function Mappings',newline,newline
+        glossary ,← '| Vibe Symbol | Human Readable |',newline
+        glossary ,← '|-------------|----------------|',newline
+        
+        func_names ← FuncMap.⎕NL 2
+        :For i :In ⍳1⌈≢func_names
+            :If i<≢func_names
+                name ← ∊(func_names[i;]≠' ')/func_names[i;]  ⍝ Get row and trim spaces
+                symbol ← FuncMap⍎name
+                glossary ,← '| `',symbol,'` | `',name,'` |',newline
+            :EndIf
+        :EndFor
+        
+        ⍝ Pattern mappings section
+        glossary ,← newline,'## Pattern Mappings',newline,newline
+        glossary ,← '| Vibe Code | Human Readable |',newline
+        glossary ,← '|-----------|----------------|',newline
+        
+        ⍝ Use Patterns array instead of PatternMap
+        :For pattern :In Patterns
+            :If 2=≢pattern
+                find ← 0⊃pattern
+                replace ← 1⊃pattern
+                glossary ,← '| `',replace,'` | `',find,'` |',newline
+            :EndIf
+        :EndFor
+        
+        ⍝ Usage examples
+        glossary ,← newline,'## Usage Examples',newline,newline
+        glossary ,← '### Compression',newline
+        glossary ,← '```apl',newline
+        glossary ,← 'vibe_code ← Vibe.Compress original_code',newline
+        glossary ,← '```',newline,newline
+        glossary ,← '### Decompression',newline
+        glossary ,← '```apl',newline
+        glossary ,← 'readable_code ← Vibe.Decompress vibe_code',newline
+        glossary ,← '```',newline
+        
+        ⍝ Write glossary file
+        :Trap 22
+            glossary ⎕NPUT filename 1
+            ⎕←'📚 Glossary generated: ',filename
+        :Else
+            ⎕←'❌ Failed to write glossary: ',⎕DM
+        :EndTrap
+    ∇
+
+    ∇ SetCompressionLevel level
+    ⍝ Set compression level (minimal/standard/maximum)
+        Config.compression_level ← level
+        ⎕←'🔧 Compression level set to: ',level
+    ∇
+
+    ∇ ToggleVibeCompression
+    ⍝ Toggle vibe compression on/off
+        Config.enabled ← ~Config.enabled
+        ⎕←'🎛️  Vibe compression ',((Config.enabled)⊃'disabled' 'enabled')
+    ∇
+
+    ∇ result ← GetVibeStatus
+    ⍝ Get current vibe configuration status
+        result ← ⎕NS ''
+        result.enabled ← Config.enabled
+        result.compression_level ← Config.compression_level
+        result.auto_glossary ← Config.auto_glossary
+        result.target_compression ← Config.target_compression
+        result.glossary_path ← Config.glossary_path
+    ∇
+
+    ∇ DemoVibeCompression
+    ⍝ Demonstrate vibe compression capabilities with all levels
+        ⎕←'🎵 Vibe Coding Compression Demo'
+        ⎕←'=============================='
+        ⎕←''
+        
+        ⍝ Show current configuration
+        status ← GetVibeStatus
+        ⎕←'📋 Current Configuration:'
+        ⎕←'   Enabled: ',⍕status.enabled
+        ⎕←'   Level: ',status.compression_level
+        ⎕←'   Auto-glossary: ',⍕status.auto_glossary
+        ⎕←'   Target compression: ',⍕status.target_compression
+        ⎕←''
+        
+        ⍝ Test sample code
+        sample_code ← 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS '''' ⋄ :If 0=≢file_contents ⋄ error_messages ← ''Empty file'' ⋄ :EndIf}'
+        
+        ⍝ Temporarily enable compression for demo
+        original_enabled ← Config.enabled
+        Config.enabled ← 1
+        
+        ⍝ Test all compression levels
+        levels ← 'minimal' 'standard' 'maximum'
+        
+        ⎕←'📊 Compression Level Comparison:'
+        ⎕←'Original code (', ⍕≢sample_code, ' chars):'
+        ⎕←sample_code
+        ⎕←''
+        
+        compressed_results ← ⍬
+        :For level :In levels
+            Config.compression_level ← level
+            compressed ← Compress sample_code
+            ratio ← CompressionRatio sample_code compressed
+            compressed_results ,← ⊂compressed
+            
+            ⎕←level,' compression (', ⍕≢compressed, ' chars, ratio: ',⍕ratio,'):'
+            ⎕←compressed
+            ⎕←''
+        :EndFor
+        
+        ⍝ Restore original settings
+        Config.enabled ← original_enabled
+        
+        ⍝ Calculate compression statistics
+        max_compressed ← ⊃⌽compressed_results
+        best_ratio ← CompressionRatio sample_code max_compressed
+        
+        ⎕←'📊 Compression Summary:'
+        ⎕←'   Original chars: ', ⍕≢sample_code
+        ⎕←'   Best compressed: ', ⍕≢max_compressed
+        ⎕←'   Best ratio: ', ⍕best_ratio
+        ⎕←'   Space savings: ', ⍕⌊100×1-best_ratio, '%'
+        ⎕←''
+        ⎕←'💡 Benefits for LLM Token Processing:'
+        ⎕←'   • Dramatically reduced token count'
+        ⎕←'   • More code fits in context windows'
+        ⎕←'   • Faster processing due to shorter inputs'
+        ⎕←'   • Cost savings for API-based LLMs'
+        ⎕←'   • Maintains full APL expressiveness'
+        ⎕←''
+        ⎕←'📚 Glossary auto-generated at: ',Config.glossary_path
+    ∇
+
+:EndNamespace

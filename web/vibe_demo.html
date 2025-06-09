@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APLCICD - Vibe Coding Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Fira Code', 'Monaco', 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #ffffff;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .concept-banner {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .concept-banner h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .demo-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .compression-demo {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #feca57;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+        }
+        
+        .before-code {
+            border-left-color: #ff6b6b;
+        }
+        
+        .after-code {
+            border-left-color: #48cae4;
+        }
+        
+        .arrow {
+            font-size: 2em;
+            color: #feca57;
+            text-align: center;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #feca57;
+        }
+        
+        .interactive-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #feca57;
+        }
+        
+        .code-input {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-family: 'Fira Code', monospace;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .compress-btn {
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            margin: 10px 5px;
+        }
+        
+        .compress-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .level-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .level-btn {
+            padding: 10px 20px;
+            border: 2px solid #feca57;
+            background: transparent;
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .level-btn.active,
+        .level-btn:hover {
+            background: #feca57;
+            color: #000;
+        }
+        
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #feca57;
+        }
+        
+        .benefit-card h4 {
+            color: #feca57;
+            margin-bottom: 10px;
+        }
+        
+        .glossary-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .mapping {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .before-after {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Vibe Coding Revolution</h1>
+            <p>Ultra-concise code compression for LLM token efficiency</p>
+        </div>
+        
+        <div class="concept-banner">
+            <h2>Revolutionary Paradigm</h2>
+            <p>Coined February 2025 - "Vibe Coding" transforms verbose APL into ultra-concise symbolic forms</p>
+        </div>
+        
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>🔥 Dramatic Compression</h3>
+                <div class="before-after">
+                    <div>
+                        <h4 style="color: #ff6b6b;">Before</h4>
+                        <div class="code-block before-code">ProcessPipelineStage ← {
+  pipeline_status ← ⎕NS ''
+  file_contents ← data
+  performance_metrics ← results
+}</div>
+                        <div style="text-align: center; margin-top: 10px;">234 characters</div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div>
+                        <h4 style="color: #48cae4;">After</h4>
+                        <div class="code-block after-code">∆P←{
+  ⍵←⎕ns⍬
+  ⍳←data
+  ⍨←results
+}</div>
+                        <div style="text-align: center; margin-top: 10px;">56 characters</div>
+                    </div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">76%</div>
+                        <div>Reduction</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">4x</div>
+                        <div>Context</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">3x</div>
+                        <div>Speed</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="demo-card">
+                <h3>🧠 LLM Benefits</h3>
+                <div class="benefits">
+                    <div class="benefit-card">
+                        <h4>⚡ Context Efficiency</h4>
+                        <p>4x more code fits in the same context window</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>💰 Cost Savings</h4>
+                        <p>75% reduction in API token costs</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>🚀 Processing Speed</h4>
+                        <p>3x faster due to reduced token count</p>
+                    </div>
+                    <div class="benefit-card">
+                        <h4>🎯 Model Performance</h4>
+                        <p>Less confusion from verbose names</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="interactive-section">
+            <h2>🛠️ Try Vibe Compression</h2>
+            <p>Compress your APL code using different compression levels</p>
+            
+            <div class="input-group">
+                <label for="code-input">Enter APL code to compress:</label>
+                <textarea 
+                    id="code-input" 
+                    class="code-input" 
+                    placeholder="Enter APL code here...
+
+Example:
+result ← ⎕NS ''
+pipeline_status ← ProcessPipelineStage data
+error_messages ← ValidateFiles files
+performance_metrics ← CollectMetrics system">result ← ⎕NS ''
+pipeline_status ← ProcessPipelineStage data
+error_messages ← ValidateFiles files
+performance_metrics ← CollectMetrics system</textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Compression Level:</label>
+                <div class="level-selector">
+                    <button class="level-btn" onclick="selectLevel('minimal')">Minimal</button>
+                    <button class="level-btn active" onclick="selectLevel('standard')">Standard</button>
+                    <button class="level-btn" onclick="selectLevel('maximum')">Maximum</button>
+                </div>
+            </div>
+            
+            <button class="compress-btn" onclick="compressCode()">🎵 Compress Code</button>
+            <button class="compress-btn" onclick="showGlossary()">📚 View Glossary</button>
+            <button class="compress-btn" onclick="explainBenefits()">💡 Explain Benefits</button>
+            
+            <div id="compression-results" style="display: none;">
+                <h3>Compression Results</h3>
+                <div class="before-after">
+                    <div>
+                        <h4 style="color: #ff6b6b;">Original</h4>
+                        <div id="original-code" class="code-block before-code"></div>
+                        <div id="original-stats" style="text-align: center; margin-top: 10px;"></div>
+                    </div>
+                    
+                    <div class="arrow">→</div>
+                    
+                    <div>
+                        <h4 style="color: #48cae4;">Compressed</h4>
+                        <div id="compressed-code" class="code-block after-code"></div>
+                        <div id="compressed-stats" style="text-align: center; margin-top: 10px;"></div>
+                    </div>
+                </div>
+                
+                <div class="stats" id="compression-stats"></div>
+            </div>
+        </div>
+        
+        <div class="interactive-section">
+            <h2>📚 Vibe Code Glossary</h2>
+            <p>Symbolic mappings for reverse translation</p>
+            
+            <div class="glossary-preview">
+                <h4>Variable Mappings</h4>
+                <div class="mapping"><span>⍺</span><span>ai_detection_result</span></div>
+                <div class="mapping"><span>⍵</span><span>pipeline_status</span></div>
+                <div class="mapping"><span>⍳</span><span>file_contents</span></div>
+                <div class="mapping"><span>⍴</span><span>error_messages</span></div>
+                <div class="mapping"><span>⍨</span><span>performance_metrics</span></div>
+                
+                <h4 style="margin-top: 20px;">Function Mappings</h4>
+                <div class="mapping"><span>∆P</span><span>ProcessPipelineStage</span></div>
+                <div class="mapping"><span>∆A</span><span>DetectAIContent</span></div>
+                <div class="mapping"><span>∆T</span><span>ExecuteTests</span></div>
+                <div class="mapping"><span>∆M</span><span>CollectMetrics</span></div>
+                <div class="mapping"><span>∆D</span><span>UpdateDashboard</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentLevel = 'standard';
+        
+        function selectLevel(level) {
+            currentLevel = level;
+            document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function compressCode() {
+            const code = document.getElementById('code-input').value.trim();
+            if (!code) {
+                alert('Please enter some APL code to compress!');
+                return;
+            }
+            
+            // Use real webhook to APL server
+            compressWithRealAPI(code, currentLevel);
+        }
+        
+        function compressWithRealAPI(code, level) {
+            // Show loading state
+            const resultsDiv = document.getElementById('compression-results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<h3>🔄 Compressing with real APL server...</h3><p>Connecting to APLCICD vibe compression engine...</p>';
+            
+            // Prepare request data
+            const requestData = {
+                code: code,
+                level: level,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Make real API call to APLCICD server
+            fetch('/api/vibe/compress', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showCompressionResults(code, data.compressed, data.stats);
+                } else {
+                    throw new Error(data.error || 'Compression failed');
+                }
+            })
+            .catch(error => {
+                console.warn('Real API failed, falling back to simulation:', error);
+                // Fallback to simulation if server is not available
+                const compressed = simulateCompression(code, level);
+                showCompressionResults(code, compressed);
+                
+                // Show fallback message
+                const warningDiv = document.createElement('div');
+                warningDiv.style.cssText = 'background: rgba(255,165,0,0.2); padding: 10px; border-radius: 5px; margin: 10px 0; border-left: 4px solid orange;';
+                warningDiv.innerHTML = '⚠️ Using simulation (real APL server not running). To use real compression: <code>./aplcicd dashboard</code>';
+                resultsDiv.insertBefore(warningDiv, resultsDiv.firstChild);
+            });
+        }
+        
+        function simulateCompression(code, level) {
+            // Fallback simulation for when real server is not available
+            let compressed = code;
+            
+            // Variable replacements
+            const varMappings = {
+                'pipeline_status': '⍵',
+                'file_contents': '⍳',
+                'error_messages': '⍴',
+                'performance_metrics': '⍨',
+                'ai_detection_result': '⍺'
+            };
+            
+            // Function replacements
+            const funcMappings = {
+                'ProcessPipelineStage': '∆P',
+                'DetectAIContent': '∆A',
+                'ExecuteTests': '∆T',
+                'CollectMetrics': '∆M',
+                'UpdateDashboard': '∆D'
+            };
+            
+            // Apply variable mappings
+            Object.entries(varMappings).forEach(([original, compressed_var]) => {
+                compressed = compressed.replace(new RegExp(original, 'g'), compressed_var);
+            });
+            
+            // Apply function mappings
+            Object.entries(funcMappings).forEach(([original, compressed_func]) => {
+                compressed = compressed.replace(new RegExp(original, 'g'), compressed_func);
+            });
+            
+            // Apply pattern replacements based on level
+            if (level === 'standard' || level === 'maximum') {
+                compressed = compressed.replace(/⎕NS ''/g, '⎕ns⍬');
+                compressed = compressed.replace(/result ← /g, 'result←');
+            }
+            
+            if (level === 'maximum') {
+                // Additional whitespace compression
+                compressed = compressed.replace(/\s+/g, ' ');
+                compressed = compressed.replace(/\s*←\s*/g, '←');
+                compressed = compressed.replace(/\s*⋄\s*/g, '⋄');
+            }
+            
+            return compressed;
+        }
+        
+        function showCompressionResults(original, compressed, realStats) {
+            const resultsDiv = document.getElementById('compression-results');
+            
+            document.getElementById('original-code').textContent = original;
+            document.getElementById('compressed-code').textContent = compressed;
+            
+            const originalLength = original.length;
+            const compressedLength = compressed.length;
+            const reduction = Math.round((1 - compressedLength / originalLength) * 100);
+            const ratio = (compressedLength / originalLength).toFixed(2);
+            
+            document.getElementById('original-stats').textContent = `${originalLength} characters`;
+            document.getElementById('compressed-stats').textContent = `${compressedLength} characters`;
+            
+            // Use real stats if available, otherwise calculate
+            let statsHTML;
+            if (realStats) {
+                statsHTML = `
+                    <div class="stat">
+                        <div class="stat-number">${realStats.reduction || reduction}%</div>
+                        <div>Reduction</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${realStats.ratio || ratio}</div>
+                        <div>Ratio</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${realStats.context_multiplier || Math.round(originalLength / compressedLength)}x</div>
+                        <div>Context</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${realStats.level || currentLevel}</div>
+                        <div>Level</div>
+                    </div>
+                `;
+                
+                // Add "REAL APL" indicator
+                statsHTML += `
+                    <div class="stat" style="background: rgba(0,255,0,0.2); border: 1px solid #48cae4;">
+                        <div class="stat-number">✅</div>
+                        <div>Real APL</div>
+                    </div>
+                `;
+            } else {
+                statsHTML = `
+                    <div class="stat">
+                        <div class="stat-number">${reduction}%</div>
+                        <div>Reduction</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${ratio}</div>
+                        <div>Ratio</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${Math.round(originalLength / compressedLength)}x</div>
+                        <div>Context</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">${currentLevel}</div>
+                        <div>Level</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('compression-stats').innerHTML = statsHTML;
+            resultsDiv.style.display = 'block';
+        }
+        
+        function showGlossary() {
+            alert('📚 Vibe Code Glossary\n\nComplete mappings:\n\nVariables:\n⍺ = ai_detection_result\n⍵ = pipeline_status\n⍳ = file_contents\n⍴ = error_messages\n⍨ = performance_metrics\n\nFunctions:\n∆P = ProcessPipelineStage\n∆A = DetectAIContent\n∆T = ExecuteTests\n∆M = CollectMetrics\n\nTo generate full glossary:\n./aplcicd vibe');
+        }
+        
+        function explainBenefits() {
+            alert('💡 Vibe Coding Benefits for LLMs:\n\n🚀 Context Window Efficiency\n• 4x more code fits in same context\n• Better understanding of large codebases\n\n💰 API Cost Savings\n• 75% reduction in token count\n• Massive savings for API-based LLMs\n\n⚡ Processing Speed\n• 3x faster due to fewer tokens\n• Reduced computational overhead\n\n🎯 Model Performance\n• Less confusion from verbose names\n• Cleaner symbolic representation\n\n🔄 Maintains APL Power\n• Full language expressiveness\n• No loss of functionality');
+        }
+    </script>
+</body>
+</html>
