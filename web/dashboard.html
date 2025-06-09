@@ -29,6 +29,8 @@ border-radius: 6px; margin: 10px 0; font-family: "SF Mono", Consolas, monospace;
 .reduction { color: #58a6ff; font-weight: bold; }
 .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
 .status-item { background: #21262d; padding: 15px; border-radius: 8px; border-left: 4px solid #3fb950; }
+.status-item.warning { border-left-color: #d29922; }
+.status-item.error { border-left-color: #f85149; }
 .competition-badge { background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); 
 color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0; }
 .controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
@@ -37,9 +39,23 @@ border-radius: 6px; cursor: pointer; font-size: 14px; transition: background 0.2
 .btn:hover { background: #2ea043; }
 .btn-secondary { background: #21262d; border: 1px solid #30363d; }
 .btn-secondary:hover { background: #30363d; }
+.btn-danger { background: #da3633; }
+.btn-danger:hover { background: #e03e3b; }
 .refresh-indicator { position: fixed; top: 20px; right: 20px; background: #1f6feb; 
 color: white; padding: 10px 15px; border-radius: 20px; font-size: 12px; opacity: 0; 
 transition: opacity 0.3s; }
+.live-indicator { color: #3fb950; font-size: 0.8rem; }
+.loading { opacity: 0.6; }
+.toggle-switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+background-color: #ccc; transition: .4s; border-radius: 34px; }
+.slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px;
+bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: #2196F3; }
+input:checked + .slider:before { transform: translateX(26px); }
+.git-info { font-family: monospace; font-size: 0.9rem; background: #21262d; 
+padding: 15px; border-radius: 8px; margin: 15px 0; }
 </style></head><body>
 
 <div class="container">
@@ -47,28 +63,38 @@ transition: opacity 0.3s; }
 <h1>🎵 APLCICD</h1>
 <p>Revolutionary APL CI/CD System with Vibe Coding for LLM Co-Creation</p>
 <p><strong>APL Forge 2025 Competition Entry</strong></p>
+<div class="live-indicator">🟢 LIVE DATA</div>
 </div>
 
 <div class="section vibe-demo">
-<h2>🎵 Revolutionary Vibe Compression</h2>
+<h2>🎵 Revolutionary Vibe Compression <span class="live-indicator">LIVE</span></h2>
 <p>Ultra-concise APL compression optimized for LLM co-creation workflows</p>
 
-<div class="metrics-grid">
+<div style="margin: 20px 0;">
+<label>Vibe Mode: </label>
+<label class="toggle-switch">
+  <input type="checkbox" id="vibeToggle">
+  <span class="slider"></span>
+</label>
+<span id="vibeStatus">Loading...</span>
+</div>
+
+<div class="metrics-grid" id="vibeMetrics">
 <div class="metric">
 <h3>Files Compressed</h3>
-<div class="value">2</div>
+<div class="value" id="filesCompressed">Loading...</div>
 </div>
 <div class="metric">
 <h3>Average Compression</h3>
-<div class="value">29<span class="unit">%</span></div>
+<div class="value" id="avgCompression">Loading...<span class="unit">%</span></div>
 </div>
 <div class="metric">
 <h3>Token Savings</h3>
-<div class="value">1250</div>
+<div class="value" id="tokenSavings">Loading...</div>
 </div>
 <div class="metric">
 <h3>LLM Efficiency</h3>
-<div class="value">1.6<span class="unit">x</span></div>
+<div class="value" id="llmEfficiency">Loading...<span class="unit">x</span></div>
 </div>
 </div>
 
@@ -87,30 +113,30 @@ transition: opacity 0.3s; }
 </div>
 
 <div class="section">
-<h2>📊 Live System Metrics</h2>
+<h2>📊 Live System Metrics <span class="live-indicator">LIVE</span></h2>
 
-<div class="metrics-grid">
+<div class="metrics-grid" id="systemMetrics">
 <div class="metric">
 <h3>APL Functions</h3>
-<div class="value">23</div>
+<div class="value" id="aplFunctions">Loading...</div>
 </div>
 <div class="metric">
 <h3>Variables</h3>
-<div class="value">15</div>
+<div class="value" id="aplVariables">Loading...</div>
 </div>
 <div class="metric">
 <h3>Performance Score</h3>
-<div class="value">8.7<span class="unit">/10</span></div>
+<div class="value" id="performanceScore">Loading...<span class="unit">/10</span></div>
 </div>
 <div class="metric">
 <h3>Memory Usage</h3>
-<div class="value">45<span class="unit">MB</span></div>
+<div class="value" id="memoryUsage">Loading...<span class="unit">MB</span></div>
 </div>
 </div>
 
-<div class="status-grid">
+<div class="status-grid" id="systemStatus">
 <div class="status-item">
-<strong>Vibe Compression</strong><br/>✅ Operational
+<strong>Vibe Compression</strong><br/><span id="vibeCompressionStatus">Loading...</span>
 </div>
 <div class="status-item">
 <strong>Self-Optimization</strong><br/>✅ Active
@@ -153,30 +179,31 @@ transition: opacity 0.3s; }
 </div>
 
 <div class="section">
-<h2>📝 Git Integration & AI Collaboration</h2>
+<h2>📝 Git Integration & AI Collaboration <span class="live-indicator">LIVE</span></h2>
 
-<div class="metrics-grid">
+<div class="metrics-grid" id="gitMetrics">
 <div class="metric">
 <h3>Total Commits</h3>
-<div class="value">7</div>
+<div class="value" id="totalCommits">Loading...</div>
 </div>
 <div class="metric">
 <h3>AI-Assisted Commits</h3>
-<div class="value">6</div>
+<div class="value" id="aiCommits">Loading...</div>
 </div>
 <div class="metric">
-<h3>Self-Optimizations</h3>
-<div class="value">3</div>
+<h3>Current Branch</h3>
+<div class="value" id="currentBranch" style="font-size: 1.2rem;">Loading...</div>
 </div>
 <div class="metric">
-<h3>Vibe Mode</h3>
-<div class="value">ACTIVE</div>
+<h3>Modified Files</h3>
+<div class="value" id="modifiedFiles">Loading...</div>
 </div>
 </div>
 
-<div style="background: #21262d; padding: 15px; border-radius: 8px; margin: 15px 0; font-family: monospace;">
-<strong>Latest Commit:</strong><br/>
-🧹 Clean up working directory - remove redundant files and consolidate
+<div class="git-info" id="gitInfo">
+<strong>Remote URL:</strong> <span id="remoteUrl">Loading...</span><br/>
+<strong>Recent Commits:</strong><br/>
+<div id="recentCommits">Loading...</div>
 </div>
 </div>
 
@@ -187,9 +214,9 @@ transition: opacity 0.3s; }
 <button class="btn" onclick="runVibeCompression()">🎵 Run Vibe Compression</button>
 <button class="btn" onclick="runSelfOptimization()">🔄 Self-Optimize System</button>
 <button class="btn" onclick="commitImprovements()">📝 Commit Improvements</button>
-<button class="btn btn-secondary" onclick="toggleVibeMode()">⚡ Toggle Vibe Mode</button>
 <button class="btn btn-secondary" onclick="generateGlossary()">📚 Generate Glossary</button>
 <button class="btn btn-secondary" onclick="refreshDashboard()">🔄 Refresh Dashboard</button>
+<button class="btn btn-danger" onclick="openWebServer()">🌐 Start Web Server</button>
 </div>
 
 <div style="margin-top: 20px; padding: 15px; background: #0d1117; border-radius: 8px; font-family: monospace;">
@@ -203,39 +230,200 @@ Vibe compression enables 60%+ token savings for efficient AI interaction
 
 <div class="refresh-indicator" id="refreshIndicator">Refreshing...</div>
 <script>
-function runVibeCompression() {
-  showRefreshIndicator();
-  alert("🎵 Vibe compression would start here\! Check console for progress.");
+// Global state
+let isRefreshing = false;
+
+// Initialize dashboard on load
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllData();
+    setupVibeToggle();
+    
+    // Auto-refresh every 10 seconds
+    setInterval(loadAllData, 10000);
+});
+
+function setupVibeToggle() {
+    const toggle = document.getElementById('vibeToggle');
+    toggle.addEventListener('change', function() {
+        toggleVibeMode();
+    });
 }
 
-function runSelfOptimization() {
-  showRefreshIndicator();
-  alert("🔄 Self-optimization would analyze and improve the system\!");
+async function loadAllData() {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    
+    try {
+        await Promise.all([
+            loadVibeStatus(),
+            loadVibeMetrics(),
+            loadSystemMetrics(), 
+            loadGitInfo()
+        ]);
+    } catch (error) {
+        console.error('Error loading data:', error);
+    } finally {
+        isRefreshing = false;
+    }
 }
 
-function commitImprovements() {
-  showRefreshIndicator();
-  alert("📝 Would commit all improvements to git with AI attribution\!");
+async function loadVibeStatus() {
+    try {
+        const response = await fetch('/api/vibe/status');
+        const data = await response.json();
+        
+        const toggle = document.getElementById('vibeToggle');
+        const status = document.getElementById('vibeStatus');
+        
+        toggle.checked = data.vibe_mode;
+        status.textContent = data.vibe_mode ? 'ENABLED' : 'DISABLED';
+        status.style.color = data.vibe_mode ? '#3fb950' : '#f85149';
+        
+        // Update compression status
+        const compressionStatus = document.getElementById('vibeCompressionStatus');
+        compressionStatus.innerHTML = data.vibe_mode ? '✅ Operational' : '⚠️ Disabled';
+        
+    } catch (error) {
+        document.getElementById('vibeStatus').textContent = 'Error';
+        console.error('Error loading vibe status:', error);
+    }
 }
 
-function toggleVibeMode() {
-  showRefreshIndicator();
-  alert("⚡ Would toggle vibe compression mode in config.json\!");
+async function loadVibeMetrics() {
+    try {
+        const response = await fetch('/api/vibe/metrics');
+        const data = await response.json();
+        
+        document.getElementById('filesCompressed').textContent = data.files_compressed;
+        document.getElementById('avgCompression').textContent = data.avg_compression;
+        document.getElementById('tokenSavings').textContent = data.token_savings;
+        document.getElementById('llmEfficiency').textContent = data.llm_efficiency;
+        
+    } catch (error) {
+        console.error('Error loading vibe metrics:', error);
+    }
+}
+
+async function loadSystemMetrics() {
+    try {
+        const response = await fetch('/api/system/live');
+        const data = await response.json();
+        
+        document.getElementById('aplFunctions').textContent = data.apl_functions;
+        document.getElementById('aplVariables').textContent = data.apl_variables;
+        document.getElementById('performanceScore').textContent = data.performance_score;
+        document.getElementById('memoryUsage').textContent = data.memory_mb;
+        
+    } catch (error) {
+        console.error('Error loading system metrics:', error);
+    }
+}
+
+async function loadGitInfo() {
+    try {
+        const response = await fetch('/api/git/info');
+        const data = await response.json();
+        
+        document.getElementById('totalCommits').textContent = data.total_commits;
+        document.getElementById('aiCommits').textContent = data.ai_commits;
+        document.getElementById('currentBranch').textContent = data.current_branch;
+        document.getElementById('modifiedFiles').textContent = data.modified_files;
+        document.getElementById('remoteUrl').textContent = data.remote_url;
+        
+        // Format recent commits
+        const commits = data.recent_commits.split('\n').slice(0, 3);
+        document.getElementById('recentCommits').innerHTML = commits.map(commit => 
+            `<div style="margin: 5px 0; font-size: 0.85rem;">${commit}</div>`
+        ).join('');
+        
+    } catch (error) {
+        console.error('Error loading git info:', error);
+    }
+}
+
+async function toggleVibeMode() {
+    showRefreshIndicator();
+    
+    try {
+        const response = await fetch('/api/vibe/toggle', {method: 'POST'});
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`⚡ ${data.message}`);
+            await loadVibeStatus();
+        } else {
+            alert('❌ Failed to toggle vibe mode');
+        }
+    } catch (error) {
+        alert('❌ Error toggling vibe mode: ' + error.message);
+        console.error('Error toggling vibe mode:', error);
+    }
+}
+
+async function runVibeCompression() {
+    showRefreshIndicator();
+    
+    try {
+        const response = await fetch('/api/vibe/compress', {method: 'POST'});
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`🎵 Vibe compression completed! ${data.files_processed} files processed.`);
+            setTimeout(loadAllData, 1000);
+        } else {
+            alert('❌ Vibe compression failed');
+        }
+    } catch (error) {
+        alert('❌ Error running vibe compression: ' + error.message);
+        console.error('Error running vibe compression:', error);
+    }
+}
+
+async function runSelfOptimization() {
+    showRefreshIndicator();
+    alert('🔄 Self-optimization would analyze and improve the system!');
+}
+
+async function commitImprovements() {
+    showRefreshIndicator();
+    
+    try {
+        const response = await fetch('/api/git/commit', {method: 'POST'});
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('📝 Improvements committed successfully!');
+            setTimeout(loadGitInfo, 1000);
+        } else {
+            alert('❌ Git commit failed: ' + data.message);
+        }
+    } catch (error) {
+        alert('❌ Error committing improvements: ' + error.message);
+        console.error('Error committing:', error);
+    }
 }
 
 function generateGlossary() {
-  alert("📚 Would generate updated compression glossary\!");
+    alert('📚 Would generate updated compression glossary!');
 }
 
-function refreshDashboard() { location.reload(); }
+function refreshDashboard() { 
+    showRefreshIndicator();
+    loadAllData();
+}
+
+function openWebServer() {
+    if (confirm('🌐 Start APLCICD Web Server on port 8081?')) {
+        alert('🚀 Web server starting... Check console for details.');
+        // In real implementation, this would call the server startup API
+    }
+}
 
 function showRefreshIndicator() {
-  const indicator = document.getElementById("refreshIndicator");
-  indicator.style.opacity = "1";
-  setTimeout(() => indicator.style.opacity = "0", 2000);
+    const indicator = document.getElementById('refreshIndicator');
+    indicator.style.opacity = '1';
+    setTimeout(() => indicator.style.opacity = '0', 2000);
 }
-
-setInterval(refreshDashboard, 30000);
 </script>
 
 </body></html>
