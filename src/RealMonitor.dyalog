@@ -201,6 +201,186 @@
         :If 0<log_entry.execution_time
             ⎕←'   Duration: ',⍕log_entry.execution_time,' seconds'
         :EndIf
+        
+        ⍝ Save to persistent metrics storage
+        SaveMetrics log_entry
+    ∇
+    
+    ∇ SaveMetrics metrics;json;timestamp;filename
+    ⍝ Save metrics to persistent JSON storage with timestamp
+        :Trap 22
+            ⍝ Ensure logs directory exists
+            :If ~⎕NEXISTS 'logs'
+                ⎕MKDIR 'logs'
+            :EndIf
+            
+            ⍝ Add timestamp to metrics if not present
+            :If 0=⎕NC'metrics.timestamp'
+                metrics.timestamp ← ⎕TS
+            :EndIf
+            metrics.saved_at ← ⍕⎕TS
+            
+            ⍝ Convert to JSON
+            json ← ⎕JSON metrics
+            
+            ⍝ Create filename with timestamp
+            timestamp ← ∊⍕¨6↑metrics.timestamp
+            filename ← 'logs/metrics_',timestamp,'.json'
+            
+            ⍝ Save to file
+            json ⎕NPUT filename 1
+            
+            ⎕←'💾 Metrics saved: ',filename
+            
+            ⍝ Also append to metrics log
+            AppendToMetricsLog metrics
+            
+        :Else
+            ⎕←'⚠️  Failed to save metrics: ',⎕DM
+        :EndTrap
+    ∇
+    
+    ∇ AppendToMetricsLog metrics;log_entry;summary
+    ⍝ Append metrics summary to continuous log file
+        :Trap 22
+            ⍝ Create summary entry
+            summary ← ⎕NS ''
+            summary.timestamp ← ⍕⎕TS
+            summary.type ← 'METRICS'
+            
+            ⍝ Extract key metrics safely
+            :If 9=⎕NC'metrics.success'
+                summary.success ← metrics.success
+            :Else
+                summary.success ← 1
+            :EndIf
+            
+            :If 9=⎕NC'metrics.files_processed'
+                summary.files_processed ← metrics.files_processed
+            :ElseIf 9=⎕NC'metrics.files'
+                summary.files_processed ← ≢metrics.files
+            :Else
+                summary.files_processed ← 0
+            :EndIf
+            
+            :If 9=⎕NC'metrics.memory_usage'
+                summary.memory_usage ← metrics.memory_usage
+            :Else
+                summary.memory_usage ← ⎕WA
+            :EndIf
+            
+            :If 9=⎕NC'metrics.cpu_time'
+                summary.cpu_time ← metrics.cpu_time
+            :ElseIf 9=⎕NC'metrics.execution_time'
+                summary.cpu_time ← metrics.execution_time
+            :Else
+                summary.cpu_time ← 0
+            :EndIf
+            
+            ⍝ Format log entry
+            log_entry ← summary.timestamp,' | ',summary.type,' | SUCCESS=',⍕summary.success
+            log_entry ,← ' | FILES=',⍕summary.files_processed
+            log_entry ,← ' | MEM=',⍕summary.memory_usage
+            log_entry ,← ' | CPU=',⍕summary.cpu_time
+            
+            ⍝ Append to metrics log
+            log_entry ⎕NPUT 'logs/metrics.log' 1
+            
+        :Else
+            ⎕←'⚠️  Failed to append to metrics log: ',⎕DM
+        :EndTrap
+    ∇
+    
+    ∇ metrics ← LoadMetricsHistory;files;latest_metrics
+    ⍝ Load historical metrics from storage
+        :Trap 22
+            ⍝ Find all metrics files
+            files ← ⊃⎕NINFO⍠1⊢'logs/metrics_*.json'
+            
+            :If 0=≢files
+                ⎕←'ℹ️  No historical metrics found'
+                metrics ← ⍬
+                →0
+            :EndIf
+            
+            ⍝ Load the most recent metrics files (last 10)
+            files ← (¯10⌊≢files)↑files
+            metrics ← ⍬
+            
+            :For file :In files
+                :Trap 22
+                    latest_metrics ← ⎕JSON ⊃⎕NGET file 1
+                    metrics ,← ⊂latest_metrics
+                :Else
+                    ⎕←'⚠️  Could not load metrics file: ',file
+                :EndTrap
+            :EndFor
+            
+            ⎕←'📊 Loaded ',⍕≢metrics,' historical metrics records'
+            
+        :Else
+            ⎕←'⚠️  Failed to load metrics history: ',⎕DM
+            metrics ← ⍬
+        :EndTrap
+    ∇
+    
+    ∇ analysis ← AnalyzeMetricsTrends metrics;performance_scores;memory_usage;cpu_times
+    ⍝ Analyze trends in historical metrics
+        :If 0=≢metrics
+            analysis ← ⎕NS '' ⋄ analysis.error ← 'No metrics available'
+            →0
+        :EndIf
+        
+        ⍝ Extract key metrics safely
+        performance_scores ← ExtractMetricValues metrics 'performance_score' 'success'
+        memory_usage ← ExtractMetricValues metrics 'memory_usage' ⎕WA
+        cpu_times ← ExtractMetricValues metrics 'cpu_time' 'execution_time'
+        
+        analysis ← ⎕NS ''
+        analysis.sample_count ← ≢metrics
+        analysis.performance_trend ← CalculateTrend performance_scores
+        analysis.memory_trend ← CalculateTrend memory_usage
+        analysis.cpu_trend ← CalculateTrend cpu_times
+        analysis.average_performance ← (+/performance_scores)÷≢performance_scores
+        analysis.performance_variance ← (+/(performance_scores-analysis.average_performance)*2)÷≢performance_scores
+        
+        ⎕←'📈 Metrics Analysis: ',⍕analysis.sample_count,' samples, ',⍕analysis.average_performance,' avg performance'
+        analysis
+    ∇
+    
+    ∇ values ← ExtractMetricValues (metrics primary_field fallback_field);m;val
+    ⍝ Extract metric values with fallback handling
+        values ← ⍬
+        :For m :In metrics
+            :If 9=⎕NC'm.',primary_field
+                val ← m⍎primary_field
+            :ElseIf (0≠⎕NC'fallback_field')∧(9=⎕NC'm.',fallback_field)
+                val ← m⍎fallback_field
+            :ElseIf 2=⎕NC'fallback_field'
+                val ← fallback_field
+            :Else
+                val ← 0
+            :EndIf
+            values ,← val
+        :EndFor
+    ∇
+    
+    ∇ trend ← CalculateTrend values;n;x;y;slope
+    ⍝ Calculate simple linear trend from values
+        :If 2>≢values
+            trend ← 0
+            →0
+        :EndIf
+        
+        n ← ≢values
+        x ← ⍳n
+        y ← values
+        
+        ⍝ Simple linear regression slope
+        slope ← (+/x×y)-(+/x)×(+/y)÷n
+        slope ← slope÷(+/x*2)-(+/x)*2÷n
+        
+        trend ← slope
     ∇
 
     ∇ seconds ← CalculateTimeDiff (start_ts end_ts)

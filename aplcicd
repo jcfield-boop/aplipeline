@@ -452,6 +452,88 @@ APLCICD.CompetitionServer
     run_apl "$apl_server_code" "Competition web server"
 }
 
+run_analyze_project() {
+    local project_path="${1:-}"
+    
+    if [[ -z "$project_path" ]]; then
+        log_error "Please provide a project path or GitHub URL"
+        echo "Usage: ./aplcicd analyze <path-or-url>"
+        echo ""
+        echo "Examples:"
+        echo "  ./aplcicd analyze /path/to/local/apl/project"
+        echo "  ./aplcicd analyze https://github.com/username/apl-project"
+        return 1
+    fi
+    
+    log_header "External Project Analysis"
+    
+    local apl_analyze_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+⎕←''
+⎕←'🔍 Analyzing External APL Project'
+⎕←'================================='
+result ← APLCICD.AnalyzeProject '$project_path'
+:If result.success
+    ⎕←''
+    ⎕←'✅ Analysis Complete!'
+    ⎕←'===================='
+    ⎕←'🎵 Vibe compression could save ',⍕result.vibe.total_tokens_saved,' tokens'
+    ⎕←'📊 Code quality score: ',⍕result.quality.overall_score
+    ⎕←'🔧 CI/CD readiness: ',⍕100×result.cicd.score,'%'
+    ⎕←''
+    ⎕←'📄 Detailed report saved to project directory'
+:Else
+    ⎕←'❌ Analysis failed: ',result.error
+:EndIf
+⎕OFF"
+    
+    run_apl "$apl_analyze_code" "External project analysis"
+}
+
+run_external_demo() {
+    log_header "External Project Analysis Demo"
+    
+    # Create a simple demo project
+    local demo_dir="/tmp/apl_demo_project"
+    mkdir -p "$demo_dir"
+    
+    # Create sample APL files
+    cat > "$demo_dir/Calculator.dyalog" << 'EOF'
+:Namespace Calculator
+    ∇ result ← Add args
+        result ← +/args
+    ∇
+    
+    ∇ result ← Multiply args
+        result ← ×/args
+    ∇
+    
+    ∇ result ← ProcessData data
+        :For item :In data
+            :For subitem :In item
+                result ,← subitem × 2
+            :EndFor
+        :EndFor
+    ∇
+:EndNamespace
+EOF
+
+    cat > "$demo_dir/Utils.apl" << 'EOF'
+⍝ Utility functions
+ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''}
+ValidateInput ← {⎕ML ← 1 ⋄ :If 0=≢⍵ ⋄ 'Error' ⋄ :Else ⋄ 'OK' ⋄ :EndIf}
+GenerateReport ← {data ← ⍵ ⋄ report ← ⊂'Report for ',⍕≢data,' items'}
+EOF
+    
+    log_info "Created demo project at: $demo_dir"
+    log_info "Running APLCICD analysis..."
+    
+    run_analyze_project "$demo_dir"
+    
+    echo ""
+    log_success "External project analysis demonstrated!"
+}
+
 run_complete_competition_demo() {
     log_header "Complete Competition Demonstration"
     
@@ -618,6 +700,12 @@ main() {
             ;;
         "complete-demo")
             run_complete_competition_demo
+            ;;
+        "analyze")
+            run_analyze_project "${2:-}"
+            ;;
+        "external-demo")
+            run_external_demo
             ;;
         "restart")
             restart_dyalog

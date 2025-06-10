@@ -134,6 +134,20 @@
             ⎕SIGNAL 22⊣'Failed to load Dashboard module'
         :EndTrap
         
+        ⎕←'  Loading ProjectLoader module...'
+        :Trap 22
+            ⎕FIX'file://src/ProjectLoader.dyalog'
+        :Else
+            ⎕SIGNAL 22⊣'Failed to load ProjectLoader module'
+        :EndTrap
+        
+        ⎕←'  Loading VibeBenchmarks module...'
+        :Trap 22
+            ⎕FIX'file://src/VibeBenchmarks.dyalog'
+        :Else
+            ⎕SIGNAL 22⊣'Failed to load VibeBenchmarks module'
+        :EndTrap
+        
         ⍝ Initialize all modules - Vibe and SelfOptimizer first (core philosophy)
         Vibe.Initialize
         SelfOptimizer.Initialize
@@ -147,6 +161,8 @@
         GitAPL.Initialize
         APLPatterns.Initialize
         Dashboard.Initialize
+        ProjectLoader.Initialize
+        VibeBenchmarks.Initialize
     ∇
 
     ∇ ValidateInstallation
@@ -668,6 +684,20 @@
         :EndTrap
     ∇
 
+    ∇ result ← AnalyzeProject path
+    ⍝ Analyze external APL project with comprehensive suite
+        ⎕←'🔍 APLCICD External Project Analysis'
+        ⎕←'===================================='
+        result ← ProjectLoader.AnalyzeProject path
+    ∇
+    
+    ∇ ExternalDemo
+    ⍝ Demonstrate external project analysis capabilities
+        ⎕←'🌍 APLCICD External Project Analysis Demo'
+        ⎕←'=========================================='
+        ProjectLoader.RunCompetitionDemo
+    ∇
+    
     ∇ CompetitionServer
     ⍝ Launch competition web server
         ⍝ Ensure advanced modules are loaded

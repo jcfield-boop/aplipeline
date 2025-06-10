@@ -22,6 +22,7 @@
   "security": {
     "validate_inputs": true,
     "webhook_verification": true,
+    "webhook_secret": "aplcicd_secure_webhook_secret_2025",
     "rate_limit_requests": 100,
     "rate_limit_window_minutes": 60
   },

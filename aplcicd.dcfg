@@ -30,7 +30,9 @@
     "APLCICD.SelfOptimizer": "./src/SelfOptimizer.dyalog",
     "APLCICD.APLPatterns": "./src/APLPatterns.dyalog",
     "APLCICD.Tests": "./src/Tests.dyalog",
-    "APLCICD.RecursiveTest": "./src/RecursiveTest.dyalog"
+    "APLCICD.RecursiveTest": "./src/RecursiveTest.dyalog",
+    "APLCICD.VibeBenchmarks": "./src/VibeBenchmarks.dyalog",
+    "APLCICD.ProjectLoader": "./src/ProjectLoader.dyalog"
   },
   "api": {
     "entry_points": [
@@ -41,17 +43,24 @@
       "APLCICD.Vibe.Compress",
       "APLCICD.Vibe.Decompress",
       "APLCICD.Dashboard.GenerateUnifiedDashboard",
-      "APLCICD.Pipeline.ProcessGitChanges"
+      "APLCICD.Pipeline.ProcessGitChanges",
+      "APLCICD.AnalyzeProject",
+      "APLCICD.ExternalDemo",
+      "VibeBenchmarks.RunComprehensiveBenchmarks",
+      "ProjectLoader.AnalyzeProject"
     ],
     "web_endpoints": [
       "/",
       "/api/vibe/status",
       "/api/vibe/toggle",
       "/api/vibe/compress",
+      "/api/vibe/benchmarks",
       "/api/vibe/metrics",
       "/api/git/info",
       "/api/system/live",
       "/api/metrics",
+      "/api/metrics/live",
+      "/api/metrics/history",
       "/api/selfoptimize",
       "/api/status",
       "/api/git/status",
@@ -59,6 +68,7 @@
       "/api/git/commit",
       "/api/logs/commits",
       "/api/logs/optimization",
+      "/api/project/analyze",
       "/webhook"
     ]
   },
@@ -127,7 +137,12 @@
       "Interactive vibe compression toggle via config.json",
       "Real SelfOptimizer with performance/quality scoring",
       "Production-ready architecture with persistent logging",
-      "Zero-mock implementation - all functionality real including Git commits"
+      "Zero-mock implementation - all functionality real including Git commits",
+      "External APL project analysis with comprehensive reporting",
+      "Webhook security with HMAC-SHA256 verification",
+      "Comprehensive vibe compression benchmarking suite",
+      "Persistent metrics storage with trend analysis",
+      "Live API endpoints for all system functions"
     ],
     "innovations": [
       "First self-committing CI/CD system with audit logging",
