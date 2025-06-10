@@ -33,6 +33,7 @@ aplipeline/
 ├── 📦 src/                 # 12 production modules (4,800+ lines)
 ├── 🌐 web/                 # Real-time dashboard with live data
 ├── ⚙️  config/             # System configuration
+├── 📋 logs/                # CI/CD audit logs (git commits, optimizations)
 ├── 📋 aplcicd.dcfg         # Package descriptor
 └── 📖 README.md            # Documentation
 ```
