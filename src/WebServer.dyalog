@@ -85,9 +85,11 @@
             →0
         :Else
             ⍝ Fall back to traditional Conga
-            ⍝ Initialize Conga with proper error handling
-            'DRC' ⎕CY 'conga'
-            DRC ← DRC.Init ⍬
+            ⍝ Use existing Conga if available, otherwise load it
+            :If 0=⎕NC 'Conga'
+                'Conga' ⎕CY 'conga'
+            :EndIf
+            DRC ← Conga.Init ⍬
             :If 0≠⊃DRC
                 ⎕SIGNAL 11⊣'Conga Init failed: ',⍕DRC
             :EndIf
@@ -97,8 +99,8 @@
                 {} DRC.Close 'APLCICD'
             :EndTrap
             
-            ⍝ Use simple TCP server - proper APL syntax  
-            srv ← DRC.Srv 'APLCICD' '' port 'TCP'
+            ⍝ Use HTTP server with correct Conga syntax
+            srv ← DRC.Srv 'APLCICD' '' port 'HTTP'
             :If 0≠⊃srv
                 ⎕SIGNAL 11⊣'TCP Server creation failed: ',⍕srv
             :EndIf
@@ -148,7 +150,7 @@
             
             :If conga_available ∧ 0<≢server_name
                 :Trap 0
-                    {} Conga.Close server_name
+                    {} server_DRC.Close server_name
                 :EndTrap
             :EndIf
             
@@ -303,7 +305,7 @@
         :Case '/api/git/log'
             response ← RealGitLogAPI
         :Case '/api/git/commit'
-            response ← RealGitCommitAPI method
+            response ← RealGitCommitAPI method request.Body
         :Case '/webhook'
             response ← WebhookHandler req
         :Case '/api/status'
@@ -471,23 +473,42 @@
         :EndTrap
     ∇
 
-    ∇ response ← RealGitCommitAPI method
-    ⍝ Real Git commit API endpoint
+    ∇ response ← RealGitCommitAPI method payload
+    ⍝ Real Git commit API endpoint with custom message support
         :If method≢'POST'
             response ← CreateHTTPResponse 405 'application/json' '{"error":"Method not allowed"}'
             →0
         :EndIf
         
         :Trap 0
-            commit_result ← APLCICD.GitAPL.AutoCommit 'WebServer API automated commit'
+            ⍝ Parse payload for custom commit message
+            commit_msg ← 'Dashboard automated commit via API'
+            :If 0<≢payload
+                :Trap 11
+                    request_data ← ⎕JSON payload
+                    :If 9=⎕NC'request_data.message'
+                        commit_msg ← request_data.message
+                    :EndIf
+                :EndTrap
+            :EndIf
+            
+            ⍝ Use APLCICD.SelfCommit for better commit handling
+            commit_result ← APLCICD.SelfCommit commit_msg
+            
             result ← ⎕NS ''
             result.success ← commit_result.success
             result.message ← commit_result.message
+            :If 9=⎕NC'commit_result.commit_hash'
+                result.commit_hash ← commit_result.commit_hash
+            :EndIf
             result.timestamp ← ⎕TS
+            
             response ← CreateHTTPResponse 200 'application/json' (⎕JSON result)
         :Else
             error_result ← ⎕NS ''
+            error_result.success ← 0
             error_result.error ← ⎕DM
+            error_result.message ← 'Git commit failed: ',⎕DM
             response ← CreateHTTPResponse 500 'application/json' (⎕JSON error_result)
         :EndTrap
     ∇
@@ -870,6 +891,11 @@
         html ,← '<li>Live demonstration ready</li></ul>'
         html ,← '<p><a href="/">← Back to Dashboard</a></p>'
         html ,← '</body></html>'
+    ∇
+
+    ∇ result ← Test_Variable_Access
+    ⍝ Test function to check variable access
+        result ← 'conga_available:',⍕conga_available,' server_running:',⍕server_running
     ∇
 
     ∇ DemoServer
