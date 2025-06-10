@@ -595,6 +595,9 @@
                 ⎕←'📝 Message: ',msg
                 ⎕←'🤝 AI collaboration flagged transparently'
                 
+                ⍝ Log commit to persistent log file
+                LogCommit result.commit_hash msg 'SUCCESS'
+                
                 ⍝ Display git log to show the commit
                 ⎕←''
                 ⎕←'📚 Recent commits:'
@@ -604,6 +607,8 @@
                 :EndFor
             :Else
                 ⎕←'❌ Self-commit failed: ',result.error
+                ⍝ Log failed commit attempt
+                LogCommit '' msg 'FAILED'
             :EndIf
             
         :Else
@@ -615,6 +620,43 @@
         
         ⎕←''
         ⎕←'🏆 Self-committing demonstrates APL''s revolutionary meta-programming power!'
+    ∇
+
+    ∇ LogCommit (commit_hash msg status)
+    ⍝ Log commit operations to persistent log file for CI/CD audit trail
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   commit_hash (character): Git commit hash (empty for failed commits)
+    ⍝   msg (character): Original commit message
+    ⍝   status (character): SUCCESS or FAILED
+        
+        :Trap 22
+            ⍝ Ensure logs directory exists
+            :If ~⎕NEXISTS 'logs'
+                ⎕MKDIR 'logs'
+            :EndIf
+            
+            ⍝ Create log entry with timestamp
+            timestamp ← ⍕⎕TS
+            log_entry ← timestamp,' | ',status,' | COMMIT | '
+            
+            :If 0<≢commit_hash
+                log_entry ,← 8↑commit_hash,' | '
+            :Else
+                log_entry ,← 'NO_HASH | '
+            :EndIf
+            
+            ⍝ Add first line of commit message (sanitized)
+            first_line ← ⊃(⎕UCS 10)⊂msg
+            log_entry ,← first_line
+            
+            ⍝ Append to git commits log
+            log_entry ⎕NPUT 'logs/git_commits.log' 1
+            ⎕←'  📝 Logged commit to logs/git_commits.log'
+            
+        :Else
+            ⎕←'  ⚠️  Failed to write commit log: ',⎕DM
+        :EndTrap
     ∇
 
     ∇ RecursiveDemo

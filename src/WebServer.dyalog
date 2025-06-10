@@ -492,7 +492,7 @@
                 :EndTrap
             :EndIf
             
-            ⍝ Use APLCICD.SelfCommit for better commit handling
+            ⍝ Use APLCICD.SelfCommit for better commit handling (includes logging)
             commit_result ← APLCICD.SelfCommit commit_msg
             
             result ← ⎕NS ''
