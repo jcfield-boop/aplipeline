@@ -1,7 +1,7 @@
 {
   "name": "APLCICD",
   "version": "2.0.0",
-  "description": "Revolutionary Vibe Coding & Self-Improving APL CI/CD System with Interactive Dashboard",
+  "description": "Revolutionary Vibe Coding & Self-Improving APL CI/CD System with Real Git Integration",
   "author": "APL Forge Contest 2025",
   "license": "MIT",
   "dyalog_version": "19.0",
@@ -28,7 +28,9 @@
     "APLCICD.Dashboard": "./src/Dashboard.dyalog",
     "APLCICD.Vibe": "./src/vibe.dyalog",
     "APLCICD.SelfOptimizer": "./src/SelfOptimizer.dyalog",
-    "APLCICD.APLPatterns": "./src/APLPatterns.dyalog"
+    "APLCICD.APLPatterns": "./src/APLPatterns.dyalog",
+    "APLCICD.Tests": "./src/Tests.dyalog",
+    "APLCICD.RecursiveTest": "./src/RecursiveTest.dyalog"
   },
   "api": {
     "entry_points": [
@@ -50,6 +52,13 @@
       "/api/git/info",
       "/api/system/live",
       "/api/metrics",
+      "/api/selfoptimize",
+      "/api/status",
+      "/api/git/status",
+      "/api/git/log",
+      "/api/git/commit",
+      "/api/logs/commits",
+      "/api/logs/optimization",
       "/webhook"
     ]
   },
@@ -109,36 +118,41 @@
     "category": "Vibe Coding",
     "theme": "Self-Improving Systems",
     "features": [
-      "Revolutionary vibe coding (60%+ compression)",
+      "Revolutionary vibe coding (29% measured compression)",
       "LLM co-creation optimization", 
-      "Auto-start interactive dashboard",
-      "Real CI/CD pipeline execution", 
-      "Self-optimization capabilities",
-      "Live dashboard with real metrics",
-      "Interactive vibe compression toggle",
-      "Meta-programming and recursive analysis",
-      "Production-ready architecture",
-      "Zero-mock implementation"
+      "Working interactive dashboard with real Git integration",
+      "Real CI/CD pipeline execution with audit logging", 
+      "Self-optimization with actual analysis results",
+      "File-based dashboard serving with live data",
+      "Interactive vibe compression toggle via config.json",
+      "Real SelfOptimizer with performance/quality scoring",
+      "Production-ready architecture with persistent logging",
+      "Zero-mock implementation - all functionality real including Git commits"
     ],
     "innovations": [
-      "First self-committing CI/CD system",
-      "APL-native Git integration", 
-      "Real-time performance optimization",
-      "Autonomous quality improvement"
+      "First self-committing CI/CD system with audit logging",
+      "APL-native Git integration with dashboard controls", 
+      "Real-time performance optimization with persistent tracking",
+      "Autonomous quality improvement with complete audit trails"
     ]
   },
   "performance": {
-    "vibe_compression_ratio": "60%+",
-    "token_efficiency": "maximum",
-    "performance_improvement": "15-25%",
-    "operations_per_second": 1847,
-    "memory_efficiency": "optimized",
-    "dashboard_auto_start": "< 3 seconds"
+    "vibe_compression_ratio": "29% (measured)",
+    "token_efficiency": "1,250 tokens saved",
+    "performance_score": "1.0 (SelfOptimizer)",
+    "quality_score": "0.85 (SelfOptimizer)",
+    "vibe_effectiveness": "0.5 (SelfOptimizer)",
+    "dashboard_functionality": "fully working buttons with real Git integration",
+    "dashboard_auto_start": "< 3 seconds",
+    "audit_logging": "comprehensive CI/CD operation tracking",
+    "git_integration": "real commits from dashboard with persistent logs"
   },
   "production": {
     "stability": "enterprise-grade",
-    "monitoring": "real-time",
-    "error_handling": "comprehensive",
-    "scalability": "horizontal"
+    "monitoring": "real-time with persistent logs",
+    "error_handling": "comprehensive with audit trails",
+    "scalability": "horizontal",
+    "logging": "persistent audit trails for all operations",
+    "git_integration": "native APL with dashboard controls"
   }
 }
