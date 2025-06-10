@@ -8,7 +8,10 @@ config ← ⎕JSON ⊃⎕NGET 'config/default.json' 1
 
 ⎕←'🎵 APLCICD In-Place Vibe Compression'
 ⎕←'======================================'
-⎕←'Mode: ',('Standard' 'Vibe')[1+config.vibe.vibe_mode]
+⎕←'Mode: Standard'
+:If config.vibe.vibe_mode
+    ⎕←'Mode: Vibe (files already compressed)'
+:EndIf
 ⎕←''
 
 ⍝ Define compression mappings
@@ -55,7 +58,13 @@ CompressText ← {
 ⎕←'Phase 1: Compress source files in place'
 ⎕←'======================================='
 
-files ← 'src/Core.dyalog' 'src/Config.dyalog'
+⍝ Extended to all dcfg export files (excluding vibe.dyalog to avoid circular dependency)
+files ← 'src/Core.dyalog' 'src/Config.dyalog' 'src/APLCICD.dyalog' 'src/Pipeline.dyalog'
+files ,← 'src/RealPipeline.dyalog' 'src/Monitor.dyalog' 'src/RealMonitor.dyalog' 'src/GitAPL.dyalog'
+files ,← 'src/WebServer.dyalog' 'src/Dashboard.dyalog' 'src/SelfOptimizer.dyalog' 'src/APLPatterns.dyalog'
+files ,← 'src/Tests.dyalog' 'src/RecursiveTest.dyalog'
+
+⎕←'Compressing ',⍕≢files,' files (excluding vibe.dyalog to avoid circular dependency)'
 total_reduction ← 0
 files_processed ← 0
 

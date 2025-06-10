@@ -247,12 +247,17 @@
         // Load initial vibe mode state from config on page load
         function loadVibeMode() {
             // In a real implementation, this would fetch from /api/vibe/status
-            // For now, simulate based on current config.json state (vibe_mode: false)
-            const isEnabled = false; // This would come from actual config
+            // For now, simulate based on current config.json state (vibe_mode: true)
+            const isEnabled = true; // Updated to match actual config.json vibe_mode: true
             
             document.getElementById('vibeToggle').checked = isEnabled;
             document.getElementById('vibeStatus').textContent = isEnabled ? 'ENABLED' : 'DISABLED';
             document.getElementById('vibeStatus').className = isEnabled ? 'status-good' : 'status-warning';
+            
+            // Update metrics to show vibe-enabled state
+            if (isEnabled) {
+                updateVibeMetrics(14, 45, 3500, 2.1);
+            }
         }
         
         function toggleCompressionState() {

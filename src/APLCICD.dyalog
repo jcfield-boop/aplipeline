@@ -324,11 +324,6 @@
         RealMonitor.LogPipelineExecution result
     ∇
 
-    ∇ SelfOptimize
-    ⍝ Run self-optimization process
-        SelfOptimizer.RunSelfOptimizationDemo
-    ∇
-
     ∇ result ← SelfAnalyze
     ⍝ Analyze system performance and identify improvements
         result ← SelfOptimizer.AnalyzeSelf
