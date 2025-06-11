@@ -8,14 +8,20 @@
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
     ∇ Initialize
-    ⍝ Initialize vibe compression system
+    ⍝ Initialize vibe compression system with runtime/edit-time modes
         LoadConfiguration
+        InitializeRuntimeModes
         :If Config.enabled
             ⎕←'  ✅ Vibe coding compression system loaded (enabled)'
             InitializeCompressionMaps
         :Else
             ⎕←'  ⚠️  Vibe coding compression system loaded (disabled)'
         :EndIf
+    ∇
+    
+    ∇ ∆I
+    ⍝ Compact initialization for runtime
+        Initialize
     ∇
 
     ∇ LoadConfiguration
@@ -27,6 +33,10 @@
         Config.auto_glossary ← 1
         Config.target_compression ← 0.6
         Config.glossary_path ← 'config/GLOSSARY.md'
+        Config.runtime_mode ← 1  ⍝ Start in runtime mode (no compression)
+        Config.edit_mode ← 0     ⍝ Edit mode for LLM interaction
+        Config.preserve_comments ← 1  ⍝ Archive comments when in edit mode
+        Config.comment_archive ← 'config/COMMENTS.archive'
         
         :Trap 22 11 1000
             config_text ← ⊃⎕NGET 'config/default.json' 1
@@ -77,6 +87,153 @@
         :Else
             value ← 0.6
         :EndTrap
+    ∇
+
+    ∇ InitializeRuntimeModes
+    ⍝ Set up runtime vs edit-time mode handling
+        
+        ⍝ Critical function names that must NEVER be compressed
+        RuntimeReserved ← 'Initialize' '∆I' 'Demo' 'Start' 'Stop' 'Process' 'Run'
+        RuntimeReserved ,← 'LoadCoreModules' 'ValidateInstallation' 'HealthCheck'
+        RuntimeReserved ,← 'GetStatus' 'CollectMetrics' 'FormatHTTPResponse'
+        RuntimeReserved ,← 'HandleHTTPRequest' 'CreateHTTPResponse' 'ParseHTTPRequest'
+        
+        ⍝ Comment markers for archiving
+        CommentMarkers ← '⍝' '⍝⍝' '⍝⍝⍝'
+        
+        ⎕←'  🔧 Runtime/edit-time modes initialized'
+    ∇
+
+    ∇ SetRuntimeMode
+    ⍝ Switch to runtime mode - NO compression for execution
+        Config.runtime_mode ← 1
+        Config.edit_mode ← 0
+        ⎕←'🏃 Runtime mode active - compression disabled for execution'
+    ∇
+    
+    ∇ SetEditMode
+    ⍝ Switch to edit mode - maximum compression for LLM efficiency
+        Config.runtime_mode ← 0
+        Config.edit_mode ← 1
+        ⎕←'✏️  Edit mode active - maximum compression for LLM token efficiency'
+    ∇
+    
+    ∇ compressed ← CompressForLLM code
+    ⍝ Compress code specifically for LLM interaction (edit mode only)
+        :If Config.runtime_mode
+            ⍝ In runtime mode - return uncompressed
+            compressed ← code
+            ⎕←'⚠️  Runtime mode - compression skipped for execution safety'
+            →0
+        :EndIf
+        
+        ⍝ Edit mode - full compression
+        compressed ← code
+        
+        ⍝ 1. Archive and remove comments for maximum token reduction
+        :If Config.preserve_comments
+            compressed ← ArchiveAndStripComments compressed
+        :EndIf
+        
+        ⍝ 2. Apply variable/function compression (avoiding reserved names)
+        compressed ← CompressNonReserved compressed
+        
+        ⍝ 3. Generate glossary entry for LLM reference
+        UpdateGlossary code compressed
+    ∇
+    
+    ∇ archived ← ArchiveAndStripComments code
+    ⍝ Archive comments and strip for maximum LLM token efficiency
+        lines ← (⎕UCS 10)⊆code
+        comment_lines ← ⍬
+        code_lines ← ⍬
+        
+        :For line :In lines
+            :If ∨/CommentMarkers∘≡¨⊂(≢⊃CommentMarkers)↑line
+                ⍝ Comment line - archive it
+                comment_lines ,← ⊂line
+            :ElseIf ∨/'⍝'=line
+                ⍝ Inline comment - split and archive comment part
+                comment_pos ← ⊃⍸'⍝'=line
+                code_part ← (comment_pos-1)↑line
+                comment_part ← comment_pos↓line
+                code_lines ,← ⊂code_part
+                comment_lines ,← ⊂comment_part
+            :Else
+                ⍝ Pure code line
+                code_lines ,← ⊂line
+            :EndIf
+        :EndFor
+        
+        ⍝ Archive comments
+        :If 0<≢comment_lines
+            ArchiveComments comment_lines
+        :EndIf
+        
+        ⍝ Return stripped code
+        archived ← ∊code_lines,¨⊂⎕UCS 10
+    ∇
+    
+    ∇ ArchiveComments comments
+    ⍝ Save comments to archive file for later restoration
+        :Trap 22
+            ⍝ Ensure config directory exists
+            :If ~⎕NEXISTS 'config'
+                ⎕MKDIR 'config'
+            :EndIf
+            
+            ⍝ Timestamp and save
+            timestamp ← ⍕⎕TS
+            archive_entry ← timestamp,' | COMMENTS | ',∊comments,¨⊂⎕UCS 10
+            archive_entry ⎕NPUT Config.comment_archive 1
+            
+        :Else
+            ⎕←'⚠️  Failed to archive comments: ',⎕DM
+        :EndTrap
+    ∇
+    
+    ∇ compressed ← CompressNonReserved code
+    ⍝ Apply compression while preserving runtime-critical names
+        compressed ← code
+        
+        ⍝ Only compress if function names are not in reserved list
+        :For reserved :In RuntimeReserved
+            :If ∨/reserved⍷code
+                ⎕←'🔒 Preserving reserved function: ',reserved
+                ⍝ Skip compression of this section
+                →nextreserved
+            :EndIf
+        nextreserved:
+        :EndFor
+        
+        ⍝ Apply safe variable compression only
+        :If 9=⎕NC'VarMap'
+            compressed ← ApplySafeVarCompression compressed
+        :EndIf
+    ∇
+    
+    ∇ compressed ← ApplySafeVarCompression code
+    ⍝ Compress only variables, not function names
+        compressed ← code
+        
+        ⍝ Simple variable pattern replacement
+        :For var :In VarMap.⎕NL ¯2
+            pattern ← '\b',var,'\b'  ⍝ Word boundary to avoid partial matches
+            replacement ← VarMap⍎var
+            :Trap 11
+                compressed ← pattern ⎕R replacement ⊣compressed
+            :EndTrap
+        :EndFor
+    ∇
+    
+    ∇ UpdateGlossary (original compressed)
+    ⍝ Update glossary for LLM reference
+        :If Config.auto_glossary
+            :Trap 22
+                glossary_entry ← '**',compressed,'** → ',original
+                glossary_entry ⎕NPUT Config.glossary_path 1
+            :EndTrap
+        :EndIf
     ∇
 
     ∇ InitializeCompressionMaps
@@ -132,14 +289,14 @@
         FuncMap.ConfigLoadConfig ← '∇Cl'
         FuncMap.MonitorGetMetrics ← '∇Mg'
         FuncMap.PipelineRunStage ← '∇Pr'
-        FuncMap.WebServerStart ← '∇Ws'
+        FuncMap.HTMLDashboardLaunch ← '∇Hl'
         FuncMap.VibeCompress ← '∇Vc'
         FuncMap.VibeDecompress ← '∇Vd'
         
         ⍝ Add dotted method patterns using ⍎ for dynamic assignment
         ⍎'FuncMap.VibeCompress_dot ← ''∇Vc'''
         ⍎'FuncMap.VibeDecompress_dot ← ''∇Vd'''
-        ⍎'FuncMap.WebServerStart_dot ← ''∇Ws'''
+        ⍎'FuncMap.HTMLDashboardLaunch_dot ← ''∇Hl'''
         ⍎'FuncMap.MonitorGetMetrics_dot ← ''∇Mg'''
         
         ⍝ Pattern compression maps: [find] [replace]
@@ -155,7 +312,7 @@
         ⍝ Method-style patterns (Class.Method → ∇Symbol)
         Patterns ,← ⊂('Vibe.Compress') ('∇Vc')
         Patterns ,← ⊂('Vibe.Decompress') ('∇Vd')
-        Patterns ,← ⊂('WebServer.Start') ('∇Ws')
+        Patterns ,← ⊂('HTMLDashboard.Launch') ('∇Hl')
         Patterns ,← ⊂('Monitor.GetMetrics') ('∇Mg')
         Patterns ,← ⊂('Config.LoadConfig') ('∇Cl')
         Patterns ,← ⊂('Pipeline.RunStage') ('∇Pr')
@@ -613,6 +770,73 @@
         ⎕←'   • Maintains full APL expressiveness'
         ⎕←''
         ⎕←'📚 Glossary auto-generated at: ',Config.glossary_path
+    ∇
+
+    ⍝ ═══════════════════════════════════════════════════════════════
+    ⍝ Runtime/Edit Mode API Functions
+    ⍝ ═══════════════════════════════════════════════════════════════
+
+    ∇ SwitchToRuntimeMode
+    ⍝ API: Switch to runtime mode for execution safety
+        SetRuntimeMode
+        UpdateConfigFile 'runtime_mode' 1
+        UpdateConfigFile 'edit_mode' 0
+    ∇
+    
+    ∇ SwitchToEditMode
+    ⍝ API: Switch to edit mode for maximum LLM token efficiency
+        SetEditMode
+        UpdateConfigFile 'runtime_mode' 0
+        UpdateConfigFile 'edit_mode' 1
+    ∇
+    
+    ∇ ToggleCommentPreservation
+    ⍝ API: Toggle comment preservation/archiving
+        Config.preserve_comments ← ~Config.preserve_comments
+        UpdateConfigFile 'preserve_comments' Config.preserve_comments
+        ⎕←'💬 Comment preservation: ',(Config.preserve_comments⊃'disabled' 'enabled')
+    ∇
+    
+    ∇ result ← GetCurrentMode
+    ⍝ API: Get current mode status
+        result ← ⎕NS ''
+        result.runtime_mode ← Config.runtime_mode
+        result.edit_mode ← Config.edit_mode
+        result.preserve_comments ← Config.preserve_comments
+        result.compression_enabled ← Config.enabled
+        result.current_mode ← (Config.runtime_mode)⊃'EDIT' 'RUNTIME'
+    ∇
+    
+    ∇ UpdateConfigFile (key value)
+    ⍝ Update configuration file with new setting
+        :Trap 22
+            ⍝ Read current config
+            config ← ⎕JSON ⊃⎕NGET 'config/default.json' 1
+            
+            ⍝ Update vibe section
+            config.vibe⍎key,'←value'
+            
+            ⍝ Write back to file
+            (⎕JSON config) ⎕NPUT 'config/default.json' 1
+            
+        :Else
+            ⎕←'⚠️  Failed to update config file: ',⎕DM
+        :EndTrap
+    ∇
+    
+    ∇ RestoreComments code
+    ⍝ API: Restore comments from archive for a given code segment
+        :Trap 22
+            :If ⎕NEXISTS Config.comment_archive
+                archive_content ← ⊃⎕NGET Config.comment_archive 1
+                ⎕←'💬 Comments available in archive: ',Config.comment_archive
+                ⎕←'   Archive contains ',⍕≢(⎕UCS 10)⊆archive_content,' comment entries'
+            :Else
+                ⎕←'ℹ️  No comment archive found'
+            :EndIf
+        :Else
+            ⎕←'⚠️  Error accessing comment archive: ',⎕DM
+        :EndTrap
     ∇
 
 :EndNamespace

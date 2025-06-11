@@ -8,6 +8,7 @@
 ⍝ • APLCICD.Pipeline  - CI/CD automation, validation, security, quality
 ⍝ • APLCICD.Monitor   - Monitoring, logging, webhooks, real-time data
 ⍝ • APLCICD.Config    - Configuration management and error handling
+⍝ • APLCICD.HTMLDashboard - Native HTMLRenderer dashboard interface
 ⍝ • APLCICD.Core      - Legacy AI detection (superseded by vibe approach)
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
@@ -27,13 +28,12 @@
             ⎕←'✅ Pipeline module (CI/CD automation)'  
             ⎕←'✅ Monitor module (logging & monitoring)'
             ⎕←'✅ Config module (configuration management)'
-            ⎕←'✅ WebServer module (Conga web interface)'
+            ⎕←'✅ HTMLDashboard module (Native HTMLRenderer interface)'
             ⎕←'✅ Core module (legacy AI detection)'
             ⎕←''
             ⎕←'🎵 APLCICD v2.0 ready for vibe coding & self-improvement!'
             ⎕←''
-            ⍝ Auto-start web server and dashboard
-            StartDashboard
+            ⍝ System ready - no auto-start of services
             ⎕←''
             QuickHelp
         :Case 11
@@ -84,11 +84,11 @@
             ⎕SIGNAL 22⊣'Failed to load SelfOptimizer module'
         :EndTrap
         
-        ⎕←'  Loading WebServer module...'
+        ⎕←'  Loading HTMLDashboard module...'
         :Trap 22
-            ⎕FIX'file://src/WebServer.dyalog'
+            ⎕FIX'file://src/HTMLDashboard.dyalog'
         :Else
-            ⎕SIGNAL 22⊣'Failed to load WebServer module'
+            ⎕SIGNAL 22⊣'Failed to load HTMLDashboard module'
         :EndTrap
         
         ⎕←'  Loading Vibe module...'
@@ -148,19 +148,19 @@
             ⎕SIGNAL 22⊣'Failed to load VibeBenchmarks module'
         :EndTrap
         
-        ⍝ Initialize all modules - Vibe and SelfOptimizer first (core philosophy)
-        Vibe.Initialize
+        ⍝ Initialize all modules - core modules only (no auto-start services)
+        Vibe.∆I
         SelfOptimizer.Initialize
-        Core.Initialize
+        Core.∆I
         Pipeline.Initialize
         Monitor.Initialize
-        Config.Initialize
-        WebServer.Initialize
+        Config.∆I
+        HTMLDashboard.Initialize
         RealPipeline.Initialize
         RealMonitor.Initialize
         GitAPL.Initialize
         APLPatterns.Initialize
-        Dashboard.Initialize
+        Dashboard.∆I
         ProjectLoader.Initialize
         VibeBenchmarks.Initialize
     ∇
@@ -171,19 +171,19 @@
         
         :Trap 11 22
             ⍝ Check core functions exist
-            :If 9≠⎕NC'Core.AI'
-                ⎕SIGNAL 11⊣'Core.AI function not found'
+            :If 9≠⎕NC'Vibe.Compress'
+                ⎕SIGNAL 11⊣'Vibe.Compress function not found'
             :EndIf
             
             ⍝ Test basic functionality
-            ai_score ← Core.AI 'Generated using AI'
-            :If ~(0≤ai_score≤1)
-                ⎕SIGNAL 11⊣'AI detection function returning invalid values'
+            test_compression ← Vibe.Compress 'test code'
+            :If 0=≢test_compression
+                ⎕SIGNAL 11⊣'Vibe compression function returning invalid values'
             :EndIf
             
             ⍝ Test pipeline functionality
-            :If 9≠⎕NC'Pipeline.QuickValidation'
-                ⎕SIGNAL 11⊣'Pipeline functions not available'
+            :If 9≠⎕NC'RealPipeline.RunPipeline'
+                ⎕SIGNAL 11⊣'RealPipeline functions not available'
             :EndIf
             
             ⎕←'✅ Installation validated successfully'
@@ -211,13 +211,9 @@
             :If 9=⎕NC'Pipeline' ⋄ health.modules ,← ⊂'Pipeline: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Pipeline: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
             :If 9=⎕NC'Monitor' ⋄ health.modules ,← ⊂'Monitor: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Monitor: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
             :If 9=⎕NC'Config' ⋄ health.modules ,← ⊂'Config: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Config: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            
-            ⍝ Test basic functionality
-            test_result ← Core.AI 'test'
-            :If ~(0≤test_result≤1)
-                health.status ← 'FAILED'
-                health.modules ,← ⊂'Core.AI: FAILED'
-            :EndIf
+            :If 9=⎕NC'Vibe' ⋄ health.modules ,← ⊂'Vibe: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Vibe: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
+            :If 9=⎕NC'RealPipeline' ⋄ health.modules ,← ⊂'RealPipeline: OK' ⋄ :Else ⋄ health.modules ,← ⊂'RealPipeline: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
+            :If 9=⎕NC'RealMonitor' ⋄ health.modules ,← ⊂'RealMonitor: OK' ⋄ :Else ⋄ health.modules ,← ⊂'RealMonitor: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
             
             ⎕←'Health Status: ',health.status
             ⎕←'Modules: ',⍕≢health.modules,' checked'
@@ -241,51 +237,47 @@
     ∇ QuickHelp
     ⍝ Display quick start information for v2.0
         ⎕←'🎯 APLCICD v2.0 Quick Start:'
-        ⎕←'  APLCICD.Demo         - Run system demonstration'
-        ⎕←'  APLCICD.AI text      - Test AI detection'
+        ⎕←'  APLCICD.Demo         - Run vibe coding demonstration'
+        ⎕←'  APLCICD.VibeCompress - Compress code for LLM efficiency'
         ⎕←'  APLCICD.Pipeline     - Run CI/CD pipeline'
         ⎕←'  APLCICD.Monitor      - Start monitoring'
         ⎕←'  APLCICD.HealthCheck  - System health status'
-        ⎕←'  APLCICD.WebDemo      - Launch web server demo'
+        ⎕←'  APLCICD.Dashboard    - Launch HTMLRenderer dashboard'
         ⎕←''
         ⎕←'📦 Core Modules:'
-        ⎕←'  Core.AI, Core.Enhanced     - AI detection functions'
-        ⎕←'  Pipeline.Run, Pipeline.Validate - CI/CD operations'
-        ⎕←'  Monitor.Start, Monitor.Status   - Monitoring & logging'
+        ⎕←'  Vibe.Compress, Vibe.Decompress - Ultra-concise code compression'
+        ⎕←'  RealPipeline.Run, RealPipeline.Validate - Real CI/CD operations'
+        ⎕←'  RealMonitor.Start, RealMonitor.Status   - Real monitoring & logging'
         ⎕←'  Config.Load, Config.Save        - Configuration management'
-        ⎕←'  WebServer.Start, WebServer.DemoServer - Web interface & webhooks'
+        ⎕←'  HTMLDashboard.Launch               - Native HTMLRenderer dashboard'
     ∇
 
     ∇ Demo
     ⍝ Run the main system demonstration
-        Core.DemoAdvanced
+        ⎕←'🎵 APLCICD v2.0 Vibe Coding Demo'
+        ⎕←'================================='
+        VibeDemo
     ∇
 
-    ∇ result ← AI text
-    ⍝ Quick AI detection using ultra-concise function
-        result ← Core.AI text
+    ∇ VibeNote
+    ⍝ Note about vibe coding focus
+        ⎕←'📝 APLCICD v2.0 focuses on vibe coding for LLM co-creation'
+        ⎕←'   AI detection functionality deprecated in favor of compression'
+        ⎕←'   Use Vibe.Compress and Vibe.Decompress for LLM optimization'
     ∇
 
-    ∇ result ← Enhanced text
-    ⍝ Advanced AI detection
-        result ← Core.Enhanced text
-    ∇
-
-    ∇ result ← AdvancedAI text
-    ⍝ Advanced AI detection with sophisticated linguistic analysis
-        result ← Core.AdvancedAI text
-    ∇
-
-    ∇ WebDemo
-    ⍝ Launch web server for competition demonstration
-        ⎕←'🌐 Launching APLCICD Web Demo Server'
-        ⎕←'===================================='
-        WebServer.DemoServer
+    ∇ Dashboard
+    ⍝ Launch HTMLRenderer dashboard for interactive demonstration
+        ⎕←'🚀 Launching APLCICD HTMLRenderer Dashboard'
+        ⎕←'==========================================='
+        HTMLDashboard.Launch
     ∇
 
     ∇ Performance
-    ⍝ Quick performance benchmark
-        Core.BenchmarkPerformance 1000
+    ⍝ Quick performance benchmark using vibe compression
+        ⎕←'🚀 APLCICD v2.0 Performance Benchmark'
+        ⎕←'====================================='
+        VibeBenchmarks.RunComprehensiveBenchmarks
     ∇
 
     ∇ result ← Pipeline files
@@ -354,11 +346,11 @@
         ⎕←'Status: ',health.status
         ⎕←'Modules: ',⍕≢health.modules
         ⎕←''
-        ⎕←'Ultra-concise AI function:'
-        ⎕←'  AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)  ⍝ 18 characters'
+        ⎕←'Vibe coding compression:'
+        ⎕←'  Ultra-concise code compression for LLM co-creation'
         ⎕←''
         ⎕←'Available operations:'
-        ⎕←'  • AI detection (APLCICD.AI) - REAL implementation'
+        ⎕←'  • Vibe compression (APLCICD.VibeCompress) - LLM optimization'
         ⎕←'  • CI/CD pipeline (APLCICD.Pipeline) - REAL implementation'
         ⎕←'  • System monitoring (APLCICD.Monitor) - REAL implementation'
         ⎕←'  • Configuration management (APLCICD.Config)'
@@ -436,6 +428,194 @@
         ⎕←'✅ No mocking or simulation!'
     ∇
 
+    ∇ ProjectAnalysisDemo
+    ⍝ Demonstrate ProjectLoader external project analysis
+        ⎕←'🔍 EXTERNAL PROJECT ANALYSIS DEMO'
+        ⎕←'================================='
+        ⎕←'Analyzing external APL projects for vibe compression potential'
+        ⎕←''
+        
+        ⍝ Create a sample project for analysis
+        demo_dir ← '/tmp/apl_sample_project'
+        {} ⎕SH 'mkdir -p ',demo_dir
+        
+        ⍝ Create sample APL files
+        sample_code1 ← 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''}'
+        sample_code2 ← 'ValidateInput ← {⎕ML ← 1 ⋄ :If 0=≢⍵ ⋄ ''Error'' ⋄ :Else ⋄ ''OK'' ⋄ :EndIf}'
+        sample_code3 ← ':Namespace Calculator\n    ∇ result ← Add args\n        result ← +/args\n    ∇\n:EndNamespace'
+        
+        sample_code1 ⎕NPUT demo_dir,'/Utils.apl' 1
+        sample_code2 ⎕NPUT demo_dir,'/Validation.dyalog' 1  
+        sample_code3 ⎕NPUT demo_dir,'/Calculator.dyalog' 1
+        
+        ⎕←'📁 Created sample project at: ',demo_dir
+        ⎕←'📂 Files: Utils.apl, Validation.dyalog, Calculator.dyalog'
+        ⎕←''
+        
+        ⍝ Analyze the project
+        result ← ProjectLoader.AnalyzeProject demo_dir
+        
+        ⍝ Display results
+        :If result.success
+            ⎕←'✅ ANALYSIS COMPLETE'
+            ⎕←'==================='
+            ⎕←'📊 Files analyzed: ',⍕result.file_count
+            ⎕←'🎵 Vibe compression potential: ',⍕result.vibe.total_compression_ratio,'%'
+            ⎕←'📏 Token savings: ',⍕result.vibe.total_tokens_saved,' tokens'
+            ⎕←'⭐ Overall quality score: ',⍕result.quality.overall_score,'/10'
+            ⎕←'🔧 CI/CD readiness: ',⍕100×result.cicd.score,'%'
+            ⎕←''
+            ⎕←'💡 TOP RECOMMENDATIONS:'
+            ⎕←'• Implement vibe coding for ',⍕result.vibe.total_compression_ratio,'% compression'
+            ⎕←'• Add CI/CD pipeline for automated quality checks'
+            ⎕←'• Consider function optimization for better performance'
+        :Else
+            ⎕←'❌ Analysis failed: ',result.error
+        :EndIf
+        
+        ⍝ Clean up
+        {} ⎕SH 'rm -rf ',demo_dir
+        ⎕←''
+        ⎕←'🎯 External project analysis capability demonstrated!'
+    ∇
+
+    ∇ RealMonitoringDemo
+    ⍝ Demonstrate RealMonitor live system monitoring
+        ⎕←'📊 REAL-TIME MONITORING DEMO'
+        ⎕←'==========================='
+        ⎕←'Live system monitoring with actual metrics collection'
+        ⎕←''
+        
+        ⍝ Start monitoring
+        {} RealMonitor.StartMonitoring
+        ⎕←''
+        
+        ⍝ Simulate some activity and collect metrics
+        ⎕←'🔄 Simulating system activity...'
+        :For i :In ⍳3
+            ⎕←'   Iteration ',⍕i,': Collecting metrics...'
+            metrics ← RealMonitor.CollectRealMetrics
+            ⎕←'   Memory: ',⍕metrics.memory_mb,'MB, CPU time: ',⍕metrics.cpu_time_ms,'ms'
+            ⍝ Small delay to show progression
+            ⎕DL 0.5
+        :EndFor
+        ⎕←''
+        
+        ⍝ Get performance history
+        ⎕←'📈 PERFORMANCE ANALYSIS'
+        ⎕←'======================'
+        history ← RealMonitor.GetPerformanceHistory
+        :If 0<≢history
+            ⎕←'📊 Total metrics collected: ',⍕≢history
+            ⎕←'⏱️  Monitoring duration: ',⍕history.monitoring_duration_seconds,' seconds'
+            ⎕←'📈 Performance trend: ',history.analysis.performance_trend
+            ⎕←'💾 Memory trend: ',history.analysis.memory_trend
+            ⎕←'⚡ CPU trend: ',history.analysis.cpu_trend
+        :Else
+            ⎕←'⚠️  No performance history available yet'
+        :EndIf
+        ⎕←''
+        
+        ⍝ Get real system status
+        ⎕←'🔍 SYSTEM HEALTH STATUS'
+        ⎕←'======================'
+        status ← RealMonitor.GetRealSystemStatus
+        ⎕←'📊 System status: ',status.status
+        ⎕←'⚡ Health score: ',⍕status.health_score,'/10'
+        ⎕←'🔧 APL version: ',status.apl_version
+        ⎕←'⏰ Timestamp: ',⍕status.timestamp
+        ⎕←''
+        
+        ⍝ Stop monitoring
+        RealMonitor.StopMonitoring
+        ⎕←'✅ Real-time monitoring demonstration complete!'
+    ∇
+
+    ∇ IntegratedDemo
+    ⍝ Comprehensive demo showcasing ProjectLoader + RealMonitor integration
+        ⎕←'🚀 INTEGRATED APLCICD DEMONSTRATION'
+        ⎕←'=================================='
+        ⎕←'ProjectLoader + RealMonitor + Vibe Coding Integration'
+        ⎕←''
+        
+        ⍝ Start monitoring for the demo
+        {} RealMonitor.StartMonitoring
+        start_metrics ← RealMonitor.CollectRealMetrics
+        ⎕←'📊 Started monitoring - Initial memory: ',⍕start_metrics.memory_mb,'MB'
+        ⎕←''
+        
+        ⍝ Demo 1: Vibe compression
+        ⎕←'STEP 1: Vibe Coding Compression'
+        ⎕←'==============================='
+        sample_func ← 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''}'
+        compressed ← Vibe.Compress sample_func
+        compression_ratio ← 100×1-≢compressed÷≢sample_func
+        ⎕←'Original: ',sample_func
+        ⎕←'Compressed: ',compressed
+        ⎕←'Compression: ',⍕compression_ratio,'%'
+        
+        ⍝ Collect metrics after vibe demo
+        vibe_metrics ← RealMonitor.CollectRealMetrics
+        ⎕←'Memory after vibe demo: ',⍕vibe_metrics.memory_mb,'MB'
+        ⎕←''
+        
+        ⍝ Demo 2: External project analysis
+        ⎕←'STEP 2: External Project Analysis'
+        ⎕←'================================='
+        demo_dir ← '/tmp/integrated_demo_project'
+        {} ⎕SH 'mkdir -p ',demo_dir
+        
+        ⍝ Create multiple sample files
+        files_created ← 0
+        :For code :In ('Calc ← +/' 'Validate ← 0=≢' 'Process ← ⎕NS ''''')
+            file_path ← demo_dir,'/File',⍕files_created,'.apl'
+            code ⎕NPUT file_path 1
+            files_created +← 1
+        :EndFor
+        
+        ⎕←'📁 Created ',⍕files_created,' sample files'
+        analysis ← ProjectLoader.AnalyzeProject demo_dir
+        
+        :If analysis.success
+            ⎕←'✅ Analysis successful'
+            ⎕←'📊 Compression potential: ',⍕analysis.vibe.total_compression_ratio,'%'
+            ⎕←'🏆 Quality score: ',⍕analysis.quality.overall_score,'/10'
+        :EndIf
+        
+        ⍝ Collect metrics after project analysis
+        analysis_metrics ← RealMonitor.CollectRealMetrics
+        ⎕←'Memory after analysis: ',⍕analysis_metrics.memory_mb,'MB'
+        ⎕←''
+        
+        ⍝ Demo 3: Performance analysis
+        ⎕←'STEP 3: Performance Analysis'
+        ⎕←'============================'
+        history ← RealMonitor.GetPerformanceHistory
+        :If 0<≢history
+            ⎕←'📈 Performance trends analyzed'
+            ⎕←'⏱️  Total monitoring time: ',⍕history.monitoring_duration_seconds,'s'
+            memory_change ← analysis_metrics.memory_mb - start_metrics.memory_mb
+            ⎕←'💾 Memory usage change: ',⍕memory_change,'MB'
+        :EndIf
+        
+        ⍝ Final system status
+        final_status ← RealMonitor.GetRealSystemStatus
+        ⎕←'🔍 Final health score: ',⍕final_status.health_score,'/10'
+        ⎕←''
+        
+        ⍝ Clean up
+        {} ⎕SH 'rm -rf ',demo_dir
+        RealMonitor.StopMonitoring
+        
+        ⎕←'🎯 INTEGRATED DEMONSTRATION COMPLETE!'
+        ⎕←'===================================='
+        ⎕←'✅ Live monitoring throughout demo'
+        ⎕←'✅ External project analysis'
+        ⎕←'✅ Vibe compression integration'
+        ⎕←'✅ Real-time performance tracking'
+        ⎕←'✅ Zero simulation - all real functionality!'
+    ∇
+
     ∇ Help
     ⍝ Display comprehensive help
         ⎕←''
@@ -444,6 +624,8 @@
         ⎕←''
         ⎕←'Core Functions:'
         ⎕←'  APLCICD.VibeDemo           - Demonstrate vibe coding compression'
+        ⎕←'  APLCICD.VibeCompress code  - Compress code for LLM efficiency'
+        ⎕←'  APLCICD.VibeDecompress code - Decompress vibe code to readable form'
         ⎕←'  APLCICD.SelfOptimize       - Self-improvement demonstration'
         ⎕←'  APLCICD.Pipeline files     - Complete REAL CI/CD pipeline'
         ⎕←'  APLCICD.Validate files     - REAL syntax validation'
@@ -453,6 +635,11 @@
         ⎕←'  APLCICD.HealthCheck       - System health'
         ⎕←'  APLCICD.Status            - System status'
         ⎕←'  APLCICD.RealDemo          - Demonstrate REAL functionality'
+        ⎕←''
+        ⎕←'NEW: Advanced Demonstration Functions:'
+        ⎕←'  APLCICD.ProjectAnalysisDemo - External project analysis with vibe compression'
+        ⎕←'  APLCICD.RealMonitoringDemo  - Live system monitoring demonstration'
+        ⎕←'  APLCICD.IntegratedDemo      - Comprehensive integrated demonstration'
         ⎕←''
         ⎕←'REAL Implementation Modules:'
         ⎕←'  RealPipeline.RunPipeline   - Actual CI/CD with real files'
@@ -488,13 +675,7 @@
             ⎕←'  ⚠️  RecursiveTest module failed to load'
         :EndTrap
         
-        :Trap 22
-            ⎕FIX'file://src/CompetitionWebServer.dyalog'
-            CompetitionWebServer.Initialize
-            ⎕←'  ✅ CompetitionWebServer module (enhanced demos)'
-        :Else
-            ⎕←'  ⚠️  CompetitionWebServer module failed to load'
-        :EndTrap
+        ⍝ CompetitionWebServer module removed - using HTMLRenderer dashboard instead
         
         ⎕←'  ✅ Advanced competition modules loaded'
     ∇
@@ -699,59 +880,43 @@
     ∇
     
     ∇ CompetitionServer
-    ⍝ Launch competition web server
-        ⍝ Ensure advanced modules are loaded
-        :If 0=⎕NC'CompetitionWebServer.LaunchCompetitionDemo'
-            LoadAdvancedModules
-        :EndIf
-        
-        :Trap 11
-            CompetitionWebServer.LaunchCompetitionDemo
-        :Else
-            ⎕←'❌ Competition server failed - ensure CompetitionWebServer module is loaded'
-        :EndTrap
+    ⍝ Launch competition dashboard (redirects to new HTMLRenderer)
+        ⎕←'🏆 Launching Competition Dashboard...'
+        ⎕←'===================================='
+        ⎕←'Using new HTMLRenderer dashboard instead of web server'
+        Dashboard
     ∇
 
     ∇ StartDashboard
-    ⍝ Auto-start web server and open dashboard when APLCICD runs
-        ⎕←'🌐 Starting APLCICD Web Dashboard...'
-        ⎕←'===================================='
+    ⍝ Auto-start HTMLRenderer dashboard when APLCICD runs
+        ⎕←'🚀 Starting APLCICD HTMLRenderer Dashboard...'
+        ⎕←'============================================='
         
         :Trap 11 22
-            ⍝ Start web server on port 8081
-            ⎕←'Starting web server on port 8081...'
-            server_result ← WebServer.Start 8081
+            ⍝ Launch HTMLRenderer dashboard
+            ⎕←'Launching HTMLRenderer dashboard...'
+            HTMLDashboard.Launch
             
-            :If WebServer.server_running
-                ⎕←'✅ Web server started successfully'
-                ⎕←'📊 Dashboard: http://localhost:8081'
-                ⎕←'🎵 Revolutionary vibe coding dashboard ready!'
-                
-                ⍝ Open dashboard in browser after short delay
-                :Trap 0
-                    ⎕DL 2  ⍝ Wait 2 seconds for server to fully start
-                    ⎕←'🌐 Opening dashboard in browser...'
-                    {} ⎕SH 'open http://localhost:8081'
-                    ⎕←'✅ Dashboard opened in browser'
-                :Else
-                    ⎕←'⚠️  Could not auto-open browser'
-                    ⎕←'   Manual access: http://localhost:8081'
-                :EndTrap
-            :Else
-                ⎕←'⚠️  Web server failed to start - using file-based dashboard'
-                dashboard_path ← ⊃⎕SH 'pwd'
-                dashboard_file ← 'file://',dashboard_path,'/web/dashboard.html'
-                ⎕←'📁 Opening file-based dashboard...'
-                :Trap 0
-                    {} ⎕SH 'open ',dashboard_file
-                    ⎕←'✅ File-based dashboard opened'
-                :Else
-                    ⎕←'⚠️  Manual access: ',dashboard_file
-                :EndTrap
-            :EndIf
+            ⎕←'✅ HTMLRenderer dashboard launched successfully'
+            ⎕←'📊 Dashboard window should be visible'
+            ⎕←'🎵 Revolutionary vibe coding dashboard ready!'
             
         :Else
-            ⎕←'❌ Dashboard startup failed: ',⎕DM
+            ⎕←'❌ HTMLRenderer dashboard startup failed: ',⎕DM
+            ⎕←'🔄 Falling back to static dashboard...'
+            
+            ⍝ Fallback to static dashboard
+            dashboard_path ← ⊃⎕SH 'pwd'
+            dashboard_file ← 'file://',dashboard_path,'/web/dashboard.html'
+            ⎕←'📁 Opening file-based dashboard...'
+            :Trap 0
+                Dashboard.SaveUnifiedDashboard 'web/dashboard.html'
+                {} ⎕SH 'open ',dashboard_file
+                ⎕←'✅ File-based dashboard opened'
+            :Else
+                ⎕←'⚠️  Manual access: ',dashboard_file
+            :EndTrap
+            
             ⎕←'💡 Try manual startup: ./aplcicd dashboard'
         :EndTrap
         
@@ -769,14 +934,15 @@
         ⎕←'=============================================='
         ⎕←''
         
-        ⍝ 1. Ultra-concise AI detection
-        ⎕←'Demo 1: Ultra-Concise AI Detection'
-        ⎕←'=================================='
-        score1 ← AI 'Fix authentication bug'      ⍝ Human: ~0.04
-        score2 ← AI 'As an AI assistant I can help' ⍝ AI: ~0.85
-        ⎕←'Human text score: ',⍕score1
-        ⎕←'AI text score: ',⍕score2
-        ⎕←'Algorithm: AI ← +/∘(∨/¨)∘(⊂⍷¨⊂)  (18 characters!)'
+        ⍝ 1. Vibe coding compression
+        ⎕←'Demo 1: Vibe Coding Compression'
+        ⎕←'==============================='
+        ⎕←'Ultra-concise APL for LLM co-creation'
+        sample ← 'result ← ProcessPipeline files'
+        compressed ← VibeCompress sample
+        ⎕←'Original: ',sample
+        ⎕←'Compressed: ',compressed
+        ⎕←'Compression ratio: ',⍕(≢compressed)÷≢sample
         ⎕←''
         
         ⍝ 2. Vibe coding demonstration
@@ -797,17 +963,19 @@
         :EndTrap
         ⎕←''
         
-        ⍝ 4. Launch web server
-        ⎕←'Demo 4: Competition Web Server'
+        ⍝ 4. Launch HTMLRenderer dashboard
+        ⎕←'Demo 4: HTMLRenderer Dashboard'
         ⎕←'=============================='
         :Trap 11
-            {} CompetitionWebServer.StartCompetitionServer 8080
+            HTMLDashboard.Launch
+            ⎕←'✅ HTMLRenderer dashboard launched'
         :Else
-            ⎕←'⚠️  Competition web server module not available'
+            ⎕←'⚠️  HTMLRenderer dashboard not available - fallback to static'
+            Dashboard.SaveUnifiedDashboard 'web/dashboard.html'
         :EndTrap
         
         result ← ⎕NS ''
-        result.ai_demo ← score1 score2
+        result.vibe_demo ← compressed
         result.vibe_compression ← 1
         result.recursive_cycles ← recursive_result.cycles
         result.server_running ← 1

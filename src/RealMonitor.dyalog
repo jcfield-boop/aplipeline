@@ -14,15 +14,17 @@
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
     ∇ Initialize
-    ⍝ Initialize real monitoring module
+    ⍝ Initialize real monitoring module (no auto-start)
         ⎕←'  ✅ Real monitoring and metrics collection loaded'
         
-        ⍝ Initialize monitoring state
+        ⍝ Initialize monitoring state - ready but not started
         monitoring_active ← 0
         metrics_history ← ⍬
         pipeline_logs ← ⍬
         start_time ← ⎕TS
         last_collection ← ⎕TS
+        
+        ⎕←'  ℹ️  Monitoring initialized but not started (use StartMonitoring to begin)'
     ∇
 
     ⍝ ═══════════════════════════════════════════════════════════════

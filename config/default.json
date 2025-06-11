@@ -33,10 +33,15 @@
     "gc_threshold": 1000
   },
   "vibe": {
+    "enabled": true,
     "vibe_mode": true,
     "compression_level": "standard",
     "auto_glossary": true,
-    "target_compression": 0.6
+    "target_compression": 0.6,
+    "runtime_mode": true,
+    "edit_mode": false,
+    "preserve_comments": true,
+    "comment_archive": "config/COMMENTS.archive"
   },
   "metadata": {
     "version": "2.0.0",

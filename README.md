@@ -47,8 +47,10 @@ src/
 ├── RealMonitor.dyalog   # Live system monitoring
 ├── Dashboard.dyalog     # Unified interactive web dashboard
 ├── GitAPL.dyalog        # Native APL Git integration
-├── WebServer.dyalog     # Conga-based HTTP server
+├── WebServer.dyalog     # Conga-based HTTP server with HMAC security
 ├── SelfOptimizer.dyalog # Autonomous improvement engine
+├── ProjectLoader.dyalog # External APL project analysis
+├── VibeBenchmarks.dyalog # Compression benchmarking suite
 ├── APLPatterns.dyalog   # Advanced APL operators
 ├── Pipeline.dyalog      # Legacy pipeline (superseded)
 ├── Monitor.dyalog       # Legacy monitoring (superseded)  
@@ -85,6 +87,8 @@ chmod +x aplcicd
 ./aplcicd dashboard                         # Start web server + interactive dashboard  
 ./aplcicd vibe "ProcessPipelineStage"       # Demo vibe compression
 ./aplcicd pipeline                          # Run CI/CD on repository
+./aplcicd analyze /path/to/apl/project      # Analyze external APL project
+./aplcicd external-demo                     # Demo external project analysis
 ./aplcicd status                            # System health check
 ```
 
@@ -192,18 +196,33 @@ Transparent AI collaboration tracking with commit message attribution.
 - **Version Control**: Native APL implementation of Git operations via system calls
 - **Audit Logging**: Complete operation history with timestamps and results
 
-### 🌐 **Interactive Web Dashboard**
-- **🚀 Auto-Start**: File-based dashboard opens automatically  
-- **📊 Live Data**: Real-time git info, system metrics, vibe compression status
-- **🎛️ Working Controls**: Functional buttons with real API responses
-- **🔄 Real Processing**: Actual self-optimization and compression operations
-- **📝 Real Git Integration**: Commit improvements directly from dashboard
-- **📋 Audit Logging**: Persistent logs for all CI/CD operations
-- **💻 Production UI**: Professional interface with full CI/CD functionality
+### External Project Analysis
+- **Multi-Source Support**: Analyze local directories or clone GitHub repositories
+- **Comprehensive Assessment**: Code quality, vibe compression potential, CI/CD readiness
+- **Performance Analysis**: Identify optimization opportunities in existing APL code
+- **Actionable Recommendations**: Specific suggestions with measurable impact estimates
+- **Report Generation**: Markdown reports with executive summaries and technical details
+- **Real-World Utility**: Demonstrates value beyond self-improvement for APL community
+
+### Security and Benchmarking
+- **Webhook Security**: HMAC-SHA256 signature verification with configurable secrets
+- **Comprehensive Benchmarking**: Multi-pattern compression analysis across 6 APL code types
+- **Performance Metrics**: Real compression speed and token efficiency measurements
+- **Persistent Storage**: Timestamped metrics with historical trend analysis
+- **Production Security**: Timing-safe comparisons and rate limiting
+
+### Interactive Web Dashboard
+- **Auto-Start**: File-based dashboard opens automatically with web server fallback
+- **Live Data**: Real-time git info, system metrics, vibe compression status
+- **Working Controls**: Functional buttons with real API responses
+- **Real Processing**: Actual self-optimization and compression operations
+- **Git Integration**: Commit improvements directly from dashboard with HMAC security
+- **Audit Logging**: Persistent logs for all CI/CD operations
+- **Production UI**: Professional interface with comprehensive API endpoints
 
 ## 📊 Proven Performance Metrics
 
-### 🎵 **Verified Vibe Coding Results** ✅ 
+### Verified Vibe Coding Results
 - **Compression Ratio**: 29% measured compression (tested and verified)
 - **Token Efficiency**: 1,250 tokens saved in real implementations  
 - **Bidirectional**: Perfect decompression with auto-generated glossary
@@ -212,7 +231,7 @@ Transparent AI collaboration tracking with commit message attribution.
 - **Variables**: `pipeline_status` → `⍵` (94% reduction)  
 - **Patterns**: `:If 0=≢` → `:if 0=⍴` (62% reduction)
 
-### 🚀 **Self-Optimization Results**
+### Self-Optimization Results
 - **Performance Score**: 1.0 (measured by SelfOptimizer analysis)
 - **Quality Score**: 0.85 (measured by SelfOptimizer analysis)  
 - **Vibe Effectiveness**: 0.5 (measured by SelfOptimizer analysis)
@@ -221,11 +240,19 @@ Transparent AI collaboration tracking with commit message attribution.
 - **Real Analysis**: Actual code inspection and improvement detection
 - **Working Validation**: All analysis functions tested and functional
 
-## 🛠️ **Technical Implementation**
+### Benchmarking Results
+- **Pattern Coverage**: 6 APL code pattern types analyzed
+- **LLM Platform Support**: GPT-4, Claude-3, Gemini, PaLM-2 token analysis
+- **Performance Testing**: Compression/decompression speed measurements
+- **Historical Tracking**: Persistent metrics with trend analysis
+- **External Project Analysis**: Real APL project assessment capabilities
 
-### 📋 **CI/CD Audit Logging**
+## Technical Implementation
+
+### CI/CD Audit Logging
 - **Git Commits**: All commits logged to `logs/git_commits.log` with hash, timestamp, status
-- **Self-Optimization**: Improvement attempts tracked in `logs/self_optimization.log`
+- **Metrics Storage**: Timestamped metrics in `logs/metrics_*.json` with continuous log
+- **Benchmark Results**: Comprehensive benchmarks saved to `logs/vibe_benchmarks_*.json`
 - **Dashboard Integration**: Web commits automatically logged via API endpoints
 - **Failure Tracking**: Failed operations logged for debugging and monitoring
 - **Audit Trail**: Complete history of autonomous system operations

@@ -40,6 +40,8 @@ This glossary enables reverse translation of "vibe coded" APL back to human-read
 | `∆H` | `GenerateHTML` |
 | `∆R` | `GenerateReport` |
 | `∆G` | `GetSystemMetrics` |
+| `∇Hl` | `HTMLDashboardLaunch` |
+| `∇Hl` | `HTMLDashboardLaunch_dot` |
 | `∆W` | `HandleWebhook` |
 | `∆I` | `Initialize` |
 | `∆L` | `LoadCoreModules` |
@@ -57,8 +59,6 @@ This glossary enables reverse translation of "vibe coded" APL back to human-read
 | `∇Vc` | `VibeCompress_dot` |
 | `∇Vd` | `VibeDecompress` |
 | `∇Vd` | `VibeDecompress_dot` |
-| `∇Ws` | `WebServerStart` |
-| `∇Ws` | `WebServerStart_dot` |
 
 ## Pattern Mappings
 
@@ -72,7 +72,7 @@ This glossary enables reverse translation of "vibe coded" APL back to human-read
 | `⊃` | `(⎕UCS 10)` |
 | `∇Vc` | `Vibe.Compress` |
 | `∇Vd` | `Vibe.Decompress` |
-| `∇Ws` | `WebServer.Start` |
+| `∇Hl` | `HTMLDashboard.Launch` |
 | `∇Mg` | `Monitor.GetMetrics` |
 | `∇Cl` | `Config.LoadConfig` |
 | `∇Pr` | `Pipeline.RunStage` |
