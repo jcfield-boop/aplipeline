@@ -35,13 +35,17 @@
   "vibe": {
     "enabled": true,
     "vibe_mode": true,
-    "compression_level": "standard",
+    "compression_level": "maximum",
     "auto_glossary": true,
-    "target_compression": 0.6,
-    "runtime_mode": true,
-    "edit_mode": false,
+    "target_compression": 0.7,
+    "runtime_mode": false,
+    "edit_mode": true,
     "preserve_comments": true,
-    "comment_archive": "config/COMMENTS.archive"
+    "comment_archive": "config/COMMENTS.archive",
+    "compress_all_source": true,
+    "source_patterns": ["src/*.dyalog", "src/*.apl"],
+    "excluded_from_compression": [],
+    "llm_development_mode": false
   },
   "metadata": {
     "version": "2.0.0",

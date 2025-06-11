@@ -461,12 +461,17 @@
         ⍝ Format log entry
         log_line ← (⍕⎕TS),' | ',status,' | ',improvement.category,' | ',improvement.description
         
-        ⍝ Append to log file (create if doesn't exist)
+        ⍝ Ensure logs directory exists
+        :If ~⎕NEXISTS 'logs'
+            ⎕MKDIR 'logs'
+        :EndIf
+        
+        ⍝ Append to log file in logs directory
         :Trap 22
-            log_line ⎕NPUT 'self_optimization.log' 1
-            ⎕←'  📝 Logged to self_optimization.log'
+            log_line ⎕NPUT 'logs/self_optimization.log' 1
+            ⎕←'  📝 Logged to logs/self_optimization.log'
         :Else
-            ⎕←'  ⚠️  Could not write to log file'
+            ⎕←'  ⚠️  Could not write to logs/self_optimization.log: ',⎕DM
         :EndTrap
     ∇
 
@@ -475,11 +480,11 @@
         history ← ⍬
         
         :Trap 22
-            log_lines ← ⊃⎕NGET 'self_optimization.log' 1
+            log_lines ← ⊃⎕NGET 'logs/self_optimization.log' 1
             history ← log_lines
             ⎕←'Retrieved ',⍕≢history,' optimization log entries'
         :Else
-            ⎕←'No optimization history found (new system)'
+            ⎕←'No optimization history found (new system or no logs/self_optimization.log)'
         :EndTrap
     ∇
 

@@ -14,6 +14,12 @@
         :If Config.enabled
             ⎕←'  ✅ Vibe coding compression system loaded (enabled)'
             InitializeCompressionMaps
+            
+            ⍝ Auto-compress all source files in LLM development mode
+            :If Config.llm_development_mode ∧ Config.compress_all_source
+                ⎕←'  🚀 LLM Development Mode: Auto-compressing all source files...'
+                CompressAllSource
+            :EndIf
         :Else
             ⎕←'  ⚠️  Vibe coding compression system loaded (disabled)'
         :EndIf
@@ -37,6 +43,10 @@
         Config.edit_mode ← 0     ⍝ Edit mode for LLM interaction
         Config.preserve_comments ← 1  ⍝ Archive comments when in edit mode
         Config.comment_archive ← 'config/COMMENTS.archive'
+        Config.compress_all_source ← 0  ⍝ Default: don't auto-compress
+        Config.llm_development_mode ← 0  ⍝ Default: not in LLM mode
+        Config.source_patterns ← 'src/*.dyalog' 'src/*.apl'
+        Config.excluded_from_compression ← ⍬
         
         :Trap 22 11 1000
             config_text ← ⊃⎕NGET 'config/default.json' 1
@@ -49,6 +59,8 @@
                 Config.compression_level ← ExtractJSONString config_string 'compression_level'
                 Config.auto_glossary ← ExtractJSONBoolean config_string 'auto_glossary'
                 Config.target_compression ← ExtractJSONNumber config_string 'target_compression'
+                Config.compress_all_source ← ExtractJSONBoolean config_string 'compress_all_source'
+                Config.llm_development_mode ← ExtractJSONBoolean config_string 'llm_development_mode'
             :EndIf
             
         :Else
@@ -615,8 +627,12 @@
         :If 0=⎕NC'filename' ⋄ filename ← Config.glossary_path ⋄ :EndIf
         
         ⍝ Ensure directory exists
-        dir ← ⊃,/'/'(≠⊆⊢)filename
-        :If ~⎕NEXISTS dir ⋄ ⎕MKDIR dir ⋄ :EndIf
+        parts ← '/'(≠⊆⊢)filename
+        :If 1<≢parts
+            dir ← ∊(¯1↓parts),¨'/'
+            dir ← ¯1↓dir  ⍝ Remove trailing slash
+            :If ~⎕NEXISTS dir ⋄ ⎕MKDIR dir ⋄ :EndIf
+        :EndIf
         
         newline ← ⎕UCS 10
         glossary ← '# APLCICD Vibe Code Glossary',newline
@@ -695,6 +711,189 @@
     ⍝ Toggle vibe compression on/off
         Config.enabled ← ~Config.enabled
         ⎕←'🎛️  Vibe compression ',((Config.enabled)⊃'disabled' 'enabled')
+    ∇
+
+    ∇ CompressAllSource
+    ⍝ Compress ALL source files for LLM development mode
+    ⍝ This is the main function for massive token reduction during AI development
+        :If ~Config.enabled
+            ⎕←'❌ Vibe compression disabled - enable in config first'
+            →0
+        :EndIf
+        
+        ⎕←'🚀 COMPRESSING ALL SOURCE FILES FOR LLM DEVELOPMENT'
+        ⎕←'=================================================='
+        ⎕←'Target: Maximum token reduction for AI workflows'
+        ⎕←''
+        
+        ⍝ Get all source files
+        files ← GetAllSourceFiles
+        total_files ← ≢files
+        
+        :If 0=total_files
+            ⎕←'❌ No source files found'
+            →0
+        :EndIf
+        
+        ⎕←'📁 Found ',(⍕total_files),' source files to compress'
+        ⎕←''
+        
+        ⍝ Backup original files
+        backup_dir ← 'backup/original_',(⍕⎕TS),'/'
+        CreateBackupDirectory backup_dir
+        
+        ⍝ Compress each file
+        total_original ← 0
+        total_compressed ← 0
+        compressed_count ← 0
+        
+        :For i :In ⍳total_files
+            file ← i⊃files
+            :Trap 22
+                ⍝ Read original file
+                original ← ⊃⎕NGET file 1
+                original_content ← ∊original,⎕UCS 10
+                
+                ⍝ Backup original
+                backup_file ← backup_dir,(⊃⌽'/'(≠⊆⊢)file)
+                original ⎕NPUT backup_file 1
+                
+                ⍝ Compress content
+                compressed_content ← Compress original_content
+                
+                ⍝ Write compressed version
+                (⊂compressed_content) ⎕NPUT file 1
+                
+                ⍝ Calculate metrics
+                orig_size ← ≢original_content
+                comp_size ← ≢compressed_content
+                ratio ← comp_size ÷ orig_size⌈1
+                savings ← orig_size - comp_size
+                
+                total_original ← total_original + orig_size
+                total_compressed ← total_compressed + comp_size
+                compressed_count ← compressed_count + 1
+                
+                ⎕←'✅ ',(⍕i),'/',(⍕total_files),': ',file
+                ⎕←'   Tokens: ',(⍕orig_size),' → ',(⍕comp_size),' (saved ',(⍕savings),', ',(⍕⌊100×1-ratio),'% reduction)'
+                
+            :Else
+                ⎕←'❌ Failed to compress: ',file,' - ',(⊃⎕DM)
+            :EndTrap
+        :EndFor
+        
+        ⍝ Show final summary
+        overall_ratio ← total_compressed ÷ total_original⌈1
+        overall_savings ← total_original - total_compressed
+        overall_reduction ← ⌊100×1-overall_ratio
+        
+        ⎕←''
+        ⎕←'🎯 COMPRESSION COMPLETE'
+        ⎕←'======================'
+        ⎕←'Files compressed: ',(⍕compressed_count),'/',(⍕total_files)
+        ⎕←'Total tokens: ',(⍕total_original),' → ',(⍕total_compressed)
+        ⎕←'Token savings: ',(⍕overall_savings),' (',(⍕overall_reduction),'% reduction)'
+        ⎕←'Backup location: ',backup_dir
+        ⎕←''
+        ⎕←'💡 LLM can now see ENTIRE system in ',(⍕total_compressed),' tokens!'
+        ⎕←'💡 Context efficiency improved by ',(⍕overall_reduction),'%'
+        
+        ⍝ Update glossary for all new compressions
+        GenerateGlossary Config.glossary_path
+    ∇
+
+    ∇ files ← GetAllSourceFiles
+    ⍝ Get list of all source files to compress
+        files ← ⍬
+        
+        ⍝ Default patterns if not configured
+        patterns ← Config.source_patterns
+        :If 0=≢patterns ⋄ patterns ← 'src/*.dyalog' 'src/*.apl' ⋄ :EndIf
+        
+        :For pattern :In patterns
+            :Trap 22
+                pattern_files ← ⊃⎕NINFO⍠1⊢pattern
+                files ← files,pattern_files
+            :Else
+                ⎕←'⚠️  Pattern failed: ',pattern
+            :EndTrap
+        :EndFor
+        
+        ⍝ Remove excluded files
+        :If 0<≢Config.excluded_from_compression
+            :For excluded :In Config.excluded_from_compression
+                files ← files~⊂excluded
+            :EndFor
+        :EndIf
+    ∇
+
+    ∇ CreateBackupDirectory dir
+    ⍝ Create backup directory for original files
+        :Trap 22
+            ⎕MKDIR dir
+            ⎕←'📁 Created backup directory: ',dir
+        :Else
+            ⎕←'⚠️  Could not create backup directory: ',dir
+        :EndTrap
+    ∇
+
+    ∇ RestoreFromBackup backup_dir
+    ⍝ Restore original files from backup
+        :If ~⎕NEXISTS backup_dir
+            ⎕←'❌ Backup directory not found: ',backup_dir
+            →0
+        :EndIf
+        
+        ⎕←'🔄 Restoring files from backup...'
+        
+        backup_files ← ⊃⎕NINFO⍠1⊢backup_dir,'*'
+        
+        :For backup_file :In backup_files
+            :Trap 22
+                filename ← ⊃⌽'/'(≠⊆⊢)backup_file
+                target ← 'src/',filename
+                content ← ⊃⎕NGET backup_file 1
+                content ⎕NPUT target 1
+                ⎕←'✅ Restored: ',target
+            :Else
+                ⎕←'❌ Failed to restore: ',backup_file
+            :EndTrap
+        :EndFor
+        
+        ⎕←'🎯 Restoration complete'
+    ∇
+
+    ∇ ShowCompressionStatus
+    ⍝ Show current compression status of all source files
+        ⎕←'📊 VIBE COMPRESSION STATUS'
+        ⎕←'========================='
+        ⎕←''
+        
+        files ← GetAllSourceFiles
+        total_files ← ≢files
+        total_tokens ← 0
+        
+        :For file :In files
+            :Trap 22
+                content ← ⊃⎕NGET file 1
+                tokens ← ≢∊content,⎕UCS 10
+                total_tokens ← total_tokens + tokens
+                
+                ⍝ Check if compressed (look for vibe symbols)
+                is_compressed ← ∨/∨⌿'⍺⍵⍳⍴⍨⍣⍤⍢⌸⌺⍠⍬⍟⍫∆∇'∘.∊content
+                status ← is_compressed⊃'📄 UNCOMPRESSED' '✅ COMPRESSED'
+                
+                ⎕←status,' ',file,' (',(⍕tokens),' tokens)'
+            :Else
+                ⎕←'❌ ERROR reading ',file
+            :EndTrap
+        :EndFor
+        
+        ⎕←''
+        ⎕←'Total files: ',(⍕total_files)
+        ⎕←'Total tokens: ',(⍕total_tokens)
+        ⎕←'Mode: ',Config.compression_level,' compression'
+        ⎕←'LLM Development Mode: ',(Config.llm_development_mode⊃'OFF' 'ON')
     ∇
 
     ∇ result ← GetVibeStatus

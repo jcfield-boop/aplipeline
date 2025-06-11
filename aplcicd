@@ -185,7 +185,7 @@ validate_demo_environment() {
     done
     
     # Check required directories exist
-    local required_dirs=("src" "web" "config")
+    local required_dirs=("src" "config")
     for dir in "${required_dirs[@]}"; do
         if [[ ! -d "$dir" ]]; then
             log_error "Required directory missing: $dir"
@@ -244,7 +244,7 @@ initialize() {
     validate_demo_environment
     
     # Ensure directories exist
-    mkdir -p web logs config
+    mkdir -p logs config
     
     # Clean start
     restart_dyalog
@@ -287,34 +287,31 @@ generate_dashboard() {
         
     else
         log_error "Failed to launch HTMLRenderer dashboard"
-        log_info "Falling back to static dashboard..."
-        open_dashboard
+        log_info "HTMLRenderer dashboard unavailable"
     fi
 }
 
-# Open dashboard in browser
-open_dashboard() {
-    local dashboard_path="$SCRIPT_DIR/web/dashboard.html"
+# Generate live dashboard and open in browser
+generate_dashboard_browser() {
+    log_header "Generate Live Dashboard for Browser"
     
-    if [[ ! -f "$dashboard_path" ]]; then
-        log_error "Dashboard file not found: $dashboard_path"
-        return 1
-    fi
+    log_info "Generating live dashboard with real-time data..."
     
-    log_info "Opening dashboard in browser..."
+    # Generate live dashboard and open in browser
+    run_apl '
+        ⎕FIX'"'"'file://src/APLCICD.dyalog'"'"'
+        APLCICD.Initialize
+        HTMLDashboard.LaunchInBrowser
+        ⎕OFF
+    ' "Generate live dashboard for browser"
     
-    # Try different platform-specific openers
-    if command -v open &> /dev/null; then
-        open "$dashboard_path" && log_success "Dashboard opened (macOS)"
-    elif command -v xdg-open &> /dev/null; then
-        xdg-open "$dashboard_path" && log_success "Dashboard opened (Linux)"
-    elif command -v start &> /dev/null; then
-        start "$dashboard_path" && log_success "Dashboard opened (Windows)"
+    if [[ $? -eq 0 ]]; then
+        log_success "Live dashboard generated and opened in browser"
     else
-        log_warning "Could not auto-open browser"
-        echo "📂 Please open manually: file://$dashboard_path"
+        log_error "Failed to generate dashboard for browser"
     fi
 }
+
 
 # Run APL CI/CD demo
 run_demo() {
@@ -598,6 +595,30 @@ APLCICD.IntegratedDemo
     run_apl "$apl_integrated_code" "Integrated demonstration"
 }
 
+# Compress all source files for LLM development
+run_compress_all_source() {
+    log_header "Compress All Source Files for LLM Development"
+    
+    local apl_compress_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+Vibe.CompressAllSource
+⎕OFF"
+    
+    run_apl "$apl_compress_code" "Compress all source files"
+}
+
+# Show vibe compression status
+run_vibe_status() {
+    log_header "Vibe Compression Status"
+    
+    local apl_status_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+Vibe.ShowCompressionStatus
+⎕OFF"
+    
+    run_apl "$apl_status_code" "Vibe compression status"
+}
+
 run_complete_competition_demo() {
     log_header "Complete Competition Demonstration"
     
@@ -672,7 +693,8 @@ Usage: ./aplcicd [command] [options]
 Essential Commands:
   complete          - Full system demonstration (recommended)
   demo              - Contest demonstration
-  dashboard         - Launch native HTMLRenderer dashboard
+  dashboard         - Generate live dashboard and open in browser
+  dashboard-htmlrenderer - Launch native HTMLRenderer dashboard
   vibe TEXT         - Compress text using vibe coding (60%+ compression)
 
 Pipeline Commands:
@@ -681,6 +703,10 @@ Pipeline Commands:
   selfoptimize      - Self-optimization and improvement
   status            - System status and health check
   benchmark         - Performance benchmark
+
+Vibe Coding Commands:
+  compress-all      - Compress ALL source files for LLM development
+  vibe-status       - Show compression status of all files
 
 Competition Commands:
   vibe              - Vibe coding compression demonstration
@@ -695,12 +721,13 @@ Advanced Demo Commands:
 
 Examples:
   ./aplcicd complete                              # Full demo
-  ./aplcicd dashboard                             # Launch dashboard
+  ./aplcicd dashboard                             # Open live dashboard in browser  
+  ./aplcicd dashboard-htmlrenderer                # Launch HTMLRenderer dashboard
+  ./aplcicd compress-all                          # Compress ALL source files
+  ./aplcicd vibe-status                           # Check compression status
   ./aplcicd vibe "ProcessFunction ← {code}"       # Vibe compression
   ./aplcicd demo                                  # Contest demo
   ./aplcicd pipeline                              # CI/CD test
-  ./aplcicd complete-demo                         # Competition demo
-  ./aplcicd vibe                                  # Code compression demo
 
 Key Features:
   🎵 Ultra-concise vibe coding compression (60%+ savings)
@@ -748,6 +775,9 @@ main() {
             run_demo
             ;;
         "dashboard")
+            generate_dashboard_browser
+            ;;
+        "dashboard-htmlrenderer")
             generate_dashboard
             ;;
         "vibe")
@@ -794,6 +824,12 @@ main() {
             ;;
         "integrated")
             run_integrated_demo
+            ;;
+        "compress-all")
+            run_compress_all_source
+            ;;
+        "vibe-status")
+            run_vibe_status
             ;;
         "restart")
             restart_dyalog
