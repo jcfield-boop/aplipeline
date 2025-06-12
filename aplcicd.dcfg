@@ -17,30 +17,21 @@
   },
   "exports": {
     "APLCICD": "./src/APLCICD.dyalog",
-    "APLCICD.Core": "./src/Core.dyalog",
     "APLCICD.Pipeline": "./src/Pipeline.dyalog",
     "APLCICD.Monitor": "./src/Monitor.dyalog",
     "APLCICD.Config": "./src/Config.dyalog",
     "APLCICD.GitAPL": "./src/GitAPL.dyalog",
-    "APLCICD.WebServer": "./src/WebServer.dyalog",
     "APLCICD.Vibe": "./src/vibe.dyalog",
     "APLCICD.SelfOptimizer": "./src/SelfOptimizer.dyalog",
-    "APLCICD.APLPatterns": "./src/APLPatterns.dyalog",
-    "APLCICD.Tests": "./src/Tests.dyalog",
-    "APLCICD.RecursiveTest": "./src/RecursiveTest.dyalog",
-    "APLCICD.VibeBenchmarks": "./src/VibeBenchmarks.dyalog",
-    "APLCICD.ProjectLoader": "./src/ProjectLoader.dyalog",
-    "APLCICD.HTMLDashboard": "./src/HTMLDashboard.dyalog"
+    "APLCICD.Tests": "./src/Tests.dyalog"
   },
   "api": {
     "entry_points": [
       "APLCICD.Initialize",
       "APLCICD.TestCI",
       "APLCICD.SelfOptimize",
-      "APLCICD.StartDashboard",
       "APLCICD.Vibe.Compress",
       "APLCICD.Vibe.Decompress",
-      "APLCICD.Dashboard.GenerateUnifiedDashboard",
       "APLCICD.Pipeline.ProcessGitChanges",
       "APLCICD.AnalyzeProject",
       "APLCICD.ExternalDemo",
@@ -95,7 +86,6 @@
   "scripts": {
     "start": "./aplcicd complete",
     "demo": "./aplcicd demo",
-    "dashboard": "./aplcicd dashboard",
     "test": "./aplcicd pipeline",
     "benchmark": "./aplcicd benchmark",
     "ai": "./aplcicd ai",

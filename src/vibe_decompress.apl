@@ -8,11 +8,11 @@ config ← ⎕JSON ⊃⎕NGET 'config/default.json' 1
 
 ⎕←'🎵 APLCICD Vibe Decompression'
 ⎕←'============================='
-⎕←'Current mode: ',('Standard' 'Vibe')[1+config.vibe.vibe_mode]
+⎕←'Current mode: ',('Standard' 'Vibe')[1+config.vibe.enabled]
 ⎕←''
 
-:If ~config.vibe.vibe_mode
-    ⎕←'⚠️  Files are already in standard format (vibe_mode = false)'
+:If ~config.vibe.enabled
+    ⎕←'⚠️  Files are already in standard format (enabled = false)'
     ⎕←'Nothing to decompress.'
     →0
 :EndIf
@@ -61,7 +61,7 @@ DecompressText ← {
 ⎕←'Decompressing source files to human-readable format'
 ⎕←'=================================================='
 
-files ← 'src/Core.dyalog' 'src/Config.dyalog'
+files ← 'src/Config.dyalog' 'src/APLCICD.dyalog'
 total_expansion ← 0
 files_processed ← 0
 
@@ -99,10 +99,10 @@ files_processed ← 0
 ⎕←'Updating configuration to standard mode'
 ⎕←'====================================='
 
-config.vibe.vibe_mode ← 0
+config.vibe.enabled ← 0
 updated_config ← ⎕JSON⍠('Compact' 0)⊢config
 updated_config ⎕NPUT 'config/default.json' 1
-⎕←'✅ Config updated: vibe_mode = false'
+⎕←'✅ Config updated: enabled = false'
 ⎕←''
 
 ⍝ Results

@@ -301,14 +301,12 @@
         FuncMap.ConfigLoadConfig ← '∇Cl'
         FuncMap.MonitorGetMetrics ← '∇Mg'
         FuncMap.PipelineRunStage ← '∇Pr'
-        FuncMap.HTMLDashboardLaunch ← '∇Hl'
         FuncMap.VibeCompress ← '∇Vc'
         FuncMap.VibeDecompress ← '∇Vd'
         
         ⍝ Add dotted method patterns using ⍎ for dynamic assignment
         ⍎'FuncMap.VibeCompress_dot ← ''∇Vc'''
         ⍎'FuncMap.VibeDecompress_dot ← ''∇Vd'''
-        ⍎'FuncMap.HTMLDashboardLaunch_dot ← ''∇Hl'''
         ⍎'FuncMap.MonitorGetMetrics_dot ← ''∇Mg'''
         
         ⍝ Pattern compression maps: [find] [replace]
@@ -324,7 +322,6 @@
         ⍝ Method-style patterns (Class.Method → ∇Symbol)
         Patterns ,← ⊂('Vibe.Compress') ('∇Vc')
         Patterns ,← ⊂('Vibe.Decompress') ('∇Vd')
-        Patterns ,← ⊂('HTMLDashboard.Launch') ('∇Hl')
         Patterns ,← ⊂('Monitor.GetMetrics') ('∇Mg')
         Patterns ,← ⊂('Config.LoadConfig') ('∇Cl')
         Patterns ,← ⊂('Pipeline.RunStage') ('∇Pr')
@@ -551,6 +548,11 @@
     ⍝ Apply simple whitespace compression using string replacement
         compressed ← code
         
+        ⍝ Simple comment removal for LLM efficiency (when preserve_comments is false)
+        :If ~Config.preserve_comments
+            compressed ← SimpleStripComments compressed
+        :EndIf
+        
         ⍝ Remove extra spaces around common operators using StringReplace
         compressed ← StringReplace ('←' ' ← ' compressed)
         compressed ← StringReplace ('⋄' ' ⋄ ' compressed)
@@ -562,6 +564,30 @@
         :While ∨/'  '⍷compressed
             compressed ← StringReplace (' ' '  ' compressed)
         :EndWhile
+    ∇
+    
+    ∇ stripped ← SimpleStripComments code
+    ⍝ Simple comment removal without archival - just delete them
+        lines ← (⎕UCS 10)⊆code
+        clean_lines ← ⍬
+        
+        :For line :In lines
+            :If 0=≢line
+                clean_lines ,← ⊂''  ⍝ Keep empty lines
+            :ElseIf '⍝'=⊃line
+                ⍝ Skip comment-only lines entirely
+            :ElseIf ∨/'⍝'∊line
+                ⍝ Remove inline comments
+                comment_pos ← ⊃⍸'⍝'=line
+                clean_line ← (comment_pos-1)↑line
+                clean_lines ,← ⊂clean_line
+            :Else
+                ⍝ Keep code-only lines as-is
+                clean_lines ,← ⊂line
+            :EndIf
+        :EndFor
+        
+        stripped ← ∊clean_lines,¨⊂⎕UCS 10
     ∇
 
     ∇ decompressed ← Decompress vibe_code

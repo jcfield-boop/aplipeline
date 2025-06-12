@@ -33,8 +33,7 @@
     "gc_threshold": 1000
   },
   "vibe": {
-    "enabled": true,
-    "vibe_mode": true,
+    "enabled": false,
     "compression_level": "maximum",
     "auto_glossary": true,
     "target_compression": 0.6,

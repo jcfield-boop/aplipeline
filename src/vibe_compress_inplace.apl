@@ -9,8 +9,8 @@ config ← ⎕JSON ⊃⎕NGET 'config/default.json' 1
 ⎕←'🎵 APLCICD In-Place Vibe Compression'
 ⎕←'======================================'
 ⎕←'Mode: Standard'
-:If config.vibe.vibe_mode
-    ⎕←'Mode: Vibe (files already compressed)'
+:If config.vibe.enabled
+    ⎕←'Mode: Vibe (compression enabled)'
 :EndIf
 ⎕←''
 
@@ -59,10 +59,10 @@ CompressText ← {
 ⎕←'======================================='
 
 ⍝ Extended to all dcfg export files (excluding vibe.dyalog to avoid circular dependency)
-files ← 'src/Core.dyalog' 'src/Config.dyalog' 'src/APLCICD.dyalog' 'src/Pipeline.dyalog'
+files ← 'src/Config.dyalog' 'src/APLCICD.dyalog' 'src/Pipeline.dyalog'
 files ,← 'src/Monitor.dyalog' 'src/GitAPL.dyalog'
-files ,← 'src/HTMLDashboard.dyalog' 'src/Dashboard.dyalog' 'src/SelfOptimizer.dyalog' 'src/APLPatterns.dyalog'
-files ,← 'src/Tests.dyalog' 'src/RecursiveTest.dyalog'
+files ,← 'src/SelfOptimizer.dyalog'
+files ,← 'src/Tests.dyalog'
 
 ⎕←'Compressing ',⍕≢files,' files (excluding vibe.dyalog to avoid circular dependency)'
 total_reduction ← 0
@@ -105,13 +105,13 @@ files_processed ← 0
 avg_reduction ← ⌊total_reduction÷files_processed
 ⎕←'Average compression: ',⍕avg_reduction,'%'
 
-⍝ Set vibe_mode to true
-config.vibe.vibe_mode ← 1
+⍝ Enable vibe compression
+config.vibe.enabled ← 1
 updated_config ← ⎕JSON⍠('Compact' 0)⊢config
 
 ⍝ Save updated config
 updated_config ⎕NPUT 'config/default.json' 1
-⎕←'✅ Config updated: vibe_mode = true'
+⎕←'✅ Config updated: enabled = true'
 ⎕←''
 
 ⍝ Results
@@ -119,7 +119,7 @@ updated_config ⎕NPUT 'config/default.json' 1
 ⎕←'====================================='
 ⎕←'Files compressed: ',⍕files_processed
 ⎕←'Average reduction: ',⍕avg_reduction,'%'
-⎕←'Config updated: vibe_mode enabled'
+⎕←'Config updated: compression enabled'
 ⎕←''
 ⎕←'🎵 Source files now in vibe format - LLMs can read them normally!'
 ⎕←'📋 System will interpret files as compressed based on config flag'

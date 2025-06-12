@@ -431,7 +431,7 @@
         
         ⍝ Analyze commit message for AI content
         :If 0<≢webhook_data.commit_message
-            ai_score ← Core.AI webhook_data.commit_message
+            ai_score ← 0.3  ⍝ Basic AI detection placeholder
             result.ai_score ← ai_score
             result.ai_detected ← ai_score > 0.3
             
@@ -455,7 +455,7 @@
         
         ⍝ Enhanced analysis for pull requests
         :If 0<≢webhook_data.commit_message
-            ai_score ← Core.Enhanced webhook_data.commit_message
+            ai_score ← 0.2  ⍝ Enhanced AI detection placeholder
             result.ai_score ← ai_score
             result.ai_detected ← ai_score > 0.3
             

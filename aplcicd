@@ -180,7 +180,7 @@ validate_demo_environment() {
     log_info "Validating demo environment..."
     
     # Check all required files exist
-    local required_files=("src/APLCICD.dyalog" "src/vibe.dyalog" "src/Core.dyalog" "config/default.json")
+    local required_files=("src/APLCICD.dyalog" "src/vibe.dyalog" "src/Pipeline.dyalog" "config/default.json")
     for file in "${required_files[@]}"; do
         if [[ ! -e "$file" ]]; then
             log_error "Required file missing: $file"
@@ -254,66 +254,6 @@ initialize() {
     restart_dyalog
     
     log_success "System initialized"
-}
-
-# Launch native HTMLRenderer dashboard
-generate_dashboard() {
-    log_header "Starting APLCICD HTMLRenderer Dashboard"
-    
-    log_info "Initializing APLCICD and launching HTMLRenderer dashboard..."
-    
-    # Launch HTMLRenderer dashboard directly
-    run_apl '
-        ⎕FIX'"'"'file://src/APLCICD.dyalog'"'"'
-        APLCICD.Initialize
-        APLCICD.Dashboard
-        ⎕←"🚀 HTMLRenderer dashboard launched"
-        ⎕←"📊 Dashboard window should be visible"
-    '
-    
-    if [[ $? -eq 0 ]]; then
-        log_success "HTMLRenderer dashboard launched successfully"
-        
-        echo ""
-        echo "🎯 Dashboard Features:"
-        echo "• Native HTMLRenderer interface (no web server required)"
-        echo "• Real-time vibe compression metrics"
-        echo "• Interactive APL-JavaScript communication"
-        echo "• All module controls integrated"
-        echo "• Git integration status"
-        echo "• CI/CD pipeline controls"
-        echo "• Performance benchmarking"
-        echo "• External project analysis"
-        echo "• Self-optimization engine"
-        echo ""
-        echo "📊 Dashboard window should now be open"
-        echo "💡 If HTMLRenderer is not available, fallback dashboard will open"
-        
-    else
-        log_error "Failed to launch HTMLRenderer dashboard"
-        log_info "HTMLRenderer dashboard unavailable"
-    fi
-}
-
-# Generate live dashboard and open in browser
-generate_dashboard_browser() {
-    log_header "Generate Live Dashboard for Browser"
-    
-    log_info "Generating live dashboard with real-time data..."
-    
-    # Generate live dashboard and open in browser
-    run_apl '
-        ⎕FIX'"'"'file://src/APLCICD.dyalog'"'"'
-        APLCICD.Initialize
-        HTMLDashboard.LaunchInBrowser
-        ⎕OFF
-    ' "Generate live dashboard for browser"
-    
-    if [[ $? -eq 0 ]]; then
-        log_success "Live dashboard generated and opened in browser"
-    else
-        log_error "Failed to generate dashboard for browser"
-    fi
 }
 
 
@@ -806,7 +746,7 @@ run_complete_demo() {
     echo "🎯 Key Achievements Demonstrated:"
     echo "   ✅ Ultra-concise vibe coding compression (60%+ savings)"
     echo "   ✅ Self-improving CI/CD pipeline"
-    echo "   ✅ Real-time dashboard with live data"
+    echo "   ✅ Real-time monitoring and logging"
     echo "   ✅ Meta-programming capabilities"
     echo "   ✅ Production-ready architecture"
     echo "   ✅ Zero-mock implementation"
@@ -827,8 +767,6 @@ Usage: ./aplcicd [command] [options]
 Essential Commands:
   complete          - Full system demonstration (recommended)
   demo              - Contest demonstration
-  dashboard         - Generate live dashboard and open in browser
-  dashboard-htmlrenderer - Launch native HTMLRenderer dashboard
   vibe TEXT         - Compress text using vibe coding (60%+ compression)
 
 Pipeline Commands:
@@ -859,7 +797,7 @@ Examples:
   ./aplcicd judge-demo                            # Ultimate contest demonstration
   ./aplcicd test-self                             # Self-testing showcase
   ./aplcicd complete                              # Full demo
-  ./aplcicd dashboard                             # Open live dashboard in browser  
+  
   ./aplcicd vibe "ProcessFunction ← {code}"       # Vibe compression
   ./aplcicd demo                                  # Contest demo
   ./aplcicd pipeline                              # CI/CD test
@@ -869,7 +807,7 @@ Key Features:
   🔄 Self-improving CI/CD pipeline automation
   🛡️  Comprehensive security & quality analysis
   📊 Real-time performance monitoring & optimization
-  🚀 Native HTMLRenderer dashboard with real metrics
+  🚀 Real-time monitoring and pipeline automation
   🔧 Meta-programming and recursive self-analysis
   📚 APL-native Git integration
   ✅ Zero-mock implementation (all functionality real)
@@ -882,7 +820,7 @@ System Requirements:
 Quick Start:
   1. chmod +x aplcicd
   2. ./aplcicd complete
-  3. Open the generated dashboard in your browser
+  3. View results in console output
 
 For Interactive Use:
   ⎕FIX'file://src/APLCICD.dyalog'
@@ -908,12 +846,6 @@ main() {
             ;;
         "demo")
             run_demo
-            ;;
-        "dashboard")
-            generate_dashboard_browser
-            ;;
-        "dashboard-htmlrenderer")
-            generate_dashboard
             ;;
         "vibe")
             run_vibe_demo "${2:-}"
