@@ -10,6 +10,7 @@
 ⍝   GitBlame file           - Analyze code authorship
 ⍝   GitStatus               - Get current repository status
 ⍝   GitCommit msg           - Create new commit
+⍝   GitPush args            - Push commits to remote repository
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
@@ -117,6 +118,8 @@
                 ⍝ Handle both vector and matrix output
                 :If 2=≡status_output
                     status_lines ← status_output
+                :ElseIf 0=≢status_output
+                    status_lines ← ⍬
                 :Else
                     status_lines ← (⎕UCS 10)(≠⊆⊢)status_output
                 :EndIf
@@ -174,11 +177,52 @@
             result.commit_hash ← ##.Config.SafeShell 'git rev-parse HEAD'
             result.success ← 1
             
-            ⎕←'✅ Git commit successful: ',8↑result.commit_hash
+            ⍝ Safe output of commit hash
+            :If 8≤≢result.commit_hash
+                ⎕←'✅ Git commit successful: ',8↑result.commit_hash
+            :Else
+                ⎕←'✅ Git commit successful'
+            :EndIf
             
         :Else
             result.error ← ⎕DM
             ⎕←'❌ Git commit failed: ',⎕DM
+        :EndTrap
+    ∇
+
+    ∇ result ← GitPush args
+    ⍝ Push commits to remote repository
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   args (character): Push arguments (e.g., 'origin main' or '' for default)
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Push operation result
+        
+        result ← ⎕NS ''
+        result.success ← 0
+        result.output ← ''
+        result.error ← ''
+        
+        :Trap 0
+            ⍝ Default to origin if no args provided
+            push_cmd ← 'git push'
+            :If 0<≢args
+                push_cmd ← push_cmd,' ',args
+            :EndIf
+            
+            ⍝ Execute push using SafeShell
+            result.output ← ##.Config.SafeShell push_cmd
+            result.success ← 1
+            
+            ⎕←'✅ Git push successful'
+            :If 0<≢result.output
+                ⎕←'Output: ',result.output
+            :EndIf
+            
+        :Else
+            result.error ← ⎕DM
+            ⎕←'❌ Git push failed: ',⎕DM
         :EndTrap
     ∇
 
