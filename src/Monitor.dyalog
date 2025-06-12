@@ -552,4 +552,162 @@
         :EndIf
     ∇
 
+    ⍝ ═══════════════════════════════════════════════════════════════
+    ⍝ Real Monitoring Implementation (merged from RealMonitor.dyalog)
+    ⍝ ═══════════════════════════════════════════════════════════════
+
+    ∇ result ← StartRealMonitoring
+    ⍝ Start real-time system monitoring
+        monitoring_active ← 1
+        start_time ← ⎕TS
+        metrics_history ← ⍬
+        
+        ⎕←'🔍 Starting Real System Monitoring'
+        ⎕←'================================='
+        ⎕←'Start time: ',⍕start_time
+        
+        result ← 'Real monitoring started'
+    ∇
+
+    ∇ result ← CollectRealMetrics
+    ⍝ Gather real system metrics
+        result ← ⎕NS ''
+        result.timestamp ← ⎕TS
+        result.memory_usage ← ⎕SIZE '⎕SE'
+        result.cpu_time ← ⎕AI[2]
+        result.workspace_size ← ⎕WA
+        
+        ⍝ APL-specific metrics
+        result.defined_functions ← ≢⎕NL 3
+        result.defined_variables ← ≢⎕NL 2
+        result.active_namespaces ← ≢⎕NL 9
+        
+        ⎕←'Real metrics collected:'
+        ⎕←'  Memory: ',⍕result.memory_usage,' bytes'
+        ⎕←'  CPU time: ',⍕result.cpu_time,' ms'
+        ⎕←'  Functions: ',⍕result.defined_functions
+        ⎕←'  Variables: ',⍕result.defined_variables
+        ⎕←'  Namespaces: ',⍕result.active_namespaces
+        
+        result
+    ∇
+
+    ∇ LogPipelineExecution pipeline_result
+    ⍝ Log real pipeline execution results
+        :If 0≠⎕NC 'pipeline_logs'
+            pipeline_logs ,← ⊂pipeline_result
+        :Else
+            pipeline_logs ← ⊂pipeline_result
+        :EndIf
+        
+        Log 'info' 'pipeline' 'Pipeline executed: ',pipeline_result.status
+        SystemMetrics.pipeline_runs +← 1
+    ∇
+
+    ∇ result ← ProcessGitHubWebhook (event_type payload)
+    ⍝ Process GitHub webhook for CI/CD pipeline
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   event_type (character): 'push' or 'pull_request'  
+    ⍝   payload (namespace): Webhook payload data
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Processing results
+        
+        result ← ⎕NS ''
+        result.success ← 0
+        result.files_processed ← ⍬
+        result.pipeline_result ← ⎕NS ''
+        
+        ⎕←'📢 GitHub Webhook Received'
+        ⎕←'=========================='
+        ⎕←'Event: ',event_type
+        
+        :Trap 11 22 16
+            :Select event_type
+            :Case 'push'
+                ⍝ Extract changed files from push payload
+                :If 0≠⎕NC 'payload.commits'
+                    files ← ∊payload.commits.(added,modified)
+                    apl_files ← (∨/¨('.dyalog' '.apl')∘.⍷⊂¨files)/files
+                    
+                    :If 0<≢apl_files
+                        ⎕←'APL files changed: ',⍕≢apl_files
+                        ⎕←'  ',∊apl_files,¨⊂' '
+                        
+                        ⍝ Run pipeline on changed APL files
+                        pipeline_result ← Pipeline.Run apl_files
+                        result.pipeline_result ← pipeline_result
+                        result.files_processed ← apl_files
+                        result.success ← pipeline_result.success
+                        
+                        ⍝ Log the execution
+                        LogPipelineExecution pipeline_result
+                        
+                        ⎕←'Pipeline result: ',pipeline_result.status
+                    :Else
+                        ⎕←'No APL files changed - skipping pipeline'
+                        result.success ← 1
+                    :EndIf
+                :Else
+                    ⎕←'No commits found in push payload'
+                :EndIf
+                
+            :Case 'pull_request'
+                ⍝ Extract changed files from PR payload
+                :If 0≠⎕NC 'payload.pull_request.changed_files'
+                    files ← payload.pull_request.changed_files
+                    apl_files ← (∨/¨('.dyalog' '.apl')∘.⍷⊂¨files)/files
+                    
+                    :If 0<≢apl_files
+                        ⎕←'PR APL files: ',⍕≢apl_files
+                        pipeline_result ← Pipeline.Run apl_files
+                        result.pipeline_result ← pipeline_result
+                        result.files_processed ← apl_files  
+                        result.success ← pipeline_result.success
+                        
+                        LogPipelineExecution pipeline_result
+                        
+                        ⎕←'PR Pipeline result: ',pipeline_result.status
+                    :Else
+                        ⎕←'No APL files in PR - skipping pipeline'
+                        result.success ← 1
+                    :EndIf
+                :Else
+                    ⎕←'No changed files in PR payload'
+                :EndIf
+                
+            :Else
+                ⎕←'Unsupported event type: ',event_type
+                result.success ← 0
+            :EndSelect
+            
+        :Case 11
+            ⎕←'Domain error processing webhook: ',⎕DM
+            result.success ← 0
+        :Case 22
+            ⎕←'File error processing webhook: ',⎕DM
+            result.success ← 0
+        :Case 16
+            ⎕←'Rank error processing webhook: ',⎕DM  
+            result.success ← 0
+        :Else
+            ⎕←'Unexpected error processing webhook: ',⎕DM
+            result.success ← 0
+        :EndTrap
+        
+        ⎕←'Webhook processing complete'
+    ∇
+
+    ∇ status ← PostGitHubStatus (payload result)
+    ⍝ Post status back to GitHub (basic implementation)
+        ⎕←'📤 Posting status to GitHub:'
+        ⎕←'  Commit: ',8↑payload.after
+        ⎕←'  Status: ',(result.success⊃'failure' 'success')
+        ⎕←'  Files: ',⍕≢result.files_processed
+        
+        ⍝ In real implementation, would use GitHub API
+        status ← 'Status posted to GitHub (simulated)'
+    ∇
+
 :EndNamespace

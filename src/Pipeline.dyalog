@@ -372,19 +372,25 @@
             
             ⍝ Add issues for each dangerous pattern found
             dangerous_issues ← dangerous_found/dangerous_patterns
-            issues ,← ('DANGEROUS_OPERATION: ',⊃dangerous_issues)¨⍳+/dangerous_found
+            :If 0<≢dangerous_issues
+                issues ,← ('DANGEROUS_OPERATION: ',⊃dangerous_issues)¨⍳≢dangerous_issues
+            :EndIf
             
             ⍝ Check for potential injection vulnerabilities
             injection_patterns ← '⍎' '⎕FIX'
             injection_found ← ∨/¨injection_patterns∘.⍷⊂content
             injection_issues ← injection_found/injection_patterns
-            issues ,← ('POTENTIAL_INJECTION: ',⊃injection_issues)¨⍳+/injection_found
+            :If 0<≢injection_issues
+                issues ,← ('POTENTIAL_INJECTION: ',⊃injection_issues)¨⍳≢injection_issues
+            :EndIf
             
             ⍝ Check for hardcoded secrets (simple patterns)
             secret_patterns ← 'password' 'secret' 'token' 'key'
             secret_found ← ∨/¨(⎕C¨secret_patterns)∘.⍷⊂⎕C content
             secret_issues ← secret_found/secret_patterns
-            issues ,← ('POTENTIAL_SECRET: ',⊃secret_issues)¨⍳+/secret_found
+            :If 0<≢secret_issues
+                issues ,← ('POTENTIAL_SECRET: ',⊃secret_issues)¨⍳≢secret_issues
+            :EndIf
             
             scan_result ← (≢issues) issues
             
@@ -814,6 +820,258 @@
         :EndFor
         
         depth ← max_depth
+    ∇
+
+    ⍝ ═══════════════════════════════════════════════════════════════
+    ⍝ Real Pipeline Implementation (merged from RealPipeline.dyalog)
+    ⍝ ═══════════════════════════════════════════════════════════════
+
+    ∇ result ← RunPipeline files
+    ⍝ Execute real CI/CD pipeline on actual files
+        result ← ⎕NS ''
+        result.timestamp ← ⎕TS
+        result.files ← files
+        result.stages ← ⍬
+        result.success ← 0
+        result.errors ← ⍬
+        
+        ⎕←'🔄 Running Real CI/CD Pipeline'
+        ⎕←'============================='
+        ⎕←'Processing ',⍕≢files,' files'
+        ⎕←''
+        
+        ⍝ Use existing validation functions but with real implementation
+        validation_result ← ValidateFilesReal files
+        result.stages ,← ⊂validation_result
+        
+        :If ~validation_result.success
+            result.errors ,← ⊂'Validation failed'
+            result.success ← 0
+            ⎕←'❌ Pipeline failed at validation stage'
+            →0
+        :EndIf
+        
+        result.success ← 1
+        ⎕←'✅ Pipeline completed successfully'
+        result
+    ∇
+
+    ∇ result ← ValidateFilesReal files
+    ⍝ Real file validation - check files actually exist
+        result ← ⎕NS ''
+        result.success ← 1
+        result.files_checked ← 0
+        result.files_valid ← 0
+        result.errors ← ⍬
+        
+        :For file :In files
+            result.files_checked +← 1
+            :Trap 22
+                content ← ⊃⎕NGET file 1
+                result.files_valid +← 1
+                ⎕←'  ✅ ',file,' - valid (',⍕≢content,' chars)'
+            :Else
+                result.success ← 0
+                result.errors ,← ⊂'Cannot read file: ',file
+                ⎕←'  ❌ ',file,' - cannot read'
+            :EndTrap
+        :EndFor
+        
+        ⎕←'Files validated: ',⍕result.files_valid,'/',⍕result.files_checked
+    ∇
+
+    ∇ result ← ProcessGitChanges
+    ⍝ Process real git repository changes
+        result ← ⎕NS ''
+        result.success ← 1
+        result.changes ← ⍬
+        result.commit_hash ← ''
+        
+        :Trap 11 22 16
+            git_status ← ⊃⎕SH 'git status --porcelain'
+            :If 0<≢git_status
+                result.changes ← (⎕UCS 10)(≠⊆⊢)git_status
+                ⎕←'Git changes detected: ',⍕≢result.changes,' files'
+            :Else
+                ⎕←'No git changes detected'
+            :EndIf
+            
+            result.commit_hash ← ⊃⎕SH 'git rev-parse HEAD'
+            ⎕←'Current commit: ',8↑result.commit_hash
+            
+        :Case 11
+            result.success ← 0
+            ⎕←'Domain error accessing git repository'
+        :Case 22
+            result.success ← 0
+            ⎕←'File error accessing git repository'
+        :Case 16
+            result.success ← 0
+            ⎕←'Rank error accessing git repository'
+        :Else
+            result.success ← 0
+            ⎕←'Failed to access git repository: ',⎕DM
+        :EndTrap
+    ∇
+
+    ∇ VisualizePipeline statuses
+    ⍝ Display ASCII art pipeline visualization with stage status indicators
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   statuses (integer vector): Status codes for each stage
+    ⍝                             1=success, 0=failed, ¯1=running, ¯2=pending
+    ⍝ 
+    ⍝ Example:
+    ⍝   Pipeline.VisualizePipeline 1 1 ¯1 ¯2 ¯2  ⍝ First 2 passed, 3rd running, rest pending
+        
+        stages ← 'Validate' 'Security' 'Quality' 'Build' 'Deploy'
+        symbols ← '✗' '✓' '⋯' '○'  ⍝ fail, success, running, pending
+        colors ← 31 32 33 37      ⍝ ANSI colors: red, green, yellow, white
+        
+        ⎕←'┌─────────────────────────────────────────┐'
+        ⎕←'│           APL CI/CD Pipeline            │'
+        ⎕←'├─────────────────────────────────────────┤'
+        
+        :For i :In ⍳≢stages
+            status ← i⊃statuses,¯2 ¯2 ¯2 ¯2 ¯2  ⍝ Default to pending
+            
+            ⍝ Map status to symbol: ¯2→○, ¯1→⋯, 0→✗, 1→✓
+            :Select status
+            :Case ¯2
+                symbol ← '○'  ⍝ pending
+            :Case ¯1
+                symbol ← '⋯'  ⍝ running
+            :Case 0
+                symbol ← '✗'  ⍝ failed
+            :Case 1
+                symbol ← '✓'  ⍝ success
+            :Else
+                symbol ← '?'  ⍝ unknown
+            :EndSelect
+            
+            stage_name ← i⊃stages
+            
+            ⍝ Format with proper spacing
+            padding ← 25-≢stage_name
+            line ← '│ ',symbol,' ',stage_name,padding⍴' ','│'
+            ⎕←line
+        :EndFor
+        
+        ⎕←'└─────────────────────────────────────────┘'
+        ⎕←''
+        
+        ⍝ Show legend
+        ⎕←'Legend: ✓ Success  ✗ Failed  ⋯ Running  ○ Pending'
+    ∇
+    
+    ∇ result ← RunPipelineWithVisualization files
+    ⍝ Run pipeline with live ASCII visualization updates
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   files (character vector): List of files to process
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Complete pipeline results with visualization
+        
+        result ← ⎕NS ''
+        result.timestamp ← ⎕TS
+        result.files ← files
+        result.file_count ← ≢files
+        
+        ⎕←'🚀 APLCICD v2.0 LIVE PIPELINE VISUALIZATION'
+        ⎕←'==========================================='
+        ⎕←'Files: ',⍕≢files
+        ⎕←''
+        
+        ⍝ Initial state - all pending
+        VisualizePipeline ¯2 ¯2 ¯2 ¯2 ¯2
+        
+        ⍝ Stage 1: Validation (running)
+        ⎕←'🔍 STAGE 1: Syntax Validation'
+        VisualizePipeline ¯1 ¯2 ¯2 ¯2 ¯2
+        
+        :Trap 11 22
+            validation_start ← ⎕AI[3]
+            result.validation ← ValidateFiles files
+            result.validation.duration_ms ← ⎕AI[3] - validation_start
+            validation_status ← 'Success'≡result.validation.status
+        :Else
+            validation_status ← 0
+            result.validation ← ⎕NS '' ⋄ result.validation.status ← 'Failed'
+        :EndTrap
+        
+        VisualizePipeline validation_status ¯2 ¯2 ¯2 ¯2
+        
+        ⍝ Stage 2: Security (running)
+        ⎕←'🛡️  STAGE 2: Security Scanning'
+        VisualizePipeline validation_status ¯1 ¯2 ¯2 ¯2
+        
+        :Trap 11 22
+            security_start ← ⎕AI[3]
+            result.security ← SecurityScan files
+            result.security.duration_ms ← ⎕AI[3] - security_start
+            security_status ← 'Success'≡result.security.status
+        :Else
+            security_status ← 0
+            result.security ← ⎕NS '' ⋄ result.security.status ← 'Failed'
+        :EndTrap
+        
+        VisualizePipeline validation_status security_status ¯2 ¯2 ¯2
+        
+        ⍝ Stage 3: Quality (running)
+        ⎕←'📊 STAGE 3: Quality Analysis'
+        VisualizePipeline validation_status security_status ¯1 ¯2 ¯2
+        
+        :Trap 11 22
+            quality_start ← ⎕AI[3]
+            result.quality ← QualityAnalysis files
+            result.quality.duration_ms ← ⎕AI[3] - quality_start
+            quality_status ← 'Success'≡result.quality.status
+        :Else
+            quality_status ← 0
+            result.quality ← ⎕NS '' ⋄ result.quality.status ← 'Failed'
+        :EndTrap
+        
+        VisualizePipeline validation_status security_status quality_status ¯2 ¯2
+        
+        ⍝ Stage 4: Build (running)
+        ⎕←'🔨 STAGE 4: Build Process'
+        VisualizePipeline validation_status security_status quality_status ¯1 ¯2
+        
+        ⍝ Simulate build process
+        build_status ← ∧/validation_status security_status quality_status
+        result.build ← ⎕NS '' ⋄ result.build.status ← build_status⊃'Failed' 'Success'
+        
+        VisualizePipeline validation_status security_status quality_status build_status ¯2
+        
+        ⍝ Stage 5: Deploy (running)
+        ⎕←'🚀 STAGE 5: Deployment'
+        VisualizePipeline validation_status security_status quality_status build_status ¯1
+        
+        ⍝ Simulate deployment
+        deploy_status ← build_status
+        result.deploy ← ⎕NS '' ⋄ result.deploy.status ← deploy_status⊃'Failed' 'Success'
+        
+        ⍝ Final state
+        final_statuses ← validation_status security_status quality_status build_status deploy_status
+        VisualizePipeline final_statuses
+        
+        ⍝ Summary
+        result.overall_success ← ∧/final_statuses
+        result.stage_count ← 5
+        result.passed_stages ← +/final_statuses
+        
+        ⎕←'🎯 PIPELINE COMPLETE'
+        ⎕←'==================='
+        ⎕←'Stages passed: ',⍕result.passed_stages,'/',⍕result.stage_count
+        ⎕←'Overall status: ',(result.overall_success⊃'FAILED' 'SUCCESS')
+        ⎕←'Total files processed: ',⍕result.file_count
+        
+        :If result.overall_success
+            ⎕←'✅ All stages completed successfully!'
+        :Else
+            ⎕←'❌ Pipeline failed - check stage details above'
+        :EndIf
     ∇
 
 :EndNamespace

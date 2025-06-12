@@ -305,54 +305,22 @@
 
     ⍝ Helper functions
     ∇ compressed ← CompressWithVibe code
-    ⍝ Compress code using vibe compression (simplified for benchmarking)
-        :Trap 0
-            ⍝ Apply basic vibe compression rules
-            compressed ← code
-            ⍝ Function name compression
-            compressed ← ('ProcessPipelineStage' '∆P') ⎕R compressed
-            compressed ← ('ValidateInputParameters' '∆V') ⎕R compressed  
-            compressed ← ('AnalyzeCodeQuality' '∆Q') ⎕R compressed
-            compressed ← ('OptimizePerformance' '∆O') ⎕R compressed
-            compressed ← ('ExecuteTestSuite' '∆T') ⎕R compressed
-            
-            ⍝ Variable name compression
-            compressed ← ('pipeline_status' '⍵') ⎕R compressed
-            compressed ← ('file_contents' '⍳') ⎕R compressed
-            compressed ← ('error_messages' '⍴') ⎕R compressed
-            compressed ← ('performance_metrics' '⍨') ⎕R compressed
-            compressed ← ('validation_results' '⍪') ⎕R compressed
-            
-            ⍝ Pattern compression
-            compressed ← (':If 0=≢' ':if 0=⍴') ⎕R compressed
-            compressed ← ('⎕←''Error: ''' '⎕←''❌''') ⎕R compressed
-            compressed ← ('⎕←''Success: ''' '⎕←''✅''') ⎕R compressed
-            
+    ⍝ Compress code using REAL vibe compression system
+        :Trap 11 22
+            ⍝ Use actual Vibe.Compress function
+            compressed ← Vibe.Compress code
         :Else
             compressed ← code  ⍝ Return original on error
         :EndTrap
     ∇
 
     ∇ decompressed ← DecompressWithVibe compressed_code
-    ⍝ Decompress vibe-compressed code (simplified for benchmarking)
-        :Trap 0
-            decompressed ← compressed_code
-            ⍝ Reverse compression mappings
-            decompressed ← ('∆P' 'ProcessPipelineStage') ⎕R decompressed
-            decompressed ← ('∆V' 'ValidateInputParameters') ⎕R decompressed
-            decompressed ← ('∆Q' 'AnalyzeCodeQuality') ⎕R decompressed
-            decompressed ← ('∆O' 'OptimizePerformance') ⎕R decompressed
-            decompressed ← ('∆T' 'ExecuteTestSuite') ⎕R decompressed
-            decompressed ← ('⍵' 'pipeline_status') ⎕R decompressed
-            decompressed ← ('⍳' 'file_contents') ⎕R decompressed
-            decompressed ← ('⍴' 'error_messages') ⎕R decompressed
-            decompressed ← ('⍨' 'performance_metrics') ⎕R decompressed
-            decompressed ← ('⍪' 'validation_results') ⎕R decompressed
-            decompressed ← (':if 0=⍴' ':If 0=≢') ⎕R decompressed
-            decompressed ← ('⎕←''❌''' '⎕←''Error: ''') ⎕R decompressed
-            decompressed ← ('⎕←''✅''' '⎕←''Success: ''') ⎕R decompressed
+    ⍝ Decompress vibe-compressed code using REAL system
+        :Trap 11 22
+            ⍝ Use actual Vibe.Decompress function
+            decompressed ← Vibe.Decompress compressed_code
         :Else
-            decompressed ← compressed_code
+            decompressed ← compressed_code  ⍝ Return original on error
         :EndTrap
     ∇
 

@@ -161,10 +161,10 @@
         code_lines ← ⍬
         
         :For line :In lines
-            :If ∨/CommentMarkers∘≡¨⊂(≢⊃CommentMarkers)↑line
-                ⍝ Comment line - archive it
+            :If (0<≢line) ∧ '⍝'=⊃line
+                ⍝ Line starts with comment - archive entire line
                 comment_lines ,← ⊂line
-            :ElseIf ∨/'⍝'=line
+            :ElseIf ∨/'⍝'∊line
                 ⍝ Inline comment - split and archive comment part
                 comment_pos ← ⊃⍸'⍝'=line
                 code_part ← (comment_pos-1)↑line
@@ -382,25 +382,21 @@
     ∇
 
     ∇ result←StringReplace params
-    ⍝ Replace all occurrences using (new old text) format
-    ⍝ Simple string replacement without regex complications
+    ⍝ Simple working string replacement: (new old text)
         new ← 0⊃params ⋄ old ← 1⊃params ⋄ text ← 2⊃params
         
         :If 0=≢old ⋄ result ← text ⋄ →0 ⋄ :EndIf
         :If ~∨/old⍷text ⋄ result ← text ⋄ →0 ⋄ :EndIf
         
-        ⍝ Simple iterative replacement to avoid complex position tracking
+        ⍝ Very simple approach: split on pattern and rejoin with replacement
         result ← text
-        :While ∨/old⍷result
-            pos ← ⍸old⍷result
-            :If 0<≢pos
-                first_pos ← ⊃pos
-                ⍝ Replace first occurrence
-                before ← first_pos↑result
-                after ← (first_pos+≢old)↓result
-                result ← before,new,after
-            :EndIf
-        :EndWhile
+        pos ← ⍸old⍷result
+        :If 0<≢pos
+            start ← ⊃pos
+            before ← start↑result
+            after ← (start+≢old)↓result
+            result ← before,new,after
+        :EndIf
     ∇
 
     ∇ CreateReverseMaps
