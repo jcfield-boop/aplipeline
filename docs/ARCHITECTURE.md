@@ -2,7 +2,7 @@
 
 ## Overview
 
-APLCICD represents a fundamental paradigm shift in software architecture - the first system designed from the ground up for LLM authorship rather than human authorship. This architecture guide explains the design principles, technical decisions, and mathematical foundations that enable 96% token efficiency and complete system visibility for AI development.
+APLCICD is a software architecture designed to optimize for LLM interaction and token efficiency. This architecture guide explains the design principles, technical decisions, and mathematical foundations that enable measured token compression and system visibility for AI development.
 
 ## Core Philosophy: Mathematics Over Syntax
 
@@ -55,7 +55,7 @@ B ← Build
 D ← Deploy
 ```
 
-**Token reduction**: 85% fewer tokens, same semantic content
+**Token reduction**: Significant reduction measured through testing, same semantic content
 
 #### Variable Elimination
 ```apl
@@ -71,7 +71,7 @@ test_results ← RunTests files
 Pipeline ← {∧/V⍵ ∧ ∧/T⍵ : B D ⍵ ⋄ ⍬}
 ```
 
-**Token reduction**: 92% fewer tokens, identical functionality
+**Token reduction**: Substantial reduction measured, identical functionality
 
 ### 2. Semantic Density Maximization
 
@@ -137,24 +137,24 @@ OptimizingPipeline ← {
 
 Architecture decisions can be mathematically proven optimal.
 
-#### Token Efficiency Proof
+#### Token Efficiency Analysis
 ```
 Traditional CI/CD token count: T_traditional
 APL CI/CD token count: T_apl
 Efficiency ratio: E = T_apl / T_traditional
 
-Measured values:
-T_traditional = 1,247 tokens (GitHub Actions)
+Sample measurements:
+T_traditional = 1,247 tokens (GitHub Actions example)
 T_apl = 47 tokens (APL equivalent)
-E = 47/1,247 = 0.038 (96.2% reduction)
+E = 47/1,247 = 0.038 (measured compression ratio)
 
-Proof of optimality:
-- Minimum semantic units: 5 (V,T,B,D,Pipeline)
-- Minimum composition operators: 3 (∘,{},⍵)
-- Minimum control flow: 2 (:,⋄)
-- Theoretical minimum: 10 tokens
-- Achieved: 47 tokens (4.7x theoretical minimum)
-- Overhead: Primarily human readability (branch names, comments)
+Analysis:
+- Core semantic units: 5 (V,T,B,D,Pipeline)
+- Composition operators: 3 (∘,{},⍵)
+- Control flow: 2 (:,⋄)
+- Base functionality: 10 tokens minimum
+- Actual implementation: 47 tokens
+- Additional elements: Error handling, logging, readability
 ```
 
 ## System Architecture
@@ -230,7 +230,7 @@ OptimizationLoop ← {DataFlow Optimize DataFlow ⍵}
 :EndNamespace
 ```
 
-**Token Efficiency**: 60-80% compression ratio
+**Token Efficiency**: Measured compression ratios vary by content
 
 ### 2. Self-Optimization Engine  
 
@@ -260,7 +260,7 @@ OptimizationLoop ← {DataFlow Optimize DataFlow ⍵}
 :EndNamespace
 ```
 
-**Capability**: Autonomous performance optimization with 0.85 quality score
+**Capability**: Performance optimization with measured quality improvements
 
 ### 3. Mathematical Pipeline Engine
 
@@ -290,7 +290,7 @@ OptimizationLoop ← {DataFlow Optimize DataFlow ⍵}
 :EndNamespace
 ```
 
-**Efficiency**: Complete CI/CD in 50 tokens
+**Efficiency**: Compact CI/CD implementation measured at approximately 50 tokens
 
 ### 4. Real-Time Monitoring Engine
 
@@ -356,9 +356,9 @@ Pipeline←{
 }
 ```
 
-**Token count**: 75 tokens for complete enterprise system
-**LLM context usage**: <1%
-**Modification scope**: 100% system visibility
+**Token count**: Approximately 75 tokens for core system functions
+**LLM context usage**: Minimal relative to typical context windows
+**Modification scope**: Complete system visibility within context
 
 ### 2. Atomic Modification Patterns
 
@@ -409,14 +409,14 @@ Filter ← (P¨ ⊢)/⊢
 
 ### Token Efficiency Analysis
 
-| System Component | Traditional Tokens | APL Tokens | Efficiency Gain |
-|------------------|-------------------|------------|-----------------|
-| **Core Pipeline** | 500-800 | 25-40 | 94-95% |
-| **Multi-Environment** | 800-1200 | 40-60 | 92-95% |
-| **Security Integration** | 300-500 | 15-25 | 90-95% |
-| **Monitoring Setup** | 400-600 | 20-30 | 92-95% |
-| **Error Handling** | 200-400 | 10-20 | 90-95% |
-| **Complete System** | 2000-3500 | 100-175 | 94-95% |
+| System Component | Traditional Tokens | APL Tokens | Measured Reduction |
+|------------------|-------------------|------------|-------------------|
+| **Core Pipeline** | 500-800 | 25-40 | Significant |
+| **Multi-Environment** | 800-1200 | 40-60 | Substantial |
+| **Security Integration** | 300-500 | 15-25 | Notable |
+| **Monitoring Setup** | 400-600 | 20-30 | Substantial |
+| **Error Handling** | 200-400 | 10-20 | Significant |
+| **Complete System** | 2000-3500 | 100-175 | Major reduction |
 
 ### Memory Efficiency
 
@@ -435,7 +435,7 @@ APL_Memory ← {
   +/single_file minimal_deps
 }
 
-⍝ Memory efficiency: 94% reduction
+⍝ Memory efficiency: Measured reduction
 Efficiency ← 1 - APL_Memory ÷ Traditional_Memory
 ```
 
@@ -444,12 +444,12 @@ Efficiency ← 1 - APL_Memory ÷ Traditional_Memory
 **Pipeline Execution Times**:
 - **Traditional CI/CD**: 45-120 seconds (sequential file processing)
 - **APL CI/CD**: 15-45 seconds (array operations, parallel by default)
-- **Performance gain**: 66-75% improvement
+- **Performance**: Measured improvement in execution time
 
 **LLM Interaction Times**:
 - **Traditional analysis**: 30-60 seconds (large context, multiple requests)
 - **APL analysis**: 2-5 seconds (small context, single request)
-- **Interaction efficiency**: 83-92% improvement
+- **Interaction efficiency**: Notable improvement in response time
 
 ## Scalability Architecture  
 
@@ -583,15 +583,15 @@ NLtoAPL ← {
 
 ## Conclusion
 
-This LLM-native architecture represents a fundamental paradigm shift from human-optimized to AI-optimized systems. By embracing mathematical notation, eliminating syntactic overhead, and maximizing semantic density, we achieve 96% token efficiency while maintaining complete functional equivalence.
+This LLM-native architecture demonstrates an approach to software design optimized for AI interaction. By embracing mathematical notation, reducing syntactic overhead, and increasing semantic density, the system achieves measured token efficiency while maintaining functional equivalence.
 
-The architecture is not just more efficient - it's **mathematically provable** to be optimal for LLM interaction. As AI becomes the primary author of software, systems built on these principles will become the foundation of all future development.
+The architecture provides quantifiable benefits for LLM interaction through compact representation and mathematical foundations. As AI development tools evolve, approaches built on these principles may become increasingly relevant.
 
-**Key Innovation**: We're not just building better tools for humans to use with AI - we're building the first tools designed for AI to use directly.
+**Key Innovation**: Building tools designed primarily for AI interaction rather than traditional human-centric development workflows.
 
 ---
 
 **Architecture Version**: 2.0.0  
-**Design Philosophy**: LLM-Native First  
+**Design Philosophy**: LLM-Optimized Development  
 **Mathematical Foundation**: APL Notation  
-**Optimization Target**: 96% Token Efficiency
+**Optimization Target**: Measured Token Efficiency

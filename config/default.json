@@ -37,7 +37,7 @@
     "vibe_mode": true,
     "compression_level": "maximum",
     "auto_glossary": true,
-    "target_compression": 0.7,
+    "target_compression": 0.6,
     "runtime_mode": false,
     "edit_mode": true,
     "preserve_comments": true,

@@ -105,7 +105,7 @@
             ⎕←'   Found ',⍕≢source_files,' source files'
             
             ⍝ Run our own pipeline on our own code!
-            result ← ##.RealPipeline.RunPipeline source_files
+            result ← ##.Pipeline.RunPipeline source_files
             
             ⎕←'   Pipeline result: ',(result.success)⊃'❌ FAILED' '✅ PASSED'
             ⎕←'   Stages completed: ',⍕≢result.stages

@@ -168,7 +168,7 @@
         test_files ← 'src/Core.dyalog'
         start_time ← ⎕AI[3]
         :Trap 0
-            pipeline_result ← APLCICD.RealPipeline.ValidateFiles ⊂test_files
+            pipeline_result ← APLCICD.Pipeline.ValidateFiles ⊂test_files
         :Else
             ⍝ Create mock pipeline result if function unavailable
             pipeline_result ← ⎕NS ''
@@ -403,7 +403,7 @@
         :Case 'quality'
             ⍝ Test quality analysis
             :Trap 0
-                quality_test ← APLCICD.RealPipeline.AnalyzeRealQuality 1↑test_files
+                quality_test ← APLCICD.Pipeline.QualityAnalysis 1↑test_files
                 result.quality_improvement ← improvement.expected_impact
             :Else
                 result.passed ← 0
@@ -421,7 +421,7 @@
         :Case 'pipeline'
             ⍝ Test pipeline functionality
             :Trap 0
-                pipeline_test ← APLCICD.RealPipeline.ValidateFiles 1↑test_files
+                pipeline_test ← APLCICD.Pipeline.ValidateFiles 1↑test_files
                 result.efficiency_gain ← improvement.expected_impact
             :Else
                 result.passed ← 0

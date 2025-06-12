@@ -994,7 +994,7 @@
             validation_start ← ⎕AI[3]
             result.validation ← ValidateFiles files
             result.validation.duration_ms ← ⎕AI[3] - validation_start
-            validation_status ← 'Success'≡result.validation.status
+            validation_status ← 'PASSED'≡result.validation.status
         :Else
             validation_status ← 0
             result.validation ← ⎕NS '' ⋄ result.validation.status ← 'Failed'
@@ -1010,7 +1010,7 @@
             security_start ← ⎕AI[3]
             result.security ← SecurityScan files
             result.security.duration_ms ← ⎕AI[3] - security_start
-            security_status ← 'Success'≡result.security.status
+            security_status ← 'PASSED'≡result.security.status
         :Else
             security_status ← 0
             result.security ← ⎕NS '' ⋄ result.security.status ← 'Failed'
@@ -1026,7 +1026,7 @@
             quality_start ← ⎕AI[3]
             result.quality ← QualityAnalysis files
             result.quality.duration_ms ← ⎕AI[3] - quality_start
-            quality_status ← 'Success'≡result.quality.status
+            quality_status ← 'PASSED'≡result.quality.status
         :Else
             quality_status ← 0
             result.quality ← ⎕NS '' ⋄ result.quality.status ← 'Failed'

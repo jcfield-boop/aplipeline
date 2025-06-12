@@ -588,26 +588,26 @@
             :EndTrap
         :Case 'runPipeline'
             :Trap 0
-                pipeline_result ← RealPipeline.RunPipeline ⊃⎕NINFO⍠1⊢'src/*.dyalog'
+                pipeline_result ← Pipeline.RunPipeline ⊃⎕NINFO⍠1⊢'src/*.dyalog'
                 msg ← '🚀 Pipeline: ',pipeline_result.status,', Quality score ',⍕pipeline_result.quality_score,', ',⍕pipeline_result.duration,' seconds'
             :Else
-                msg ← '⚠️ MOCK: Pipeline: Validation passed, Quality score 0.87, 45 seconds (RealPipeline module not responding)'
+                msg ← '⚠️ MOCK: Pipeline: Validation passed, Quality score 0.87, 45 seconds (Pipeline module not responding)'
             :EndTrap
         :Case 'validateFiles'
             :Trap 0
                 files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
-                validation ← RealPipeline.ValidateFiles files
+                validation ← Pipeline.ValidateFiles files
                 msg ← '✅ File Validation: ',⍕≢files,' files validated, ',validation.status
             :Else
-                msg ← '⚠️ MOCK: File Validation: 19 files validated, all syntax clean (RealPipeline module not responding)'
+                msg ← '⚠️ MOCK: File Validation: 19 files validated, all syntax clean (Pipeline module not responding)'
             :EndTrap
         :Case 'checkSyntax'
             :Trap 0
                 files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
-                syntax_result ← RealPipeline.CheckSyntax files
+                syntax_result ← Pipeline.CheckSyntax files
                 msg ← '🔍 Syntax Check: ',⍕syntax_result.errors,' errors found, ',syntax_result.status
             :Else
-                msg ← '⚠️ MOCK: Syntax Check: 0 errors found, code ready for execution (RealPipeline module not responding)'
+                msg ← '⚠️ MOCK: Syntax Check: 0 errors found, code ready for execution (Pipeline module not responding)'
             :EndTrap
         :Case 'runBenchmarks'
             :Trap 0
@@ -778,10 +778,10 @@
             :EndTrap
         :Case 'runValidation'
             :Trap 0
-                validation_result ← RealPipeline.ValidateAllFiles
+                validation_result ← Pipeline.ValidateAllFiles
                 msg ← '✅ Validation: ',⍕validation_result.files_validated,' files validated, ',validation_result.status
             :Else
-                msg ← '⚠️ MOCK: Validation: 19 files validated, all syntax clean (RealPipeline module not responding)'
+                msg ← '⚠️ MOCK: Validation: 19 files validated, all syntax clean (Pipeline module not responding)'
             :EndTrap
         :Case 'runBenchmark'
             :Trap 0
@@ -959,8 +959,8 @@
         
         :Trap 0
             ⍝ Check if pipeline modules are loaded
-            data.pipeline_loaded ← 9=⎕NC 'RealPipeline'
-            data.monitor_loaded ← 9=⎕NC 'RealMonitor'
+            data.pipeline_loaded ← 9=⎕NC 'Pipeline'
+            data.monitor_loaded ← 9=⎕NC 'Monitor'
             
             ⍝ Pipeline status (simulate recent execution)
             data.last_execution ← ⎕TS

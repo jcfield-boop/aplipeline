@@ -101,7 +101,7 @@ ratio ← 100×1-≢compressed÷≢original
 ```
 
 **Implementation Notes:**
-- Compression ratio: 20-60% typical
+- Compression ratio: Varies by content
 - Bidirectional: Use `Vibe.Decompress` to restore original
 - Thread-safe: Yes
 - Performance: O(n) where n is code length

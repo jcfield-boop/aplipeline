@@ -218,7 +218,7 @@
         :Trap 22
             test_files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
             :If 0<≢test_files
-                validation_result ← APLCICD.RealPipeline.ValidateFiles 1↑test_files
+                validation_result ← APLCICD.Pipeline.ValidateFiles 1↑test_files
                 
                 test1 ← Assert 'Pipeline validation succeeds' 1 validation_result.success
                 result ← UpdateTestResults result test1

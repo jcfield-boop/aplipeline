@@ -60,7 +60,7 @@ CompressText ← {
 
 ⍝ Extended to all dcfg export files (excluding vibe.dyalog to avoid circular dependency)
 files ← 'src/Core.dyalog' 'src/Config.dyalog' 'src/APLCICD.dyalog' 'src/Pipeline.dyalog'
-files ,← 'src/RealPipeline.dyalog' 'src/Monitor.dyalog' 'src/RealMonitor.dyalog' 'src/GitAPL.dyalog'
+files ,← 'src/Monitor.dyalog' 'src/GitAPL.dyalog'
 files ,← 'src/HTMLDashboard.dyalog' 'src/Dashboard.dyalog' 'src/SelfOptimizer.dyalog' 'src/APLPatterns.dyalog'
 files ,← 'src/Tests.dyalog' 'src/RecursiveTest.dyalog'
 
