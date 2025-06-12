@@ -199,6 +199,28 @@
         merged
     ∇
 
+    ∇ result ← SafeShell command
+    ⍝ Safe shell command execution with error handling
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   command (character): Shell command to execute
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (character vector): Command output or empty on error
+        
+        :Trap 0
+            result ← ⎕SH command
+            ⍝ Handle both vector and matrix results
+            :If 2=≡result
+                result ← ↑result  ⍝ Convert matrix to vector
+            :EndIf
+        :Else
+            ⎕←'SafeShell error executing: ',command
+            ⎕←'Error: ',⎕DM
+            result ← ''
+        :EndTrap
+    ∇
+
     ∇ ShowConfig config
     ⍝ Display configuration in readable format
     ⍝ 
