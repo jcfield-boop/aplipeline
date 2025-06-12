@@ -11,6 +11,7 @@
 ⍝   GitStatus               - Get current repository status
 ⍝   GitCommit msg           - Create new commit
 ⍝   GitPush args            - Push commits to remote repository
+⍝   GitCommitAndPush msg    - Commit and push in one operation
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
@@ -115,13 +116,17 @@
             
             :If 0<≢status_output
                 result.clean ← 0
-                ⍝ Handle both vector and matrix output
+                ⍝ Handle both vector and matrix output safely
                 :If 2=≡status_output
                     status_lines ← status_output
                 :ElseIf 0=≢status_output
                     status_lines ← ⍬
-                :Else
+                :ElseIf 1=≡status_output
+                    ⍝ Simple vector - split on newlines
                     status_lines ← (⎕UCS 10)(≠⊆⊢)status_output
+                :Else
+                    ⍝ Fallback for unexpected structure
+                    status_lines ← ⊂status_output
                 :EndIf
                 
                 ⍝ Parse status codes
@@ -224,6 +229,47 @@
             result.error ← ⎕DM
             ⎕←'❌ Git push failed: ',⎕DM
         :EndTrap
+    ∇
+
+    ∇ result ← GitCommitAndPush msg
+    ⍝ Convenience function to commit and push in one operation
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   msg (character): Commit message
+    ⍝ 
+    ⍝ Returns:
+    ⍝   result (namespace): Combined operation result
+        
+        result ← ⎕NS ''
+        result.commit_success ← 0
+        result.push_success ← 0
+        result.commit_hash ← ''
+        result.push_output ← ''
+        result.error ← ''
+        
+        ⎕←'🚀 Committing and pushing changes...'
+        
+        ⍝ First commit
+        commit_result ← GitCommit msg
+        result.commit_success ← commit_result.success
+        result.commit_hash ← commit_result.commit_hash
+        
+        :If commit_result.success
+            ⍝ Then push
+            push_result ← GitPush ''
+            result.push_success ← push_result.success
+            result.push_output ← push_result.output
+            
+            :If push_result.success
+                ⎕←'✅ Commit and push completed successfully!'
+            :Else
+                result.error ← 'Push failed: ',push_result.error
+                ⎕←'❌ ',result.error
+            :EndIf
+        :Else
+            result.error ← 'Commit failed: ',commit_result.error
+            ⎕←'❌ ',result.error
+        :EndIf
     ∇
 
     ∇ result ← GitBranch
