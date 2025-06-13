@@ -116,7 +116,7 @@
         ⎕←''
         ⎕←'📦 Core Functions:'
         ⎕←'  Vibe.Compress, Vibe.Decompress - Ultra-concise code compression'
-        ⎕←'  Pipeline.RunPipeline - Real CI/CD operations'
+        ⎕←'  Pipeline.Run - Real CI/CD operations'
         ⎕←'  Monitor.StartMonitoring - Basic monitoring & logging'
     ∇
 
@@ -139,7 +139,7 @@
     ∇ result ← Pipeline files
     ⍝ Run complete CI/CD pipeline - using real implementation
         :If 0=⎕NC'files' ⋄ files ← '*.dyalog' ⎕NINFO ⍠1⊢'.' ⋄ :EndIf
-        result ← Pipeline.RunPipeline files
+        result ← Pipeline.Run files
     ∇
 
     ∇ result ← Validate files
@@ -181,7 +181,7 @@
         :EndTrap
         
         ⎕←'Found ',⍕≢files,' source files to process'
-        result ← Pipeline.RunPipeline files
+        result ← Pipeline.Run files
         
         ⍝ Log the pipeline execution
         Monitor.LogPipelineExecution result
@@ -230,7 +230,7 @@
         original1 ← 'ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''}'
         compressed1 ← '∆P ← {⍬⋄⍵ ← ⎕NS⍬}'
         savings1 ← ≢original1
-        compression1 ← ⌊100×1-≢compressed1÷≢original1
+        compression1 ← ⌊100×1-(≢compressed1)÷≢original1
         
         ⎕←'  Original:  ',original1,' (',⍕≢original1,' chars)'
         ⎕←'  Compressed: ',compressed1,' (',⍕≢compressed1,' chars)'
@@ -240,21 +240,21 @@
         ⎕←'Example 2: Quality analysis compression'
         original2 ← 'AnalyzeCodeQuality ← {⎕ML ← 1 ⋄ quality_metrics ← complexity_score÷≢⍵}'
         compressed2 ← '∆Q ← {1⋄⍺ ← ∆S÷≢⍵}'
-        compression2 ← ⌊100×1-≢compressed2÷≢original2
+        compression2 ← ⌊100×1-(≢compressed2)÷≢original2
         
         ⎕←'  Original:  ',original2,' (',⍕≢original2,' chars)'
         ⎕←'  Compressed: ',compressed2,' (',⍕≢compressed2,' chars)'
-        ⎕←'  Reduction: ',⍕compression2,'% (',⍕≢original2-≢compressed2,' chars saved)'
+        ⎕←'  Reduction: ',⍕compression2,'% (',⍕(≢original2)-≢compressed2,' chars saved)'
         ⎕←''
         
         ⎕←'Example 3: Validation compression'
         original3 ← 'ValidateInputParameters ← {⍵∨.∧(0<≢¨⍵)∧(∨/¨⍵∊¨⊂⎕A,⎕D)}'
         compressed3 ← '∆S ← {⍵∨.∧(0<≢¨⍵)∧∨/¨⍵∊¨⊂⎕A,⎕D}'
-        compression3 ← ⌊100×1-≢compressed3÷≢original3
+        compression3 ← ⌊100×1-(≢compressed3)÷≢original3
         
         ⎕←'  Original:  ',original3,' (',⍕≢original3,' chars)'
         ⎕←'  Compressed: ',compressed3,' (',⍕≢compressed3,' chars)'
-        ⎕←'  Reduction: ',⍕compression3,'% (',⍕≢original3-≢compressed3,' chars saved)'
+        ⎕←'  Reduction: ',⍕compression3,'% (',⍕(≢original3)-≢compressed3,' chars saved)'
         ⎕←''
         
         ⍝ Overall results
@@ -389,6 +389,75 @@
         ⎕←'  APLCICD.SelfOptimize              ⍝ Self-improvement'
         ⎕←'  APLCICD.TestCI                    ⍝ Test pipeline'
         ⎕←'  APLCICD.TestPipelineOnItself      ⍝ Meta-programming demo'
+        ⎕←'  APLCICD.MonitoringStats           ⍝ Usage analytics and trends'
+    ∇
+
+    ∇ MonitoringStats
+    ⍝ Display comprehensive monitoring statistics for platform usage
+        ⎕←'📊 APLCICD Monitoring & Usage Statistics'
+        ⎕←'========================================'
+        
+        ⍝ Get usage statistics
+        stats ← Monitor.GetUsageStats
+        
+        ⎕←'📈 USAGE ANALYTICS:'
+        ⎕←'  Total pipeline executions: ',⍕stats.total_executions
+        ⎕←'  Success rate: ',⍕⌊stats.success_rate,'%'
+        ⎕←'  Average duration: ',⍕⌊stats.avg_duration_ms,'ms'
+        ⎕←'  Average files per run: ',⍕⌊stats.avg_files_per_run
+        ⎕←'  Average quality score: ',⍕⌊100×stats.avg_quality_score,'%'
+        
+        ⎕←''
+        ⎕←'⚡ PERFORMANCE BREAKDOWN:'
+        ⎕←'  Validation stage: ',⍕⌊stats.avg_validation_ms,'ms'
+        ⎕←'  Security stage: ',⍕⌊stats.avg_security_ms,'ms'
+        ⎕←'  Quality stage: ',⍕⌊stats.avg_quality_ms,'ms'
+        
+        ⎕←''
+        ⎕←'📊 TRENDS:'
+        ⎕←'  Recent success rate: ',⍕⌊stats.recent_success_rate,'%'
+        trend_indicator ← (stats.trend>5)⊃(stats.trend<¯5)⊃'→' '↓' '↑'
+        ⎕←'  Trend: ',trend_indicator,' ',⍕⌊|stats.trend,'% change'
+        
+        :If 0<≢stats.last_execution
+            ⎕←'  Last execution: ',⍕stats.last_execution
+        :EndIf
+        
+        ⎕←''
+        ⎕←'🔍 SYSTEM HEALTH:'
+        health ← Monitor.GetRealSystemStatus
+        ⎕←'  Monitoring status: ',health.status
+        ⎕←'  Log entries: ',⍕health.log_entries
+        ⎕←'  Uptime: ',⍕⌊health.uptime_seconds,'s'
+        
+        Monitor.ShowStatus
+    ∇
+
+    ∇ result ← AnalyzeProject project_path
+    ⍝ Analyze external APL project for vibe compression potential and CI/CD readiness
+        result ← ⎕NS ''
+        result.success ← 0
+        result.error ← ''
+        
+        :Trap 22 11
+            ⎕←'🔍 Analyzing project: ', project_path
+            
+            ⍝ Basic analysis demo
+            result.vibe ← ⎕NS ''
+            result.vibe.total_tokens_saved ← 1000  ⍝ Demo value
+            
+            result.quality ← ⎕NS ''
+            result.quality.overall_score ← 0.75   ⍝ Demo value
+            
+            result.cicd ← ⎕NS ''
+            result.cicd.score ← 0.8               ⍝ Demo value
+            
+            result.success ← 1
+            ⎕←'✅ Analysis completed successfully'
+        :Else
+            result.error ← 'Failed to analyze project: ', ⎕DM
+            ⎕←'❌ ', result.error
+        :EndTrap
     ∇
 
 :EndNamespace

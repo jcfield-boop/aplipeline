@@ -48,17 +48,22 @@
             result.validation ← ValidateFiles files
             result.validation.duration_ms ← ⎕AI[3] - validation_start
             ⎕←'  Status: ',result.validation.status
-            ⎕←'  Pass Rate: ',⍕100×result.validation.pass_rate,'%'
+            :If 0<⎕NC'result.validation.pass_rate'
+                ⎕←'  Pass Rate: ',⍕100×result.validation.pass_rate,'%'
+            :EndIf
             ⎕←'  Duration: ',⍕result.validation.duration_ms,'ms'
         :Case 11
             ⎕←'  Status: DOMAIN_ERROR - ',⎕DM
             result.validation ← CreateErrorResult 'DOMAIN_ERROR' ⎕DM
+            result.validation.duration_ms ← ⎕AI[3] - validation_start
         :Case 22
             ⎕←'  Status: FILE_ERROR - ',⎕DM
             result.validation ← CreateErrorResult 'FILE_ERROR' ⎕DM
+            result.validation.duration_ms ← ⎕AI[3] - validation_start
         :Else
             ⎕←'  Status: UNEXPECTED_ERROR - ',⎕DM
             result.validation ← CreateErrorResult 'UNEXPECTED_ERROR' ⎕DM
+            result.validation.duration_ms ← ⎕AI[3] - validation_start
         :EndTrap
         
         ⍝ Stage 2: Security Scan
@@ -73,12 +78,15 @@
         :Case 11
             ⎕←'  Status: DOMAIN_ERROR - ',⎕DM
             result.security ← CreateErrorResult 'DOMAIN_ERROR' ⎕DM
+            result.security.duration_ms ← ⎕AI[3] - security_start
         :Case 22
             ⎕←'  Status: FILE_ERROR - ',⎕DM
             result.security ← CreateErrorResult 'FILE_ERROR' ⎕DM
+            result.security.duration_ms ← ⎕AI[3] - security_start
         :Else
             ⎕←'  Status: UNEXPECTED_ERROR - ',⎕DM
             result.security ← CreateErrorResult 'UNEXPECTED_ERROR' ⎕DM
+            result.security.duration_ms ← ⎕AI[3] - security_start
         :EndTrap
         
         ⍝ Stage 3: Quality Analysis
@@ -93,12 +101,15 @@
         :Case 11
             ⎕←'  Status: DOMAIN_ERROR - ',⎕DM
             result.quality ← CreateErrorResult 'DOMAIN_ERROR' ⎕DM
+            result.quality.duration_ms ← ⎕AI[3] - quality_start
         :Case 22
             ⎕←'  Status: FILE_ERROR - ',⎕DM
             result.quality ← CreateErrorResult 'FILE_ERROR' ⎕DM
+            result.quality.duration_ms ← ⎕AI[3] - quality_start
         :Else
             ⎕←'  Status: UNEXPECTED_ERROR - ',⎕DM
             result.quality ← CreateErrorResult 'UNEXPECTED_ERROR' ⎕DM
+            result.quality.duration_ms ← ⎕AI[3] - quality_start
         :EndTrap
         
         ⍝ Overall pipeline status using APL logic
@@ -243,7 +254,7 @@
         result.warnings ← ⍬
         
         :Trap 11 22 16
-            lines ← (⎕UCS 10)(≠⊆⊢)content
+            lines ← (content≠⎕UCS 10)⊂content
             result.valid ← ValidateNamespaceStructure lines
             
         :Case 11
@@ -481,7 +492,7 @@
     ∇ score ← CalculateReadability content
     ⍝ Competition-grade APL readability analysis
     ⍝ Considers APL-specific idioms and best practices
-        lines ← (⎕UCS 10)(≠⊆⊢)content
+        lines ← (content≠⎕UCS 10)⊂content
         :If 0=≢lines ⋄ score←0 ⋄ :Return ⋄ :EndIf
         
         ⍝ 1. Line length appropriateness (APL can be concise)
@@ -529,7 +540,7 @@
     ⍝ APL-specific complexity analysis (0-1, lower complexity = higher score)
         :If 0=≢content ⋄ score←1 ⋄ :Return ⋄ :EndIf
         
-        lines ← (⎕UCS 10)(≠⊆⊢)content
+        lines ← (content≠⎕UCS 10)⊂content
         
         ⍝ 1. Nesting depth analysis (APL can handle deeper nesting elegantly)
         paren_depth ← MaxNestingDepth content '()'
@@ -582,7 +593,7 @@
     ⍝ Calculate maintainability score (0-1, higher is better)
         :If 0=≢content ⋄ score←0 ⋄ :Return ⋄ :EndIf
         
-        lines ← (⎕UCS 10)(≠⊆⊢)content
+        lines ← (content≠⎕UCS 10)⊂content
         
         ⍝ Function organization (presence of function definitions)
         function_defs ← +/∨/¨'∇'∊¨lines
@@ -606,7 +617,7 @@
     ⍝ Calculate documentation quality score (0-1, higher is better)
         :If 0=≢content ⋄ score←0 ⋄ :Return ⋄ :EndIf
         
-        lines ← (⎕UCS 10)(≠⊆⊢)content
+        lines ← (content≠⎕UCS 10)⊂content
         
         ⍝ Comment density
         comment_lines ← +/∨/¨'⍝'∊¨lines
@@ -765,7 +776,7 @@
 
     ∇ functions ← ExtractFunctions content
     ⍝ Extract function definitions from content
-        lines ← (⎕UCS 10)(≠⊆⊢)content
+        lines ← (content≠⎕UCS 10)⊂content
         functions ← ⍬
         
         ⍝ Find function start/end pairs

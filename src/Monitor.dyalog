@@ -62,34 +62,65 @@
         :EndIf
         
         ⍝ Display important messages
-        :If level∊'WARN' 'ERROR'
+        :If (⊂level)∊'WARN' 'ERROR'
             ⎕←'[',level,'] ',source,': ',message
         :EndIf
     ∇
 
     ∇ LogPipelineExecution result
-    ⍝ Log pipeline execution results
+    ⍝ Log comprehensive pipeline execution results for production monitoring
     ⍝ 
     ⍝ Arguments:
-    ⍝   result (namespace): Pipeline execution result
+    ⍝   result (namespace): Pipeline execution result from Pipeline.Run
         
         :If 0=⎕NC'result'
             LogMessage 'ERROR' 'Pipeline' 'Invalid pipeline result'
             →0
         :EndIf
         
-        :If result.overall_success
-            LogMessage 'INFO' 'Pipeline' 'Pipeline execution successful'
+        ⍝ Core execution logging
+        :If result.success
+            LogMessage 'INFO' 'Pipeline' 'Pipeline execution PASSED'
         :Else
-            LogMessage 'ERROR' 'Pipeline' 'Pipeline execution failed'
+            LogMessage 'ERROR' 'Pipeline' 'Pipeline execution FAILED'
         :EndIf
         
-        ⍝ Log stage details if available
-        :If 0<⎕NC'result.stage_results'
-            passed ← +/result.stage_results.passed
-            total ← ≢result.stage_results.passed
-            LogMessage 'INFO' 'Pipeline' ('Stages: ',⍕passed,'/',⍕total,' passed')
+        ⍝ Performance metrics logging
+        LogMessage 'INFO' 'Performance' ('Total duration: ',⍕result.total_duration_ms,'ms')
+        LogMessage 'INFO' 'Performance' ('Files processed: ',⍕result.file_count)
+        
+        ⍝ Stage-by-stage results
+        :If 0<⎕NC'result.validation'
+            LogMessage 'INFO' 'Validation' ('Status: ',result.validation.status,' Duration: ',⍕result.validation.duration_ms,'ms')
         :EndIf
+        
+        :If 0<⎕NC'result.security'
+            LogMessage 'INFO' 'Security' ('Status: ',result.security.status,' Duration: ',⍕result.security.duration_ms,'ms')
+        :EndIf
+        
+        :If 0<⎕NC'result.quality'
+            LogMessage 'INFO' 'Quality' ('Status: ',result.quality.status,' Avg Quality: ',⍕result.quality.avg_quality,' Duration: ',⍕result.quality.duration_ms,'ms')
+        :EndIf
+        
+        ⍝ Error details for failed executions
+        :If ~result.success
+            LogMessage 'ERROR' 'Pipeline' 'FAILURE ANALYSIS:'
+            :If result.validation.status≢'PASSED'
+                LogMessage 'ERROR' 'Validation' ('Failed: ',result.validation.error_message)
+            :EndIf
+            :If result.security.status≢'PASSED'
+                LogMessage 'ERROR' 'Security' ('Failed: ',result.security.error_message)
+            :EndIf
+            :If result.quality.status≢'PASSED'
+                LogMessage 'ERROR' 'Quality' ('Failed: ',result.quality.error_message)
+            :EndIf
+        :EndIf
+        
+        ⍝ Usage analytics
+        UpdateUsageMetrics result
+        
+        ⍝ Display summary for immediate feedback
+        ⎕←'📊 Pipeline execution logged at ',⍕⎕TS
     ∇
 
     ∇ metrics ← CollectRealMetrics
@@ -192,6 +223,100 @@
             ⎕←'Recent logs:'
             {⎕←'  [',⍵.level,'] ',⍵.source,': ',⍵.message}¨3↑⌽LogEntries
         :EndIf
+    ∇
+
+    ∇ UpdateUsageMetrics result
+    ⍝ Update usage analytics and performance tracking for production insights
+    ⍝ 
+    ⍝ Arguments:
+    ⍝   result (namespace): Pipeline execution result
+        
+        :Trap 0
+            ⍝ Create metrics entry for tracking trends
+            metric_entry ← ⎕NS ''
+            metric_entry.timestamp ← ⎕TS
+            metric_entry.success ← result.success
+            metric_entry.duration_ms ← result.total_duration_ms
+            metric_entry.file_count ← result.file_count
+            metric_entry.command ← 'pipeline'
+            
+            ⍝ Stage performance breakdown
+            metric_entry.validation_ms ← result.validation.duration_ms
+            metric_entry.security_ms ← result.security.duration_ms  
+            metric_entry.quality_ms ← result.quality.duration_ms
+            
+            ⍝ Quality metrics for trend analysis
+            :If 0<⎕NC'result.quality.avg_quality'
+                metric_entry.avg_quality ← result.quality.avg_quality
+            :Else
+                metric_entry.avg_quality ← 0
+            :EndIf
+            
+            ⍝ Store metrics for analytics (simple append for demo)
+            :If 0=⎕NC'UsageMetrics'
+                UsageMetrics ← ⍬
+            :EndIf
+            UsageMetrics ,← ⊂metric_entry
+            
+            ⍝ Keep only recent entries (last 100)
+            :If 100<≢UsageMetrics
+                UsageMetrics ← ¯100↑UsageMetrics
+            :EndIf
+            
+            ⍝ Log analytics summary
+            recent_success_rate ← 100×(+/metric_entry.success,9↑1↓⊃¨UsageMetrics.success)÷10⌊≢UsageMetrics
+            avg_duration ← ÷⌿10↑⊃¨UsageMetrics.duration_ms
+            
+            LogMessage 'ANALYTICS' 'Usage' ('Success rate: ',⍕⌊recent_success_rate,'% | Avg duration: ',⍕⌊avg_duration,'ms')
+            
+        :Else
+            LogMessage 'ERROR' 'Analytics' 'Failed to update usage metrics'
+        :EndTrap
+    ∇
+
+    ∇ stats ← GetUsageStats
+    ⍝ Get comprehensive usage statistics for platform monitoring
+        stats ← ⎕NS ''
+        
+        :If 0=⎕NC'UsageMetrics'
+            stats.total_executions ← 0
+            stats.success_rate ← 0
+            stats.avg_duration_ms ← 0
+            →0
+        :EndIf
+        
+        :If 0=≢UsageMetrics
+            stats.total_executions ← 0
+            stats.success_rate ← 0
+            stats.avg_duration_ms ← 0
+            →0
+        :EndIf
+        
+        metrics ← ↑UsageMetrics
+        
+        stats.total_executions ← ≢metrics
+        stats.success_rate ← 100×(+/metrics.success)÷≢metrics
+        stats.avg_duration_ms ← ÷⌿metrics.duration_ms
+        stats.avg_files_per_run ← ÷⌿metrics.file_count
+        stats.avg_quality_score ← ÷⌿metrics.avg_quality
+        
+        ⍝ Performance breakdown
+        stats.avg_validation_ms ← ÷⌿metrics.validation_ms
+        stats.avg_security_ms ← ÷⌿metrics.security_ms
+        stats.avg_quality_ms ← ÷⌿metrics.quality_ms
+        
+        ⍝ Trend analysis (last 10 vs previous)
+        :If 10<≢metrics
+            recent ← ¯10↑metrics.success
+            previous ← ¯20↑¯10↓metrics.success
+            stats.recent_success_rate ← 100×(+/recent)÷≢recent
+            stats.trend ← stats.recent_success_rate - 100×(+/previous)÷≢previous
+        :Else
+            stats.recent_success_rate ← stats.success_rate
+            stats.trend ← 0
+        :EndIf
+        
+        stats.last_execution ← ¯1↑metrics.timestamp
     ∇
 
 :EndNamespace

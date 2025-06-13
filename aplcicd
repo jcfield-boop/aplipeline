@@ -569,6 +569,17 @@ Vibe.ShowCompressionStatus
     run_apl "$apl_status_code" "Vibe compression status"
 }
 
+run_monitoring_stats() {
+    log_header "Platform Monitoring Statistics"
+    
+    local apl_stats_code="⎕FIX'file://src/APLCICD.dyalog'
+APLCICD.Initialize
+APLCICD.MonitoringStats
+⎕OFF"
+    
+    run_apl "$apl_stats_code" "Platform monitoring statistics"
+}
+
 run_judge_demo() {
     log_header "Contest Judge Demonstration"
     
@@ -764,53 +775,45 @@ Dyalog APL Forge Contest 2025
 
 Usage: ./aplcicd [command] [options]
 
-Essential Commands:
-  complete          - Full system demonstration (recommended)
-  demo              - Contest demonstration
-  vibe TEXT         - Compress text using vibe coding (60%+ compression)
+Essential Commands (Tier 1):
+  test              - Comprehensive system test (recommended for all testing)
+  demo              - Contest demonstration with live vibe compression metrics
+  status            - System health check and diagnostics
+  vibe [TEXT]       - Ultra-concise vibe compression demonstration
 
-Pipeline Commands:
-  pipeline          - Run complete CI/CD pipeline
-  realdemo          - Real implementation demo (no mocks)
-  selfoptimize      - Self-optimization and improvement
-  status            - System status and health check
-  benchmark         - Performance benchmark
+Development Commands (Tier 2):
+  pipeline          - Full CI/CD pipeline with monitoring (validation, security, quality)
+  benchmark         - Performance testing and metrics analysis
+  analyze [PATH]    - External project analysis and recommendations
+  stats             - Comprehensive usage analytics and performance trends
 
-Vibe Coding Commands:
-  compress-all      - Compress ALL source files for LLM development
-  vibe-status       - Show compression status of all files
+Advanced Commands (Tier 3):
+  optimize          - Self-optimization and meta-programming capabilities
+  dashboard         - Web interface (when HTMLRenderer available)
 
-Competition Commands:
-  judge-demo        - Ultimate contest demonstration for judges (5-part presentation)
-  test-self         - Self-testing showcase: system testing itself
-  vibe              - Vibe coding compression demonstration
-  recursive         - Recursive self-testing demonstration
-  competition       - Launch competition web server
-  complete-demo     - Complete competition demonstration
-
-Advanced Demo Commands:
-  project-analysis  - External project analysis demonstration
-  monitoring        - Real-time system monitoring demonstration
-  integrated        - Comprehensive integrated demonstration
+Production Monitoring:
+  stats             - Usage analytics, performance trends, success rates
+  status            - System health, monitoring status, recent activity
 
 Examples:
-  ./aplcicd judge-demo                            # Ultimate contest demonstration
-  ./aplcicd test-self                             # Self-testing showcase
-  ./aplcicd complete                              # Full demo
+  ./aplcicd test                                  # Comprehensive system test
+  ./aplcicd demo                                  # Contest demonstration
+  ./aplcicd pipeline                              # Full CI/CD pipeline with monitoring
+  ./aplcicd stats                                 # Usage analytics and trends
   
-  ./aplcicd vibe "ProcessFunction ← {code}"       # Vibe compression
-  ./aplcicd demo                                  # Contest demo
-  ./aplcicd pipeline                              # CI/CD test
+  ./aplcicd vibe "ProcessFunction ← {code}"       # Vibe compression demo
+  ./aplcicd analyze /path/to/project              # External project analysis
+  ./aplcicd optimize                              # Self-optimization demo
 
 Key Features:
-  🎵 Ultra-concise vibe coding compression (60%+ savings)
-  🔄 Self-improving CI/CD pipeline automation
-  🛡️  Comprehensive security & quality analysis
-  📊 Real-time performance monitoring & optimization
-  🚀 Real-time monitoring and pipeline automation
-  🔧 Meta-programming and recursive self-analysis
-  📚 APL-native Git integration
-  ✅ Zero-mock implementation (all functionality real)
+  🏭 Production CI/CD Pipeline (validation, security, quality analysis)
+  📊 Comprehensive Monitoring (usage analytics, performance tracking, trends)
+  🎵 Vibe Coding Compression (ultra-concise LLM co-creation optimization)
+  🔍 Real-time Error Analysis (detailed failure diagnostics and logging)
+  📈 Performance Optimization (stage-by-stage timing and bottleneck identification)
+  🧠 Self-Improving System (meta-programming and recursive analysis capabilities)
+  🔧 External Project Analysis (compression potential and CI/CD readiness assessment)
+  ✅ Zero-mock Implementation (all functionality production-ready)
 
 System Requirements:
   • Dyalog APL 19.0+ (automatically detected)
@@ -819,13 +822,16 @@ System Requirements:
 
 Quick Start:
   1. chmod +x aplcicd
-  2. ./aplcicd complete
-  3. View results in console output
+  2. ./aplcicd test
+  3. ./aplcicd pipeline  (run full CI/CD with monitoring)
+  4. ./aplcicd stats     (view usage analytics and trends)
 
 For Interactive Use:
   ⎕FIX'file://src/APLCICD.dyalog'
   APLCICD.Initialize
-  APLCICD.Demo
+  APLCICD.TestCI              ⍝ Run full CI/CD pipeline
+  APLCICD.MonitoringStats     ⍝ View usage analytics
+  APLCICD.Demo                ⍝ Vibe coding demonstration
 
 Repository: https://github.com/jcfield-boop/aplipeline
 Contest: Dyalog APL Forge 2025 - Vibe Coding Category
@@ -841,32 +847,52 @@ main() {
     local cmd="${1:-help}"
     
     case "$cmd" in
-        "complete"|"full")
+        # Tier 1 - Essential Commands
+        "test")
             run_complete_demo
             ;;
         "demo")
             run_demo
             ;;
+        "status")
+            run_status
+            ;;
         "vibe")
             run_vibe_demo "${2:-}"
+            ;;
+        
+        # Tier 2 - Development Commands  
+        "pipeline")
+            run_pipeline
             ;;
         "benchmark")
             run_benchmark
             ;;
-        "status")
-            run_status
+        "analyze")
+            run_analyze_project "${2:-}"
             ;;
-        "pipeline")
-            run_pipeline
+        
+        # Tier 3 - Advanced Commands
+        "optimize")
+            run_self_optimize
+            ;;
+        "dashboard")
+            log_info "Dashboard requires HTMLRenderer dependency"
+            log_info "Use './aplcicd status' for text-based interface"
+            ;;
+        "stats")
+            run_monitoring_stats
+            ;;
+        
+        # Legacy commands for backward compatibility
+        "complete"|"full")
+            run_complete_demo
             ;;
         "realdemo")
             run_real_demo
             ;;
         "selfoptimize")
             run_self_optimize
-            ;;
-        "vibe")
-            run_vibe_demo "${2:-}"
             ;;
         "recursive")
             run_recursive_demo
@@ -876,9 +902,6 @@ main() {
             ;;
         "complete-demo")
             run_complete_competition_demo
-            ;;
-        "analyze")
-            run_analyze_project "${2:-}"
             ;;
         "external-demo")
             run_external_demo
