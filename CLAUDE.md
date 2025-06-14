@@ -288,5 +288,41 @@ dyalog -script integration_example.apl
 ./aplcicd test && ./aplcicd demo
 ```
 
+## Recursive Testing Capabilities
+
+APL-CD can run analysis on its own codebase. Here's what actually works:
+
+### Self-Analysis Features
+- **Health Check**: `APLCICD.HealthCheck` reports module status and load count
+- **File Discovery**: Can enumerate its own source files (11 .dyalog, 10+ .apl files)
+- **Module Loading**: Initializes 3 core modules (DependencyMatrix, ParallelPipeline, Pipeline)
+- **Performance Testing**: Can benchmark its own execution time
+
+### Working Self-Test Commands
+```bash
+# Basic self-health check
+dyalog -script final_recursive_demo.apl
+
+# Dependency analysis demo  
+dyalog -script direct_demo.apl
+
+# Performance comparison
+dyalog -script simple_benchmark.apl
+```
+
+### Recursive Testing Results
+When run on itself, APL-CD can:
+- Report system health: "OK" status with 3/3 modules loaded
+- Inventory codebase: Finds 21 executable files in project
+- Run dependency matrix operations on sample data
+- Execute pipeline analysis on its own source files (with some namespace limitations)
+- Benchmark execution performance in milliseconds
+
+### Limitations
+- Namespace scope issues prevent some cross-module calls in scripts
+- Pipeline validation has content parsing limitations  
+- Full recursive analysis works better through the main `./aplcicd` interface
+- Some operations require manual module loading due to APL workspace constraints
+
 ## APL Forge Context
 - Refer to https://forge.dyalog.com/about-the-apl-forge/ for additional details about the APL development ecosystem and tooling context for this project

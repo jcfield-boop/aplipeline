@@ -486,12 +486,44 @@ APLCICD.Demo
 
 ---
 
-## The Vision
+## Recursive Testing
 
-> **"While others optimize for human readability, we optimize for AI fluency. The future belongs to languages that AIs understand natively - and that language is mathematics."**
+APL-CD can analyze its own codebase using its own CI/CD tools.
 
-**APL CI/CD**: Pioneering the inevitable future of software development.
+### What Works
+- **Self Health Check**: Reports module status (3/3 loaded)
+- **File Discovery**: Enumerates own source files (21 executable files)
+- **Dependency Analysis**: Runs matrix operations on sample dependency data
+- **Performance Testing**: Benchmarks own execution speed
 
-**Repository**: https://github.com/jcfield-boop/aplipeline  
-**Competition**: APL Forge 2025 - Paradigm Shift Category  
-**Innovation**: First LLM-native development infrastructure
+### Test Commands
+```bash
+# Self-analysis demo
+dyalog -script final_recursive_demo.apl
+
+# Dependency testing  
+dyalog -script direct_demo.apl
+
+# Performance comparison
+dyalog -script simple_benchmark.apl
+```
+
+### Results
+When run on itself, the system can report:
+- System health: OK status with all modules operational
+- Codebase inventory: 11 source modules + 10+ demo scripts
+- Execution performance: Sub-20ms for core operations
+- Code quality assessment on its own source files
+
+### Limitations
+- APL namespace scope affects some cross-module script calls
+- Full recursive analysis works best through main `./aplcicd` interface
+- Some pipeline validation functions have content parsing constraints
+
+---
+
+## Repository Info
+
+**URL**: https://github.com/jcfield-boop/aplipeline  
+**Competition**: APL Forge 2025  
+**Innovation**: Array-oriented CI/CD with O(N²) dependency resolution
