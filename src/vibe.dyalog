@@ -253,7 +253,6 @@
         
         ⍝ Variable name compression (human → vibe)
         VarMap ← ⎕NS ''
-        VarMap.ai_detection_result ← '⍺'
         VarMap.pipeline_status ← '⍵'
         VarMap.file_contents ← '⍳'
         VarMap.error_messages ← '⍴'
@@ -273,7 +272,6 @@
         FuncMap ← ⎕NS ''
         FuncMap.ProcessPipelineStage ← '∆P'
         FuncMap.AnalyzeCodeQuality ← '∆Q'
-        FuncMap.DetectAIContent ← '∆A'
         FuncMap.ValidateSyntax ← '∆S'
         FuncMap.ExecuteTests ← '∆T'
         FuncMap.OptimizePerformance ← '∆O'

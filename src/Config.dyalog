@@ -53,7 +53,6 @@
         ⍝ Security settings
         config.security ← ⎕NS ''
         config.security.strict_mode ← 1
-        config.security.ai_detection_threshold ← 0.3
         config.security.quality_threshold ← 0.5
         
         ⍝ Monitoring settings
@@ -244,7 +243,6 @@
         ⎕←''
         ⎕←'Security:'
         ⎕←'  Strict Mode: ',(config.security.strict_mode⊃'No' 'Yes')
-        ⎕←'  AI Threshold: ',⍕config.security.ai_detection_threshold
         ⎕←''
         ⎕←'Monitoring:'
         ⎕←'  Enabled: ',(config.monitoring.enabled⊃'No' 'Yes')

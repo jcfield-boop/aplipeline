@@ -297,14 +297,14 @@ savings ← orig_len-comp_len
 
 # Run performance benchmark
 run_benchmark() {
-    log_header "Performance Benchmark"
+    log_header "APL-CD Performance Benchmark vs Traditional CI/CD"
     
     local apl_benchmark_code="⎕FIX'file://src/APLCICD.dyalog'
 APLCICD.Initialize
-APLCICD.Performance
+Benchmark.BenchmarkDemo
 ⎕OFF"
     
-    run_apl "$apl_benchmark_code" "Performance benchmark"
+    run_apl "$apl_benchmark_code" "APL-CD performance benchmarking"
 }
 
 # Run system status check

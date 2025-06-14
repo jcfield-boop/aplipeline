@@ -1,38 +1,43 @@
 :Namespace APLCICD
-⍝ APLCICD v2.0 - Simplified Vibe Coding & Self-Improving APL CI/CD System
-⍝ Revolutionary approach for LLM co-creation with ultra-concise compression
-⍝ Simplified from 1,487 lines to focus on core functionality
+⍝ APL-CD v3.0 - Array-Oriented Continuous Deployment System
+⍝ Revolutionary CI/CD leveraging APL's array paradigm for dependency resolution
+⍝ and parallel pipeline execution with optional vibe coding compression
 ⍝
 ⍝ Core Architecture:
-⍝ • APLCICD.Vibe      - Ultra-concise "vibe coding" compression for LLM workflows
-⍝ • APLCICD.SelfOptimizer - Basic self-analysis capabilities  
-⍝ • APLCICD.Pipeline  - CI/CD automation, validation, security, quality
-⍝ • APLCICD.Monitor   - Basic monitoring and logging
-⍝ • APLCICD.Config    - Simplified configuration management
-⍝ • APLCICD.GitAPL    - Git integration
-⍝ • APLCICD.Tests     - Essential testing
+⍝ • DependencyMatrix    - Matrix-based dependency resolution (O(N²) complexity)
+⍝ • ParallelPipeline    - Array-oriented parallel execution engine
+⍝ • Pipeline           - CI/CD automation, validation, security, quality
+⍝ • Monitor            - Performance monitoring and analytics
+⍝ • Config             - Configuration management
+⍝ • GitAPL             - Git integration
+⍝ • Tests              - Essential testing
+⍝ • Vibe               - Optional ultra-concise compression for LLM workflows
+⍝ • SelfOptimizer      - Self-analysis and improvement capabilities
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
     ∇ Initialize
-    ⍝ Initialize the simplified APLCICD system
+    ⍝ Initialize the APL-CD system
         ⎕←''
-        ⎕←'APLCICD v2.0 - Vibe Coding & Self-Improving CI/CD'
-        ⎕←'================================================'
+        ⎕←'APL-CD v3.0 - Array-Oriented Continuous Deployment'
+        ⎕←'=================================================='
         ⎕←''
         ⎕←'Loading core modules...'
         
         :Trap 11 22 16  ⍝ Specific errors only
             LoadCoreModules
-            ⎕←'✅ Vibe module (ultra-concise compression for LLM co-creation)'
-            ⎕←'✅ SelfOptimizer module (basic self-analysis)'
-            ⎕←'✅ Pipeline module (CI/CD automation)'  
-            ⎕←'✅ Monitor module (basic logging & monitoring)'
-            ⎕←'✅ Config module (configuration management)'
-            ⎕←'✅ GitAPL module (Git integration)'
-            ⎕←'✅ Tests module (essential testing)'
+            ⎕←'✅ DependencyMatrix (matrix-based dependency resolution)'
+            ⎕←'✅ ParallelPipeline (array-oriented parallel execution)'
+            ⎕←'✅ Benchmark (performance analysis vs traditional CI/CD)'
+            ⎕←'✅ Pipeline (CI/CD automation)'  
+            ⎕←'✅ Monitor (performance monitoring & analytics)'
+            ⎕←'✅ Config (configuration management)'
+            ⎕←'✅ GitAPL (Git integration)'
+            ⎕←'✅ Tests (essential testing)'
+            ⎕←'✅ Vibe (optional compression for LLM workflows)'
+            ⎕←'✅ SelfOptimizer (self-analysis & improvement)'
             ⎕←''
-            ⎕←'🎵 APLCICD v2.0 ready for vibe coding & self-improvement!'
+            ⎕←'🔢 APL-CD v3.0 ready for array-oriented continuous deployment!'
             ⎕←''
             QuickHelp
         :Case 11
@@ -49,6 +54,9 @@
     ∇ LoadCoreModules
     ⍝ Load the core modules with proper error handling
         :Trap 22
+            ⎕FIX'file://src/DependencyMatrix.dyalog'
+            ⎕FIX'file://src/ParallelPipeline.dyalog'
+            ⎕FIX'file://src/Benchmark.dyalog'
             ⎕FIX'file://src/Pipeline.dyalog'
             ⎕FIX'file://src/Monitor.dyalog'
             ⎕FIX'file://src/Config.dyalog'
@@ -61,13 +69,16 @@
         :EndTrap
         
         ⍝ Initialize all modules
-        Vibe.Initialize
-        SelfOptimizer.Initialize
+        DependencyMatrix.Initialize
+        ParallelPipeline.Initialize
+        Benchmark.Initialize
         Pipeline.Initialize
         Monitor.Initialize
         Config.∆I
         GitAPL.Initialize
         Tests.Initialize
+        Vibe.Initialize
+        SelfOptimizer.Initialize
     ∇
 
     ∇ health ← HealthCheck
