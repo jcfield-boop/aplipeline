@@ -24,95 +24,45 @@
         ⎕←''
         ⎕←'Loading core modules...'
         
-        :Trap 11 22 16  ⍝ Specific errors only
-            LoadCoreModules
-            ⎕←'✅ DependencyMatrix (matrix-based dependency resolution)'
-            ⎕←'✅ ParallelPipeline (array-oriented parallel execution)'
-            ⎕←'✅ Benchmark (performance analysis vs traditional CI/CD)'
-            ⎕←'✅ Pipeline (CI/CD automation)'  
-            ⎕←'✅ Monitor (performance monitoring & analytics)'
-            ⎕←'✅ Config (configuration management)'
-            ⎕←'✅ GitAPL (Git integration)'
-            ⎕←'✅ Tests (essential testing)'
-            ⎕←'✅ Vibe (optional compression for LLM workflows)'
-            ⎕←'✅ SelfOptimizer (self-analysis & improvement)'
-            ⎕←''
-            ⎕←'🔢 APL-CD v3.0 ready for array-oriented continuous deployment!'
-            ⎕←''
-            QuickHelp
-        :Case 11
-            ⎕←'❌ Domain error loading components: ',⎕DM
-        :Case 22
-            ⎕←'❌ File error loading components: ',⎕DM
-        :Case 16
-            ⎕←'❌ Network error during initialization: ',⎕DM
-        :Else
-            ⎕←'❌ Unexpected error (',⍕⎕EN,'): ',⎕DM
-        :EndTrap
+        LoadCoreModules
+        ⎕←'🔢 APL-CD Core Triad Loaded:'
+        ⎕←'✅ DependencyMatrix - O(N²) matrix operations'
+        ⎕←'✅ ParallelPipeline - Array-based parallel execution'
+        ⎕←'✅ Pipeline - Matrix-based CI/CD processing'
+        ⎕←''
+        ⎕←'🚀 APL-CD ready for array-oriented deployment!'
+        ⎕←''
+        QuickHelp
     ∇
 
     ∇ LoadCoreModules
-    ⍝ Load the core modules with proper error handling
+    ⍝ Load simplified core triad
         :Trap 22
             ⎕FIX'file://src/DependencyMatrix.dyalog'
             ⎕FIX'file://src/ParallelPipeline.dyalog'
-            ⎕FIX'file://src/Benchmark.dyalog'
             ⎕FIX'file://src/Pipeline.dyalog'
-            ⎕FIX'file://src/Monitor.dyalog'
-            ⎕FIX'file://src/Config.dyalog'
-            ⎕FIX'file://src/SelfOptimizer.dyalog'
-            ⎕FIX'file://src/vibe.dyalog'
-            ⎕FIX'file://src/GitAPL.dyalog'
-            ⎕FIX'file://src/Tests.dyalog'
         :Else
             ⎕SIGNAL 22⊣'Failed to load core modules'
         :EndTrap
         
-        ⍝ Initialize all modules
+        ⍝ Initialize core triad only
         DependencyMatrix.Initialize
-        ParallelPipeline.Initialize
-        Benchmark.Initialize
+        ParallelPipeline.Initialize  
         Pipeline.Initialize
-        Monitor.Initialize
-        Config.∆I
-        GitAPL.Initialize
-        Tests.Initialize
-        Vibe.Initialize
-        SelfOptimizer.Initialize
     ∇
 
     ∇ health ← HealthCheck
-    ⍝ Basic health check with essential validation
+    ⍝ APL-style health check using array operations
+        modules ← 'DependencyMatrix' 'ParallelPipeline' 'Pipeline'
+        module_status ← (9=⎕NC¨modules)
+        
         health ← ⎕NS ''
         health.timestamp ← ⎕TS
-        health.version ← '2.0.0'
-        health.status ← 'OK'
-        health.modules ← ⍬
+        health.modules ← modules
+        health.status ← (∧/module_status)⊃'DEGRADED' 'OK'
+        health.loaded_count ← +/module_status
         
-        :Trap 11 22
-            ⍝ Check each core module
-            :If 9=⎕NC'Pipeline' ⋄ health.modules ,← ⊂'Pipeline: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Pipeline: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            :If 9=⎕NC'Monitor' ⋄ health.modules ,← ⊂'Monitor: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Monitor: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            :If 9=⎕NC'Config' ⋄ health.modules ,← ⊂'Config: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Config: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            :If 9=⎕NC'Vibe' ⋄ health.modules ,← ⊂'Vibe: OK' ⋄ :Else ⋄ health.modules ,← ⊂'Vibe: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            :If 9=⎕NC'SelfOptimizer' ⋄ health.modules ,← ⊂'SelfOptimizer: OK' ⋄ :Else ⋄ health.modules ,← ⊂'SelfOptimizer: MISSING' ⋄ health.status ← 'DEGRADED' ⋄ :EndIf
-            
-            ⎕←'Health Status: ',health.status
-            ⎕←'Modules: ',⍕≢health.modules,' checked'
-        :Case 11
-            health.status ← 'FAILED'
-            health.error ← ⎕DM
-            ⎕←'Health Check FAILED (domain error): ',⎕DM
-        :Case 22
-            health.status ← 'FAILED'
-            health.error ← ⎕DM
-            ⎕←'Health Check FAILED (file error): ',⎕DM
-        :Else
-            health.status ← 'FAILED'
-            health.error ← ⎕DM
-            ⎕←'Health Check FAILED (unexpected error): ',⎕DM
-        :EndTrap
-        
+        ⎕←'Health: ',health.status,' (',⍕health.loaded_count,'/',⍕≢modules,' modules)'
         health
     ∇
 
