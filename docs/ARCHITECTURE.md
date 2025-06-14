@@ -1,23 +1,24 @@
-# LLM-Native Architecture
+# APL-CD Architecture
 
 ## Overview
 
-APLCICD is a software architecture designed to optimize for LLM interaction and token efficiency. This architecture guide explains the design principles, technical decisions, and mathematical foundations that enable measured token compression and system visibility for AI development.
+APL-CD (Array-Oriented Continuous Deployment) is a CI/CD system built using APL's mathematical foundations. This architecture guide explains the design principles and technical decisions that enable superior algorithmic complexity through array-oriented programming.
 
-## Core Philosophy: Mathematics Over Syntax
+## Core Philosophy: Mathematics Over Objects
 
-### The LLM-First Principle
+### The Array-First Principle
 
-Traditional software architecture optimizes for:
-- **Human readability**: Verbose variable names, extensive comments
-- **Syntax clarity**: Explicit keywords, structured formatting  
-- **Defensive programming**: Type annotations, extensive error handling
-- **Documentation**: Separate files explaining code behavior
+Traditional CI/CD systems use:
+- **Object-oriented patterns**: Classes, inheritance, complex abstractions
+- **O(N³) algorithms**: Nested graph traversal for dependency resolution
+- **Sequential processing**: Step-by-step pipeline execution
+- **Imperative logic**: Explicit loops and conditional statements
 
-LLM-native architecture optimizes for:
-- **Token density**: Maximum meaning per character
-- **Mathematical notation**: Symbols LLMs understand natively
-- **Semantic purity**: Code expresses intent directly
+APL-CD uses array-oriented design:
+- **Matrix operations**: N×N dependency matrices for O(N²) complexity
+- **Vectorized processing**: APL array operations for parallel execution
+- **Mathematical optimization**: Linear algebra for build order calculation
+- **Functional composition**: Pipeline as mathematical function composition
 - **Self-evidence**: Behavior clear from mathematical composition
 
 ### Mathematical Foundation
