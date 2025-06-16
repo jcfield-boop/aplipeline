@@ -263,6 +263,5 @@ MIT License - see LICENSE file for details.
 
 ## References
 
-- [APL Forge Competition](https://forge.dyalog.com/about-the-apl-forge/)
 - [Tatin Package Manager](https://tatin.dev/)
 - [Dyalog APL Documentation](https://help.dyalog.com/)
