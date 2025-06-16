@@ -1,7 +1,7 @@
 {
   "name": "APL-CD",
   "version": "3.0.0",
-  "description": "Array-Oriented Continuous Deployment - Industry-validated CI/CD with Spring PetClinic benchmarking and AI development optimization",
+  "description": "Array-Oriented Continuous Deployment - CI/CD system using APL matrix operations for dependency resolution",
   "author": "APL Forge Contest 2025",
   "license": "MIT",
   "dyalog_version": "19.0",
