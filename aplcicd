@@ -148,7 +148,7 @@ run_apl() {
         rm -f "$temp_script"
         
         # Check for success indicators and absence of error indicators
-        success_pattern="APLCICD.*System Status\|Health Status: OK\|Status: OK\|✅.*ready\|🚀.*APLCICD\|✅.*loaded\|🎵.*Vibe\|Test completed successfully\|Compression Demo\|Performance Benchmark\|🏆.*CONTEST DEMONSTRATION\|🎯.*PART.*RESULTS\|Thank you, judges\|PART.*RESULTS.*demonstrated\|Meta-programming capabilities demonstrated\|Live pipeline visualization completed\|🎯 CONTEST ACHIEVEMENT\|📊 REAL SYSTEM STATISTICS"
+        success_pattern="APLCICD.*System Status\|Health Status: OK\|Status: OK\|✅.*ready\|🚀.*APLCICD\|✅.*loaded\|Test completed successfully\|Performance Benchmark\|🏆.*CONTEST DEMONSTRATION\|🎯.*PART.*RESULTS\|Thank you, judges\|PART.*RESULTS.*demonstrated\|Meta-programming capabilities demonstrated\|Live pipeline visualization completed\|🎯 CONTEST ACHIEVEMENT\|📊 REAL SYSTEM STATISTICS"
         
         if echo "$output" | grep -q "$success_pattern"; then
             # Check for fatal errors only (ignore trace output from TRACE_ON_ERROR)
@@ -180,7 +180,7 @@ validate_demo_environment() {
     log_info "Validating demo environment..."
     
     # Check all required files exist
-    local required_files=("src/APLCICD.dyalog" "src/vibe.dyalog" "src/Pipeline.dyalog" "config/default.json")
+    local required_files=("src/APLCICD.dyalog" "src/Pipeline.dyalog" "config/default.json")
     for file in "${required_files[@]}"; do
         if [[ ! -e "$file" ]]; then
             log_error "Required file missing: $file"
@@ -269,31 +269,6 @@ APLCICD.Demo
     run_apl "$apl_demo_code" "Contest demonstration"
 }
 
-# Run vibe compression demonstration
-run_vibe_demo() {
-    local text="${1:-ProcessPipelineStage}"
-    
-    log_header "Vibe Coding Compression Demo"
-    
-    local apl_vibe_code="⎕FIX'file://src/vibe.dyalog'
-Vibe.Initialize
-⎕←'🎵 Vibe Coding Compression Demo'
-⎕←'==============================='
-original ← '$text'
-⎕←'Original: ',original,' (',⍕≢original,' chars)'
-compressed ← Vibe.Compress original
-⎕←'Compressed: ',compressed,' (',⍕≢compressed,' chars)'
-orig_len ← ≢original
-comp_len ← ≢compressed
-ratio ← ⌊100×1-comp_len÷orig_len⌈1
-savings ← orig_len-comp_len
-⎕←'Compression: ',⍕ratio,'%'
-⎕←'Savings: ',⍕savings,' characters saved'
-⎕←'Test completed successfully'
-⎕OFF"
-    
-    run_apl "$apl_vibe_code" "Vibe compression demo"
-}
 
 # Run performance benchmark
 run_benchmark() {
@@ -355,56 +330,6 @@ APLCICD.SelfOptimize
     run_apl "$apl_optimize_code" "Self-optimization process"
 }
 
-run_vibe_demo() {
-    log_header "Vibe Coding Demonstration"
-    
-    local text="${1:-}"
-    
-    if [[ -n "$text" ]]; then
-        # Compress specific text using simple approach
-        local text_len=${#text}
-        local estimated_compressed_len=$((text_len * 40 / 100))  # Estimate 40% compression
-        local savings=$((text_len - estimated_compressed_len))
-        local ratio=$((60))  # 60% compression estimate
-        
-        local apl_vibe_code="⎕←'🎵 Vibe Coding Compression Demo'
-⎕←'==============================='
-⎕←'Compressing provided text...'
-⎕←''
-⎕←'Original: $text ($text_len chars)'
-⎕←'Compressed: [compressed version] ($estimated_compressed_len chars)'
-⎕←'Compression: $ratio% ($savings chars saved)'
-⎕←'✅ Demo completed successfully'
-⎕OFF"
-    else
-        # Demo mode with simple working examples
-        local apl_vibe_code="⎕←'🎵 Vibe Coding Compression Demo'
-⎕←'==============================='
-⎕←'Demonstrating ultra-concise compression for LLM co-creation'
-⎕←''
-⎕←'Example 1:'
-⎕←'  Original:  ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''} (65 chars)'
-⎕←'  Compressed: ∆P ← {⍬⋄⍵ ← ⎕NS⍬} (23 chars)'
-⎕←'  Reduction: 65% (42 chars saved)'
-⎕←''
-⎕←'Example 2:'
-⎕←'  Original:  AnalyzeCodeQuality ← {⎕ML ← 1 ⋄ quality_metrics ← complexity_score÷≢⍵} (73 chars)'
-⎕←'  Compressed: ∆Q ← {1⋄⍺ ← ∆S÷≢⍵} (22 chars)'
-⎕←'  Reduction: 70% (51 chars saved)'
-⎕←''
-⎕←'Example 3:'
-⎕←'  Original:  ValidateInputParameters ← {⍵∨.∧(0<≢¨⍵)∧(∨/¨⍵∊¨⊂⎕A,⎕D)} (63 chars)'
-⎕←'  Compressed: ∆S ← {⍵∨.∧(0<≢¨⍵)∧∨/¨⍵∊¨⊂⎕A,⎕D} (36 chars)'
-⎕←'  Reduction: 43% (27 chars saved)'
-⎕←''
-⎕←'🎯 Average compression: Measured compression for LLM token efficiency'
-⎕←'💰 LLM cost reduction: Fewer tokens results in lower API costs'
-⎕←'✅ Demo completed successfully'
-⎕OFF"
-    fi
-    
-    run_apl "$apl_vibe_code" "Vibe coding demonstration"
-}
 
 run_recursive_demo() {
     log_header "Recursive Self-Testing"
@@ -450,87 +375,6 @@ APLCICD.CompetitionServer
     run_apl "$apl_server_code" "Competition web server"
 }
 
-run_analyze_project() {
-    local project_path="${1:-}"
-    
-    if [[ -z "$project_path" ]]; then
-        log_error "Please provide a project path or GitHub URL"
-        echo "Usage: ./aplcicd analyze <path-or-url>"
-        echo ""
-        echo "Examples:"
-        echo "  ./aplcicd analyze /path/to/local/apl/project"
-        echo "  ./aplcicd analyze https://github.com/username/apl-project"
-        return 1
-    fi
-    
-    log_header "External Project Analysis"
-    
-    local apl_analyze_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-⎕←''
-⎕←'🔍 Analyzing External APL Project'
-⎕←'================================='
-result ← APLCICD.AnalyzeProject '$project_path'
-:If result.success
-    ⎕←''
-    ⎕←'✅ Analysis Complete!'
-    ⎕←'===================='
-    ⎕←'🎵 Vibe compression could save ',⍕result.vibe.total_tokens_saved,' tokens'
-    ⎕←'📊 Code quality score: ',⍕result.quality.overall_score
-    ⎕←'🔧 CI/CD readiness: ',⍕100×result.cicd.score,'%'
-    ⎕←''
-    ⎕←'📄 Detailed report saved to project directory'
-:Else
-    ⎕←'❌ Analysis failed: ',result.error
-:EndIf
-⎕OFF"
-    
-    run_apl "$apl_analyze_code" "External project analysis"
-}
-
-run_external_demo() {
-    log_header "External Project Analysis Demo"
-    
-    # Create a simple demo project
-    local demo_dir="/tmp/apl_demo_project"
-    mkdir -p "$demo_dir"
-    
-    # Create sample APL files
-    cat > "$demo_dir/Calculator.dyalog" << 'EOF'
-:Namespace Calculator
-    ∇ result ← Add args
-        result ← +/args
-    ∇
-    
-    ∇ result ← Multiply args
-        result ← ×/args
-    ∇
-    
-    ∇ result ← ProcessData data
-        :For item :In data
-            :For subitem :In item
-                result ,← subitem × 2
-            :EndFor
-        :EndFor
-    ∇
-:EndNamespace
-EOF
-
-    cat > "$demo_dir/Utils.apl" << 'EOF'
-⍝ Utility functions
-ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''}
-ValidateInput ← {⎕ML ← 1 ⋄ :If 0=≢⍵ ⋄ 'Error' ⋄ :Else ⋄ 'OK' ⋄ :EndIf}
-GenerateReport ← {data ← ⍵ ⋄ report ← ⊂'Report for ',⍕≢data,' items'}
-EOF
-    
-    log_info "Created demo project at: $demo_dir"
-    log_info "Running APLCICD analysis..."
-    
-    run_analyze_project "$demo_dir"
-    
-    echo ""
-    log_success "External project analysis demonstrated!"
-}
 
 run_project_analysis_demo() {
     log_header "ProjectLoader External Analysis Demo"
@@ -565,29 +409,6 @@ APLCICD.IntegratedDemo
     run_apl "$apl_integrated_code" "Integrated demonstration"
 }
 
-# Compress all source files for LLM development
-run_compress_all_source() {
-    log_header "Compress All Source Files for LLM Development"
-    
-    local apl_compress_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-Vibe.CompressAllSource
-⎕OFF"
-    
-    run_apl "$apl_compress_code" "Compress all source files"
-}
-
-# Show vibe compression status
-run_vibe_status() {
-    log_header "Vibe Compression Status"
-    
-    local apl_status_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-Vibe.ShowCompressionStatus
-⎕OFF"
-    
-    run_apl "$apl_status_code" "Vibe compression status"
-}
 
 run_monitoring_stats() {
     log_header "Platform Monitoring Statistics"
@@ -600,118 +421,35 @@ APLCICD.MonitoringStats
     run_apl "$apl_stats_code" "Platform monitoring statistics"
 }
 
-run_judge_demo() {
-    log_header "Contest Judge Demonstration"
+# Run Jenkins comparison demo
+run_jenkins_comparison() {
+    local project_path="${1:-src}"
+    log_header "APL-CD vs Jenkins Performance Comparison"
     
-    local apl_judge_code="⎕←'🏆 DYALOG APL FORGE 2025 - APLCICD CONTEST DEMONSTRATION'
-⎕←'========================================================'
-⎕←'Revolutionary APL CI/CD System with Vibe Coding Innovation'
-⎕←'Presented by: APLCICD v2.0 Self-Improving System'
-⎕←''
-⎕←'📋 DEMONSTRATION AGENDA:'
-⎕←'======================='
-⎕←'1. 🎵 Live Vibe Coding Compression Demonstration'
-⎕←'2. 🔄 Self-Testing: Pipeline Running on Own Source Code'
-⎕←'3. 🚀 Live Pipeline Visualization with Real Metrics'
-⎕←'4. 🧠 Self-Optimization and Meta-Programming Showcase'
-⎕←'5. 📊 Final Metrics: Token Savings and LLM Impact'
-⎕←''
-⎕←'⏱️  Estimated duration: 3-5 minutes'
-⎕←'🎯 Goal: Demonstrate APL''s superiority for AI-driven development'
-⎕←''
-⎕←'🎬 DEMONSTRATION STARTING NOW...'
-⎕DL 1
-⎕←''
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←'PART 1: 🎵 REVOLUTIONARY VIBE CODING COMPRESSION'
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←''
-⎕←'Demonstrating ultra-concise APL compression for LLM co-creation:'
-⎕←''
-⎕←'Example 1:'
-⎕←'  BEFORE: ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''''}'
-⎕←'  AFTER:  ∆P ← {⍬⋄⍵ ← ⎕NS⍬}'
-⎕←'  RESULT: 65% compression (42 chars saved)'
-⎕←''
-⎕←'Example 2:'
-⎕←'  BEFORE: AnalyzeCodeQuality ← {⎕ML ← 1 ⋄ quality_metrics ← complexity_score÷≢⍵}'
-⎕←'  AFTER:  ∆Q ← {1⋄⍺ ← ∆S÷≢⍵}'
-⎕←'  RESULT: 70% compression (51 chars saved)'
-⎕←''
-⎕←'🎯 PART 1 RESULTS: Measured compression achieved!'
-⎕←'💰 LLM TOKEN IMPACT: Reduced tokens provide cost benefits'
-⎕DL 1
-⎕←''
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←'PART 2: 🔄 ULTIMATE META-PROGRAMMING: SYSTEM TESTING ITSELF'
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←''
-⎕←'Demonstrating system''s ability to test its own source code...'
-⎕←'🔍 Found ',⍕≢⊃⎕NINFO⍠1⊢'src/*.dyalog',' source files to analyze'
-⎕←'⚡ Running validation, security scan, and quality analysis...'
-⎕DL 1
-⎕←'✅ All self-tests passed - system validated its own code!'
-⎕←'🎯 Meta-programming achievement: APL system analyzing APL system'
-⎕DL 1
-⎕←''
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←'PART 3: 🚀 LIVE PIPELINE VISUALIZATION'
-⎕←'═══════════════════════════════════════════════════════════════'
-⎕←''
-⎕←'Simulating live CI/CD pipeline with ASCII visualization...'
-⎕←''
-⎕←'┌─────────────────────────────────────────┐'
-⎕←'│           APL CI/CD Pipeline            │'
-⎕←'├─────────────────────────────────────────┤'
-⎕←'│ ⋯ Validate                             │'
-⎕DL 0.5
-⎕←'│ ✓ Validate                             │'
-⎕←'│ ⋯ Security                             │'
-⎕DL 0.5
-⎕←'│ ✓ Security                             │'
-⎕←'│ ⋯ Quality                              │'
-⎕DL 0.5
-⎕←'│ ✓ Quality                              │'
-⎕←'│ ✓ Build                                │'
-⎕←'│ ✓ Deploy                               │'
-⎕←'└─────────────────────────────────────────┘'
-⎕←''
-⎕←'🎯 PART 3 RESULTS: Live pipeline visualization completed!'
-⎕DL 1
-⎕←''
-⎕←'🏆 APLCICD v2.0 CONTEST DEMONSTRATION RESULTS'
-⎕←'============================================='
-⎕←''
-⎕←'📊 DEMONSTRATION SCORECARD:'
-⎕←'• Parts completed successfully: 3/5'
-⎕←'• Overall success rate: 100%'
-⎕←'• System reliability: EXCELLENT'
-⎕←''
-⎕←'🎵 VIBE CODING RESULTS:'
-⎕←'• Average compression ratio: Measured performance varies by content'
-⎕←'• Character savings demonstrated: 120 characters'
-⎕←'• LLM cost reduction potential: Depends on content and usage'
-⎕←'• Context window efficiency gain: Improved context utilization'
-⎕←''
-⎕←'🚀 COMPETITIVE ADVANTAGES DEMONSTRATED:'
-⎕←'======================================='
-⎕←'1. INNOVATION: APL compression system designed for LLM workflows'
-⎕←'2. REAL IMPLEMENTATION: Zero simulation - all functionality works in production'
-⎕←'3. SELF-IMPROVEMENT: System can analyze and optimize its own code'
-⎕←'4. APL-NATIVE: Leverages mathematical expressiveness for CI/CD automation'
-⎕←'5. AI-READY: Designed for LLM co-creation with measured token efficiency'
-⎕←''
-⎕←'████████████████████████████████████████████████████████████████'
-⎕←'🏆 APLCICD: APL + AI DEVELOPMENT DEMONSTRATION'
-⎕←'████████████████████████████████████████████████████████████████'
-⎕←''
-⎕←'Thank you, judges!'
-⎕←''
-⎕←'🎯 Ready for production deployment and community adoption!'
-⎕OFF"
-    
-    run_apl "$apl_judge_code" "Contest judge demonstration"
+    run_apl_script "jenkins_comparison_demo.apl" "Jenkins performance comparison"
 }
+
+# Run real-world bake-off
+run_real_world_bakeoff() {
+    local project_path="${1:-.}"
+    log_header "Real-World Bake-off: APL-CD vs Jenkins"
+    
+    run_apl_script "real_bakeoff_simple.apl" "Real-world enterprise project comparison"
+}
+
+# Run Spring PetClinic benchmark
+run_spring_petclinic_benchmark() {
+    log_header "Spring PetClinic Industry-Standard Benchmark"
+    
+    # Check if Spring PetClinic is cloned
+    if [[ ! -d "external_benchmark/spring-petclinic" ]]; then
+        log_info "Cloning Spring PetClinic benchmark project..."
+        git clone https://github.com/spring-projects/spring-petclinic.git external_benchmark/spring-petclinic
+    fi
+    
+    run_apl_script "spring_petclinic_simple.apl" "Spring PetClinic industry-standard benchmark"
+}
+
 
 run_test_self() {
     log_header "Self-Testing Showcase"
@@ -747,10 +485,6 @@ run_complete_demo() {
     run_status
     echo ""
     
-    # 2. Vibe compression demo
-    log_info "Testing vibe coding compression..."
-    run_vibe_demo "ProcessPipelineStage ← {⎕IO ← 0 ⋄ pipeline_status ← ⎕NS ''}"
-    echo ""
     
     # 3. Real implementation demo
     run_real_demo
@@ -775,7 +509,6 @@ run_complete_demo() {
     log_success "Complete demonstration finished!"
     echo ""
     echo "🎯 Key Achievements Demonstrated:"
-    echo "   ✅ Ultra-concise vibe coding compression (60%+ savings)"
     echo "   ✅ Self-improving CI/CD pipeline"
     echo "   ✅ Real-time monitoring and logging"
     echo "   ✅ Meta-programming capabilities"
@@ -809,8 +542,10 @@ Competition Demos:
 
 Development Commands:
   pipeline          - CI/CD pipeline execution
-  vibe [TEXT]       - Vibe compression demonstration
   stats             - System statistics and monitoring
+  compare-with-jenkins [path] - Performance comparison with Jenkins
+  bake-off [path]   - Real-world enterprise project comparison
+  spring-petclinic  - Industry-standard Maven benchmark (Spring Boot)
 
 Examples:
   ./aplcicd test                                  # Complete system test
@@ -848,10 +583,10 @@ For Interactive Use:
   APLCICD.Initialize
   APLCICD.TestCI              ⍝ Run full CI/CD pipeline
   APLCICD.MonitoringStats     ⍝ View usage analytics
-  APLCICD.Demo                ⍝ Vibe coding demonstration
+  APLCICD.Demo                ⍝ Array-oriented demonstration
 
 Repository: https://github.com/jcfield-boop/aplipeline
-Contest: Dyalog APL Forge 2025 - Vibe Coding Category
+Contest: Dyalog APL Forge 2025 - Array Processing Category
 EOF
 }
 
@@ -874,9 +609,6 @@ main() {
         "status")
             run_status
             ;;
-        "vibe")
-            run_vibe_demo "${2:-}"
-            ;;
         
         # Tier 2 - Development Commands  
         "pipeline")
@@ -884,9 +616,6 @@ main() {
             ;;
         "benchmark")
             run_benchmark
-            ;;
-        "analyze")
-            run_analyze_project "${2:-}"
             ;;
         
         # Tier 3 - Advanced Commands
@@ -899,6 +628,15 @@ main() {
             ;;
         "stats")
             run_monitoring_stats
+            ;;
+        "compare-with-jenkins")
+            run_jenkins_comparison "${2:-src}"
+            ;;
+        "bake-off"|"bakeoff")
+            run_real_world_bakeoff "${2:-.}"
+            ;;
+        "spring-petclinic"|"petclinic")
+            run_spring_petclinic_benchmark
             ;;
         
         # Legacy commands for backward compatibility
@@ -932,9 +670,6 @@ main() {
         "complete-demo")
             run_complete_competition_demo
             ;;
-        "external-demo")
-            run_external_demo
-            ;;
         "project-analysis")
             run_project_analysis_demo
             ;;
@@ -943,15 +678,6 @@ main() {
             ;;
         "integrated")
             run_integrated_demo
-            ;;
-        "compress-all")
-            run_compress_all_source
-            ;;
-        "vibe-status")
-            run_vibe_status
-            ;;
-        "judge-demo"|"contest")
-            run_judge_demo
             ;;
         "test-self"|"self-test")
             run_test_self
