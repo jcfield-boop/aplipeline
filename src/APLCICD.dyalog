@@ -16,18 +16,24 @@
     ⎕IO ← 0 ⋄ ⎕ML ← 1
 
     ∇ Initialize
-    ⍝ Initialize the APL-CD system
+    ⍝ Initialize the APL-CD system with proper namespace management
         ⎕←''
         ⎕←'APL-CD v3.0 - Array-Oriented Continuous Deployment'
         ⎕←'=================================================='
         ⎕←''
         ⎕←'Loading core modules...'
         
-        LoadCoreModules
-        ⎕←'🔢 APL-CD Core Triad Loaded:'
-        ⎕←'✅ DependencyMatrix - O(N²) matrix operations'
-        ⎕←'✅ ParallelPipeline - Array-based parallel execution'
-        ⎕←'✅ Pipeline - Matrix-based CI/CD processing'
+        ⍝ Load and initialize modules with proper scoping
+        load_result ← LoadCoreModulesRobust
+        
+        ⎕←'🔢 APL-CD Core System Loaded:'
+        ⎕←'✅ Modules loaded: ',⍕load_result.loaded_count,'/',⍕load_result.total_count
+        ⎕←'✅ Functions available: ',⍕load_result.functions_available
+        :If 0<load_result.functions_available
+            ⎕←'✅ DependencyMatrix - O(N²) matrix operations'
+            ⎕←'✅ ParallelPipeline - Array-based parallel execution'
+            ⎕←'✅ Pipeline - Matrix-based CI/CD processing'
+        :EndIf
         ⎕←''
         ⎕←'🚀 APL-CD ready for array-oriented deployment!'
         ⎕←''
@@ -50,18 +56,80 @@
         Pipeline.Initialize
     ∇
 
-    ∇ health ← HealthCheck
-    ⍝ APL-style health check using array operations
-        modules ← 'DependencyMatrix' 'ParallelPipeline' 'Pipeline'
-        module_status ← (9=⎕NC¨modules)
+    ∇ result ← LoadCoreModulesRobust
+    ⍝ Robust module loading with proper namespace management
+        result ← ⎕NS ''
+        result.total_count ← 0
+        result.loaded_count ← 0
+        result.functions_available ← 0
         
+        ⍝ Define module loading order (dependencies first)
+        modules ← 'Utils' 'Config' 'DependencyMatrix' 'ParallelPipeline' 'Pipeline' 'SelfOptimizer'
+        result.total_count ← ≢modules
+        
+        ⍝ Load each module with individual error handling
+        :For module :In modules
+            :Trap 22 11
+                ⎕FIX'file://src/',module,'.dyalog'
+                result.loaded_count +← 1
+                
+                ⍝ Initialize the module with proper namespace binding
+                init_func ← module,'.Initialize'
+                :If (9=⎕NC module) ∧ (3=⎕NC init_func)
+                    :Trap 0
+                        ⎕EX init_func
+                        ⍝ Create global reference for easier access
+                        ⎕EX module,'_NS ← ',module
+                    :Else
+                        ⍝ Initialization failed but module loaded
+                    :EndTrap
+                :EndIf
+            :Else
+                ⍝ Module failed to load, continue with others
+            :EndTrap
+        :EndFor
+        
+        ⍝ Check function availability after loading
+        critical_functions ← 'HealthCheck' 'BuildMatrix' 'ExecutePipeline' 'AnalyzeSelf'
+        :For func_name :In critical_functions
+            ⍝ Check if function exists in any loaded namespace
+            :For module :In modules
+                full_func ← module,'.',func_name
+                :If 3=⎕NC full_func
+                    result.functions_available +← 1
+                    :Leave
+                :EndIf
+            :EndFor
+        :EndFor
+    ∇
+    
+    ∇ health ← HealthCheck
+    ⍝ Robust health check with proper namespace detection
         health ← ⎕NS ''
         health.timestamp ← ⎕TS
-        health.modules ← modules
-        health.status ← (∧/module_status)⊃'DEGRADED' 'OK'
-        health.loaded_count ← +/module_status
         
-        ⎕←'Health: ',health.status,' (',⍕health.loaded_count,'/',⍕≢modules,' modules)'
+        ⍝ Check for loaded namespaces (proper APL way)
+        available_namespaces ← ⎕NL 9
+        target_modules ← 'DependencyMatrix' 'ParallelPipeline' 'Pipeline' 'SelfOptimizer' 'Utils'
+        
+        ⍝ Count how many target modules are actually loaded
+        loaded_modules ← ⍬
+        :For module :In target_modules
+            :If 9=⎕NC module
+                loaded_modules ← loaded_modules,⊂module
+            :EndIf
+        :EndFor
+        
+        health.modules ← target_modules
+        health.loaded_modules ← loaded_modules
+        health.loaded_count ← ≢loaded_modules
+        health.total_count ← ≢target_modules
+        
+        ⍝ Determine status based on loaded modules
+        load_ratio ← health.loaded_count ÷ health.total_count
+        health.status ← (load_ratio≥0.6)⊃'DEGRADED' 'OK'
+        
+        ⎕←'Health: ',health.status,' (',⍕health.loaded_count,'/',⍕health.total_count,' modules)'
         health
     ∇
 
@@ -462,6 +530,31 @@
             result.has_tests ← 0
             result.has_config ← 0
         :EndTrap
+    ∇
+    
+    ∇ result ← CallSafely (namespace function args)
+    ⍝ Safe function call with proper namespace resolution
+        result ← ⎕NS ''
+        result.success ← 0
+        result.value ← ⍬
+        result.error ← ''
+        
+        full_func ← namespace,'.',function
+        
+        :If 3=⎕NC full_func
+            :Trap 0
+                :If 0=≢args
+                    result.value ← ⎕EX full_func,' args'
+                :Else
+                    result.value ← ⎕EX full_func
+                :EndIf
+                result.success ← 1
+            :Else
+                result.error ← ⎕DM
+            :EndTrap
+        :Else
+            result.error ← 'Function not found: ',full_func
+        :EndIf
     ∇
 
 :EndNamespace

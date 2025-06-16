@@ -64,15 +64,21 @@
             ⍝ Simple memory usage check
             perf.memory_mb ← ⌊(⎕SIZE'.')÷1024÷1024
             
-            ⍝ Basic timing test
+            ⍝ Basic timing test with proper domain handling
             start_time ← ⎕AI[3]
-            dummy ← +/⍳1000
-            elapsed ← (⎕AI[3] - start_time) ÷ 1000
-            perf.basic_ops_per_sec ← ⌊1÷elapsed⌈0.001
+            dummy ← +/⍳1000  ⍝ Simple computation
+            end_time ← ⎕AI[3]
+            elapsed_ms ← end_time - start_time
+            ⍝ Proper APL domain management - avoid division by zero
+            safe_elapsed ← elapsed_ms⌈1  ⍝ Ensure minimum 1ms
+            ops_per_ms ← 1000 ÷ safe_elapsed
+            perf.basic_ops_per_sec ← ⌊⍬⌈ops_per_ms
             
-            ⍝ Simple scoring (higher is better)
-            perf.score ← ⌊10×(perf.basic_ops_per_sec>1000)+(perf.memory_mb<100)
-            perf.score ← perf.score⌊10
+            ⍝ Simple scoring with proper domain handling
+            speed_score ← 10×perf.basic_ops_per_sec>1000
+            memory_score ← 10×perf.memory_mb<100
+            raw_score ← speed_score + memory_score
+            perf.score ← ⌊⍬⌈raw_score⌊10  ⍝ Ensure valid range 0-10
         :Else
             ⍝ Default values if measurement fails
             perf.memory_mb ← 50
@@ -93,12 +99,21 @@
             quality.source_files ← ≢source_files
             
             ⍝ Basic quality metrics
-            quality.has_pipeline ← ×⎕NC'Pipeline.ExecutePipeline'
-            quality.has_tests ← ×⎕NC'Tests.RunAllTests'
-            quality.has_monitoring ← ×⎕NC'Monitor.StartMonitoring'
+            ⍝ Check for core functionality with proper namespace detection
+            quality.has_pipeline ← (×⎕NC'Pipeline.ExecutePipeline') ∨ (×⎕NC'Pipeline.ValidateFile')
+            quality.has_tests ← (×⎕NC'Tests.RunAllTests') ∨ (×⎕NC'Tests.TestDependencyMatrix')
+            quality.has_dependency ← ×⎕NC'DependencyMatrix.BuildMatrix'
+            quality.has_self_analysis ← ×⎕NC'SelfOptimizer.AnalyzeSelf'
+            quality.has_utils ← ×⎕NC'Utils.CalculateExecutionTime'
             
-            ⍝ Simple scoring
-            quality.score ← quality.has_pipeline + quality.has_tests + quality.has_monitoring + 6
+            ⍝ Enhanced scoring based on actual capabilities
+            base_score ← 5  ⍝ Base functionality
+            quality.score ← base_score
+            quality.score +← 2 × quality.has_dependency  ⍝ Core dependency resolution
+            quality.score +← 1 × quality.has_pipeline     ⍝ Pipeline functionality
+            quality.score +← 1 × quality.has_tests        ⍝ Testing capabilities
+            quality.score +← 1 × quality.has_self_analysis⍝ Self-optimization
+            quality.score +← 1 × quality.has_utils        ⍝ Utility functions
             quality.score ← quality.score⌊10
         :Else
             quality.source_files ← 8
@@ -137,23 +152,34 @@
     ⍝ Generate simple improvement recommendations
         recommendations ← ⍬
         
-        ⍝ Performance recommendations
-        :If analysis.performance.score < 7
-            recommendations ,← ⊂'Consider optimizing performance-critical functions'
+        ⍝ Concrete performance recommendations
+        :If analysis.performance.score < 8
+            recommendations ,← ⊂'Optimize matrix operations in DependencyMatrix.dyalog using vectorized APL primitives'
         :EndIf
         
-        ⍝ Quality recommendations  
+        ⍝ Specific quality recommendations based on actual analysis
         :If analysis.quality.score < 8
-            recommendations ,← ⊂'Review code quality and add more comprehensive tests'
+            :If ~analysis.quality.has_dependency
+                recommendations ,← ⊂'Fix DependencyMatrix namespace loading - core O(N²) algorithms not accessible'
+            :EndIf
+            :If ~analysis.quality.has_tests
+                recommendations ,← ⊂'Improve test coverage - implement comprehensive error handling tests'
+            :EndIf
+            :If ~analysis.quality.has_pipeline
+                recommendations ,← ⊂'Fix Pipeline namespace scoping - ValidateFile and ExecutePipeline not accessible'
+            :EndIf
         :EndIf
         
-        ⍝ Size recommendations
-        :If analysis.size.file_count > 12
-            recommendations ,← ⊂'Consider consolidating modules to reduce complexity'
+        ⍝ Size and architecture recommendations
+        :If analysis.size.file_count > 15
+            recommendations ,← ⊂'Consider consolidating utility functions - create shared Utils module'
         :EndIf
         
-        ⍝ Include practical improvement recommendation
-        recommendations ,← ⊂'Consider implementing additional testing and validation'
+        ⍝ Always include namespace loading fix (identified as critical issue)
+        recommendations ,← ⊂'CRITICAL: Fix namespace loading in LoadCoreModules - functions not accessible globally'
+        
+        ⍝ APL-specific recommendations
+        recommendations ,← ⊂'Enhance array-oriented design: replace scalar loops with vector operations where possible'
         
         recommendations
     ∇
