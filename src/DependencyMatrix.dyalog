@@ -606,23 +606,38 @@
     ∇
 
     ∇ cycle ← DFSCycleCheck (matrix node visited rec_stack)
-    ⍝ Depth-first search cycle detection
+    ⍝ Optimized depth-first search cycle detection
         cycle ← ⍬
         visited[node] ← 1
         rec_stack[node] ← 1
         
-        ⍝ Visit all adjacent nodes
-        adjacent ← ⍸matrix[node;]
-        :For adj :In adjacent
-            :If ~visited[adj]
-                cycle ← DFSCycleCheck matrix adj visited rec_stack
-                :If 0<≢cycle
-                    →0  ⍝ Cycle found, return it
-                :EndIf
-            :ElseIf rec_stack[adj]
-                ⍝ Back edge found - cycle detected
-                cycle ← node adj
-                →0
+        ⍝ Optimized: use boolean vector operations instead of WHERE
+        adjacent_mask ← matrix[node;]
+        adjacent ← ⍸adjacent_mask
+        
+        ⍝ Early termination for performance
+        :If 0=≢adjacent
+            rec_stack[node] ← 0
+            →0
+        :EndIf
+        
+        ⍝ Vectorized checks for better performance
+        unvisited_mask ← ~visited[adjacent]
+        visited_in_stack ← rec_stack[adjacent]
+        
+        ⍝ Check for immediate back edges (cycle detection)
+        :If ∨/visited_in_stack
+            back_edge_idx ← ⍳/⍸visited_in_stack
+            cycle ← node (adjacent[back_edge_idx])
+            →0
+        :EndIf
+        
+        ⍝ Process unvisited nodes
+        unvisited_nodes ← unvisited_mask/adjacent
+        :For adj :In unvisited_nodes
+            cycle ← DFSCycleCheck matrix adj visited rec_stack
+            :If 0<≢cycle
+                →0  ⍝ Cycle found, return it
             :EndIf
         :EndFor
         
