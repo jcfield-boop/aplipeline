@@ -60,7 +60,7 @@
     ⍝ Simple performance check using basic metrics
         perf ← ⎕NS ''
         
-        :Trap 0
+        :Trap 11 22 16
             ⍝ Simple memory usage check
             perf.memory_mb ← ⌊(⎕SIZE'.')÷1024÷1024
             
@@ -87,18 +87,18 @@
     ⍝ Simple code quality assessment
         quality ← ⎕NS ''
         
-        :Trap 0
+        :Trap 11 22 16
             ⍝ Count source files
             source_files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
             quality.source_files ← ≢source_files
             
             ⍝ Basic quality metrics
-            quality.has_vibe ← ×⎕NC'Vibe.Compress'
-            quality.has_pipeline ← ×⎕NC'Pipeline.RunPipeline'
-            quality.has_tests ← ×⎕NC'Tests.QuickSystemTest'
+            quality.has_pipeline ← ×⎕NC'Pipeline.ExecutePipeline'
+            quality.has_tests ← ×⎕NC'Tests.RunAllTests'
+            quality.has_monitoring ← ×⎕NC'Monitor.StartMonitoring'
             
             ⍝ Simple scoring
-            quality.score ← quality.has_vibe + quality.has_pipeline + quality.has_tests + 5
+            quality.score ← quality.has_pipeline + quality.has_tests + quality.has_monitoring + 6
             quality.score ← quality.score⌊10
         :Else
             quality.source_files ← 8
@@ -112,7 +112,7 @@
     ⍝ Basic system size analysis
         size ← ⎕NS ''
         
-        :Trap 0
+        :Trap 11 22 16
             ⍝ Count files by type
             source_files ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
             utility_files ← ⊃⎕NINFO⍠1⊢'src/*.apl'
@@ -152,8 +152,8 @@
             recommendations ,← ⊂'Consider consolidating modules to reduce complexity'
         :EndIf
         
-        ⍝ Always include vibe coding recommendation
-        recommendations ,← ⊂'Continue leveraging vibe coding for LLM efficiency'
+        ⍝ Include practical improvement recommendation
+        recommendations ,← ⊂'Consider implementing additional testing and validation'
         
         recommendations
     ∇

@@ -37,12 +37,11 @@
         config.system_name ← 'APLCICD'
         config.environment ← 'development'
         
-        ⍝ Vibe coding settings
-        config.vibe ← ⎕NS ''
-        config.vibe.enabled ← 0  ⍝ Disabled by default after analysis
-        config.vibe.compression_level ← 'standard'
-        config.vibe.target_compression ← 0.6
-        config.vibe.preserve_comments ← 1
+        ⍝ Development settings
+        config.development ← ⎕NS ''
+        config.development.debug_mode ← 0
+        config.development.verbose_logging ← 0
+        config.development.test_mode ← 0
         
         ⍝ Pipeline settings
         config.pipeline ← ⎕NS ''
@@ -232,10 +231,10 @@
         ⎕←'System: ',config.system_name
         ⎕←'Environment: ',config.environment
         ⎕←''
-        ⎕←'Vibe Coding:'
-        ⎕←'  Enabled: ',(config.vibe.enabled⊃'No' 'Yes')
-        ⎕←'  Compression Level: ',config.vibe.compression_level
-        ⎕←'  Target Compression: ',⍕config.vibe.target_compression
+        ⎕←'Development:'
+        ⎕←'  Debug Mode: ',(config.development.debug_mode⊃'No' 'Yes')
+        ⎕←'  Verbose Logging: ',(config.development.verbose_logging⊃'No' 'Yes')
+        ⎕←'  Test Mode: ',(config.development.test_mode⊃'No' 'Yes')
         ⎕←''
         ⎕←'Pipeline:'
         ⎕←'  Auto Run: ',(config.pipeline.auto_run⊃'No' 'Yes')

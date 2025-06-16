@@ -6,7 +6,7 @@
 ⍝ 
 ⍝ Public Functions:
 ⍝   RunAllTests              - Execute simplified test suite
-⍝   TestVibeCompression      - Test vibe coding functionality
+⍝   TestDependencyMatrix     - Test dependency matrix functionality
 ⍝   TestPipeline            - Test basic pipeline functionality
 ⍝   TestSystemHealth        - Test system health
 ⍝   QuickSystemTest         - Quick overall system test
@@ -32,10 +32,10 @@
         result.tests_failed ← 0
         result.errors ← ⍬
         
-        ⍝ Test 1: Vibe Compression
-        ⎕←'📋 Testing vibe compression...'
-        vibe_result ← TestVibeCompression
-        result ← UpdateResult result vibe_result
+        ⍝ Test 1: Dependency Matrix
+        ⎕←'📋 Testing dependency matrix...'
+        matrix_result ← TestDependencyMatrix
+        result ← UpdateResult result matrix_result
         
         ⍝ Test 2: Pipeline Functionality
         ⎕←'📋 Testing pipeline functionality...'
@@ -75,37 +75,43 @@
         result
     ∇
 
-    ∇ result ← TestVibeCompression
-    ⍝ Test basic vibe compression functionality
+    ∇ result ← TestDependencyMatrix
+    ⍝ Test dependency matrix functionality
         result ← ⎕NS ''
-        result.test_name ← 'Vibe Compression'
+        result.test_name ← 'Dependency Matrix'
         result.passed ← 1
         result.error ← ''
         
         :Trap 0
-            ⍝ Test 1: Basic compression exists
-            :If 9≠⎕NC'Vibe.Compress'
+            ⍝ Test 1: DependencyMatrix module exists
+            :If 9≠⎕NC'DependencyMatrix.BuildMatrix'
                 result.passed ← 0
-                result.error ← 'Vibe.Compress function not found'
+                result.error ← 'DependencyMatrix.BuildMatrix function not found'
                 →0
             :EndIf
             
-            ⍝ Test 2: Simple compression test
-            test_input ← 'ProcessPipelineStage ← {⎕IO ← 0}'
+            ⍝ Test 2: Simple matrix construction
+            test_deps ← ('A' 'B')('B' 'C')('C' '')
             :Trap 11
-                compressed ← Vibe.Compress test_input
-                :If (≢compressed) ≥ ≢test_input
+                matrix ← DependencyMatrix.BuildMatrix test_deps
+                :If 0=≢≢matrix  ⍝ Should be a 2D matrix
                     result.passed ← 0
-                    result.error ← 'Compression not working - output larger than input'
+                    result.error ← 'BuildMatrix not returning proper matrix'
                 :EndIf
             :Else
-                ⍝ Compression might be disabled, that's OK
-                result.passed ← 1
+                result.passed ← 0
+                result.error ← 'Error building dependency matrix: ',⎕DM
             :EndTrap
+            
+            ⍝ Test 3: Topological sort exists
+            :If 9≠⎕NC'DependencyMatrix.TopologicalSort'
+                result.passed ← 0
+                result.error ← 'DependencyMatrix.TopologicalSort function not found'
+            :EndIf
             
         :Else
             result.passed ← 0
-            result.error ← 'Error testing vibe compression: ',⎕DM
+            result.error ← 'Error testing dependency matrix: ',⎕DM
         :EndTrap
         
         result
@@ -135,7 +141,7 @@
             
             ⍝ Test 3: Simple validation test
             :Trap 11
-                test_files ← ⊂'src/vibe.dyalog'
+                test_files ← ⊂'src/APLCICD.dyalog'
                 validation_result ← Pipeline.ValidateFiles test_files
                 ⍝ As long as it doesn't crash, it's working
             :Else
@@ -268,15 +274,15 @@
             ⎕←'System health: ❌ Failed'
         :EndTrap
         
-        ⍝ Test vibe coding
+        ⍝ Test dependency matrix
         :Trap 0
-            :If 9=⎕NC'Vibe.Compress'
-                ⎕←'Vibe coding: ✅ Available'
+            :If 9=⎕NC'DependencyMatrix.BuildMatrix'
+                ⎕←'Dependency matrix: ✅ Available'
             :Else
-                ⎕←'Vibe coding: ⚠️  Not loaded'
+                ⎕←'Dependency matrix: ⚠️  Not loaded'
             :EndIf
         :Else
-            ⎕←'Vibe coding: ❌ Error'
+            ⎕←'Dependency matrix: ❌ Error'
         :EndTrap
         
         ⎕←'✅ Quick system test complete'

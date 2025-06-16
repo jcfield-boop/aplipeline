@@ -159,7 +159,7 @@
         
         ⍝ Check for dangerous extensions anywhere in filename
         :For dangerous_ext :In dangerous_exts
-            :If dangerous_ext⍷path
+            :If ∨/dangerous_ext⍷path
                 →0  ⍝ Dangerous extension found - reject
             :EndIf
         :EndFor
