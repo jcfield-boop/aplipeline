@@ -175,6 +175,9 @@ This integration transforms APL-CD into an AI-accessible platform, making array-
 # Test dependency resolution
 ./aplcicd demo
 
+# Real Maven integration demo (Quick Win!)
+dyalog -script maven_integration_demo.apl
+
 # Comprehensive system testing  
 ./aplcicd test
 

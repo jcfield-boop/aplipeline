@@ -89,6 +89,7 @@
     "recursive": "dyalog -script final_recursive_demo.apl",
     "direct": "dyalog -script direct_demo.apl",
     "spring-petclinic": "dyalog -script spring_petclinic_simple.apl",
+    "maven-integration": "dyalog -script maven_integration_demo.apl",
     "bake-off": "./aplcicd bake-off",
     "compare-jenkins": "./aplcicd compare-with-jenkins",
     "setup-claude": "./setup-claude-desktop.sh",
