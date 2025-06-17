@@ -65,13 +65,18 @@
       "config/*.json",
       "*.apl",
       "README.md",
-      "docs/*.md"
+      "docs/*.md",
+      "mcp-server/**",
+      "apl-mcp/**",
+      "setup-mcp.sh"
     ],
     "exclude": [
       "*.tmp",
       "*.log",
       "*.bak",
-      "aplcore"
+      "aplcore",
+      "mcp-server/node_modules",
+      "mcp-server/dist"
     ]
   },
   "scripts": {
@@ -85,7 +90,9 @@
     "direct": "dyalog -script direct_demo.apl",
     "spring-petclinic": "dyalog -script spring_petclinic_simple.apl",
     "bake-off": "./aplcicd bake-off",
-    "compare-jenkins": "./aplcicd compare-with-jenkins"
+    "compare-jenkins": "./aplcicd compare-with-jenkins",
+    "setup-claude": "./setup-claude-desktop.sh",
+    "test-mcp": "dyalog -script apl-mcp/test-integration.apl"
   },
   "keywords": [
     "CI/CD", 
@@ -104,7 +111,12 @@
     "Topological Sorting",
     "Performance Benchmarking",
     "Security Validation",
-    "Dyalog APL"
+    "Dyalog APL",
+    "MCP",
+    "Model Context Protocol",
+    "AI Integration",
+    "ChatGPT",
+    "Claude"
   ],
   "homepage": "https://github.com/jcfield-boop/aplipeline",
   "repository": {
@@ -117,15 +129,15 @@
     "theme": "Array-Oriented Continuous Deployment with Industry Validation",
     "features": [
       "O(N²) dependency resolution using matrix operations vs traditional O(N³) approaches",
+      "Claude Desktop integration via MCP (Model Context Protocol) for AI-accessible demonstrations",
       "Spring PetClinic industry-standard benchmark validation (gold standard for CI/CD)",
-      "AI-assisted development optimization with flow state preservation",
+      "Natural language interface to array-oriented dependency analysis through AI assistants",
       "Array-oriented parallel execution with vectorized task scheduling",
       "Matrix-based topological sorting for optimal build order determination",
-      "Enterprise-scale performance validation on real Maven projects",
+      "Real-time performance benchmarking accessible via conversational AI",
       "Security-hardened pipeline with comprehensive input validation",
       "Mathematical validation of dependency matrices using linear algebra operations",
-      "Performance benchmarking with concrete algorithmic complexity demonstrations",
-      "Production-ready system with real enterprise dependency parsing"
+      "Production-ready system with AI integration for seamless demonstration"
     ],
     "innovations": [
       "First CI/CD system built using APL's array-oriented paradigm",

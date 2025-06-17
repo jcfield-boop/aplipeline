@@ -126,6 +126,44 @@ cd aplipeline
 ./aplcicd test    # Run system validation
 ```
 
+### Claude Desktop Integration (MCP Service)
+
+APL-CD features seamless integration with Claude Desktop via MCP (Model Context Protocol), enabling natural language interaction with array-oriented CI/CD operations:
+
+```bash
+# Install for Claude Desktop
+./setup-claude-desktop.sh
+```
+
+**Restart Claude Desktop** and interact with APL-CD using natural language:
+
+**🧪 Dependency Analysis:**
+```
+Analyze Spring PetClinic dependencies using APL-CD
+```
+
+**⚡ Performance Benchmarking:**
+```
+Run APL-CD performance benchmark comparing with traditional CI/CD
+```
+
+**🔒 Security Scanning:**
+```
+Scan APL-CD source code for security issues
+```
+
+**📚 Educational Explanations:**
+```
+Explain how APL-CD uses matrix operations for O(N²) complexity
+```
+
+**🏢 Industry Comparisons:**
+```
+Compare APL-CD with Maven on enterprise projects
+```
+
+This integration transforms APL-CD into an AI-accessible platform, making array-oriented dependency resolution available through conversational interface.
+
 ## Usage
 
 ### Basic Operations
