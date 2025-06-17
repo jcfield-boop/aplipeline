@@ -70,5 +70,19 @@ export const TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'maven_integration_demo',
+    description: 'Run complete Maven integration demo with real Spring PetClinic dependencies',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        show_details: {
+          type: 'boolean',
+          description: 'Show detailed step-by-step analysis',
+          default: true
+        }
+      }
+    }
   }
 ];
