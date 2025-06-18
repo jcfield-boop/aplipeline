@@ -282,6 +282,23 @@ dyalog -script maven_integration_demo.apl
 ./aplcicd status
 ```
 
+### Project Analysis via MCP
+
+APL-CD integrates with Claude Desktop to analyze any project:
+
+```
+"use APL-CD to analyze project.apl"
+"use APL-CD to analyze MyTatinPackage/"
+"use APL-CD to analyze aplteam-Tester2 from GitHub"
+```
+
+**Supports:**
+- APL projects and Tatin packages (.dyalog, .apl files)
+- Maven projects (pom.xml)
+- Node.js projects (package.json)
+- Python projects (requirements.txt)
+- Any project directory structure
+
 ### APL Interface
 
 ```apl

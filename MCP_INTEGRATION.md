@@ -2,7 +2,7 @@
 
 ## Overview
 
-APL-CD features seamless integration with Claude Desktop via MCP (Model Context Protocol), making the first mathematical approach to dependency resolution accessible through natural language conversation.
+APL-CD features seamless integration with Claude Desktop via MCP (Model Context Protocol), making the first mathematical approach to dependency resolution accessible through natural language conversation. Analyze any APL project, Tatin package, or software project using simple natural language commands.
 
 ## Quick Start
 
@@ -46,6 +46,21 @@ Demonstrate real Maven integration with Spring PetClinic
 ```
 **Returns:** Complete demonstration of APL-CD processing actual Maven dependency data with 28x performance advantage and exponential scaling properties. Proves mathematical approach works on enterprise applications.
 
+### 🔍 Project Analysis ⭐ NEW
+```
+"use APL-CD to analyze project.apl"
+"use APL-CD to analyze MyTatinPackage/"  
+"use APL-CD to analyze aplteam-Tester2"
+```
+**Returns:** Complete analysis of any project using matrix operations. Works with:
+- **APL projects**: .dyalog, .apl files, Tatin packages
+- **Maven projects**: pom.xml dependency analysis  
+- **Node.js projects**: package.json dependencies
+- **Python projects**: requirements.txt analysis
+- **Any directory**: Auto-detects project type
+
+Shows dependency matrix visualization, build order, and O(N²) performance metrics.
+
 ## Technical Architecture
 
 ```
@@ -62,7 +77,7 @@ APL-CD Matrix Operations
 
 - **`setup-claude-desktop.sh`** - One-command installation script
 - **`apl-mcp/mcp-wrapper.dyalog`** - APL integration layer with JSON output
-- **`mcp-server/src/index.ts`** - Main MCP server with 5 focused tools
+- **`mcp-server/src/index.ts`** - Main MCP server with 6 focused tools
 - **`mcp-server/src/tools.ts`** - Clean tool definitions for essential demos
 - **`mcp-server/src/apl-interface.ts`** - Bridge between Node.js and APL
 
@@ -79,9 +94,10 @@ With APL-CD MCP server configuration for automatic connection.
 
 This integration represents:
 - **First AI-accessible array-oriented dependency resolution system**
-- **Revolutionary demonstration capability** for APL Forge Contest
+- **Universal project analysis** - works with any APL, Maven, Node.js, or Python project
 - **Zero technical barriers** for evaluating APL-CD functionality
 - **Natural language interface** to complex mathematical operations
+- **Tatin.dev compatibility** - analyze any APL package with simple commands
 
 ## Live Demonstration Ready
 

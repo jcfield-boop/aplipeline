@@ -69,5 +69,30 @@ export const TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'analyze_project',
+    description: 'Analyze any APL project or file using APL-CD dependency resolution',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_path: {
+          type: 'string',
+          description: 'Path to APL project file or directory (e.g., "project.apl", "src/", "MyProject/")',
+          default: '.'
+        },
+        show_matrix: {
+          type: 'boolean',
+          description: 'Show dependency matrix visualization',
+          default: true
+        },
+        include_performance: {
+          type: 'boolean',
+          description: 'Include performance analysis',
+          default: true
+        }
+      },
+      required: ['project_path']
+    }
   }
 ];

@@ -134,13 +134,14 @@
     "theme": "Array-Oriented Dependency Resolution with Mathematical Innovation",
     "features": [
       "O(N²) dependency resolution using matrix operations vs traditional O(N³) approaches",
+      "Universal project analysis via MCP - APL, Maven, Node.js, Python projects",
       "Real Maven integration with XML parsing and performance comparison",
       "Spring PetClinic industry-standard benchmark validation",
       "Matrix-based topological sorting for optimal build order determination",
       "Array-oriented parallel execution with vectorized task scheduling",
-      "Claude Desktop integration via MCP for AI-accessible demonstrations",
-      "Mathematical validation using linear algebra operations",
-      "Production-ready dependency resolution system"
+      "Claude Desktop integration for natural language project analysis",
+      "Tatin.dev package compatibility for APL ecosystem integration",
+      "Mathematical validation using linear algebra operations"
     ],
     "innovations": [
       "First dependency resolution system built using APL's array-oriented paradigm",
