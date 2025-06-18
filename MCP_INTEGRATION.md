@@ -16,11 +16,11 @@ APL-CD features seamless integration with Claude Desktop via MCP (Model Context 
 
 ## Available Commands
 
-### 🏆 Competition Finale
+### 🏆 Technical Demonstration
 ```
-Run 5-minute competition finale demonstration
+Run 5-minute technical demonstration
 ```
-**Returns:** Complete judge-optimized demonstration including dramatic opening, matrix visualization, complexity proof, and enterprise validation. Perfect for APL Forge Contest evaluation.
+**Returns:** Complete demonstration including mathematical opening, matrix visualization, complexity proof, and enterprise validation. Showcases APL-CD's array-oriented dependency resolution.
 
 ### 🧪 Dependency Analysis
 ```

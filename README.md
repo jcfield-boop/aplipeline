@@ -94,7 +94,7 @@ APL-CD has been proven to significantly outperform Maven on identical dependency
 | **Memory Usage** | Object graphs + GC | Compact boolean matrices | **Minimal footprint** |
 | **Identical Results** | ✅ Standard Maven output | ✅ Same dependencies found | **Verified accuracy** |
 
-### Competition-Winning Demonstrations
+### Technical Demonstrations
 
 ```bash
 # 28x speedup on real Spring PetClinic data (first mathematical approach)
@@ -263,10 +263,10 @@ This integration transforms APL-CD into an AI-accessible platform, making array-
 ### Basic Operations
 
 ```bash
-# 🏆 ONE-LINER FOR JUDGES: Complete setup and finale demo
+# 🏆 ONE-LINER SETUP: Complete setup and demo
 ./setup && ./aplcicd finale
 
-# 5-minute competition finale (judge-optimized)
+# 5-minute technical demonstration
 ./aplcicd finale
 
 # Array operations demonstration

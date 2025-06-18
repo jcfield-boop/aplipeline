@@ -533,11 +533,11 @@ Essential Commands:
   demo              - Contest demonstration with array operations
   status            - System health and module status
 
-Competition Demos:
-  finale            - 5-minute competition finale (judge-optimized)
+Technical Demos:
+  finale            - 5-minute technical demonstration
   5min              - Same as finale command
   benchmark         - O(N²) vs O(N³) algorithmic complexity proof
-  integration       - APL Forge mathematical analysis
+  integration       - Mathematical analysis demonstration
 
 Development Commands:
   pipeline          - CI/CD pipeline execution
@@ -547,8 +547,8 @@ Development Commands:
   spring-petclinic  - Industry-standard Maven benchmark (Spring Boot)
 
 Examples:
-  ./setup && ./aplcicd finale                    # One-liner for judges  
-  ./aplcicd finale                               # 5-minute competition finale
+  ./setup && ./aplcicd finale                    # One-liner setup and demo  
+  ./aplcicd finale                               # 5-minute technical demonstration
   ./aplcicd benchmark                            # Algorithmic complexity proof
   ./aplcicd demo                                 # Array operations demonstration
 
@@ -557,12 +557,12 @@ Key Features:
   ⚡ Array-Oriented Parallel Execution (vectorized task scheduling)
   📊 Mathematical Optimization (topological sorting with APL arrays)
   🔄 Recursive Self-Analysis (system analyzing its own codebase)
-  🏆 Competition-Ready Demonstrations (5 polished demo scripts)
+  🏆 Technical Demonstrations (5 polished demo scripts)
   🤖 Self-Health Monitoring (module status and performance tracking)
 
 Architecture:
   • 3 Core Modules: DependencyMatrix, ParallelPipeline, Pipeline
-  • 5 Demo Scripts: Ready for competition judging
+  • 5 Demo Scripts: Ready for technical evaluation
   • 21 Executable Files: Complete working system
 
 System Requirements:
@@ -651,7 +651,7 @@ main() {
             run_recursive_demo
             ;;
         "finale"|"5min")
-            run_apl_script "simple_5min_demo.apl" "5-minute competition finale"
+            run_apl_script "simple_5min_demo.apl" "5-minute technical demonstration"
             ;;
         "benchmark")
             run_apl_script "simple_benchmark.apl" "O(N²) vs O(N³) performance comparison"

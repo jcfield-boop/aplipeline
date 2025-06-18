@@ -1,7 +1,7 @@
 export const TOOLS = [
   {
     name: 'run_5min_demo',
-    description: 'Run the complete 5-minute competition finale demonstration',
+    description: 'Run the complete 5-minute technical demonstration',
     inputSchema: {
       type: 'object',
       properties: {

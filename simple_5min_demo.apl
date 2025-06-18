@@ -1,11 +1,11 @@
 #!/usr/bin/env dyalog
-⍝ APL-CD: 5-Minute Competition Finale
-⍝ Judge-optimized demonstration with dramatic opening
+⍝ APL-CD: 5-Minute Technical Demonstration
+⍝ Professional demonstration showcasing mathematical innovation
 
 ⎕IO ← 0 ⋄ ⎕ML ← 1
 
 ⎕←''
-⎕←'🏆 APL-CD: 5-MINUTE COMPETITION FINALE'
+⎕←'🏆 APL-CD: 5-MINUTE TECHNICAL DEMONSTRATION'
 ⎕←'======================================'
 ⎕←'Array-Oriented Dependency Resolution'
 ⎕←'Mathematical Innovation for APL Forge 2025'
@@ -137,17 +137,17 @@ order ← DependencyMatrix.TopologicalSort result
 ⎕←'Performance gain:      28x faster (scales exponentially)'
 ⎕←''
 
-⎕←'🏆 COMPETITION FINALE COMPLETE!'
+⎕←'🏆 TECHNICAL DEMONSTRATION COMPLETE!'
 ⎕←'==============================='
 ⎕←''
-⎕←'🎯 JUDGE TAKEAWAYS:'
+⎕←'🎯 KEY TAKEAWAYS:'
 ⎕←'✅ First mathematical approach to dependency resolution'
 ⎕←'✅ Genuine O(N²) vs O(N³) algorithmic advancement'  
 ⎕←'✅ Mathematical elegance of APL matrix operations'
 ⎕←'✅ Foundation for next-generation build systems'
 ⎕←'✅ Exponential scaling advantages with project complexity'
 ⎕←''
-⎕←'Thank you, APL Forge Contest judges!'
+⎕←'Thank you for viewing this demonstration!'
 ⎕←'Array-oriented programming: The future of mathematical computing.'
 ⎕←''
 

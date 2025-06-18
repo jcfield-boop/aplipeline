@@ -24,7 +24,7 @@ mkdir -p logs config
 echo "✅ APL-CD ready for demonstration!"
 echo ""
 echo "🎯 Quick Demo Commands:"
-echo "  ./aplcicd 5min      # 5-minute competition finale"
+echo "  ./aplcicd 5min      # 5-minute technical demonstration"
 echo "  ./aplcicd demo      # Array operations demo"
 echo "  ./aplcicd status    # System health check"
 echo ""
