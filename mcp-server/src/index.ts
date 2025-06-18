@@ -681,6 +681,17 @@ This demonstrates APL-CD performs REAL XML DOM parsing, not simulation or hardco
   private formatPomParsingResults(result: any, includeExternalBenchmark: boolean): string {
     const dependencies = Array.isArray(result) ? result : [];
     
+    const extractedDeps = dependencies.length > 0 ? dependencies.slice(0, 10).map((dep: any[], idx: number) => {
+      if (Array.isArray(dep) && dep.length >= 2) {
+        const groupId = dep[0] || '';
+        const artifactId = dep[1] || '';
+        const version = dep[2] || '';
+        const scope = dep[3] || 'compile';
+        return `${idx + 1}. **${groupId}:${artifactId}** (${version}) [${scope}]`;
+      }
+      return `${idx + 1}. ${JSON.stringify(dep)}`;
+    }).join('\n') + (dependencies.length > 10 ? `\n... and ${dependencies.length - 10} more dependencies` : '') : 'No dependencies found';
+
     return `
 # Spring PetClinic POM Parsing Results
 
@@ -693,21 +704,12 @@ This demonstrates APL-CD performs REAL XML DOM parsing, not simulation or hardco
 ${includeExternalBenchmark ? '- **Search Paths**: Both standard and external_benchmark locations' : ''}
 
 ### Extracted Dependencies
-${dependencies.length > 0 ? dependencies.slice(0, 10).map((dep: any[], idx: number) => {
-  if (Array.isArray(dep) && dep.length >= 2) {
-    const groupId = dep[0] || '';
-    const artifactId = dep[1] || '';
-    const version = dep[2] || '';
-    const scope = dep[3] || 'compile';
-    return `${idx + 1}. **${groupId}:${artifactId}** (${version}) [${scope}]`;
-  }
-  return `${idx + 1}. ${JSON.stringify(dep)}`;
-}).join('\n') + (dependencies.length > 10 ? `\n... and ${dependencies.length - 10} more dependencies` : '') : 'No dependencies found'}
+${extractedDeps}
 
 ### Technical Implementation
 ✅ **XML File Reading**: Direct file system access to pom.xml
-✅ **Element Parsing**: Extraction of `<groupId>`, `<artifactId>`, `<version>`, `<scope>`
-✅ **Structure Validation**: Proper `<dependencies>` section traversal
+✅ **Element Parsing**: Extraction of groupId, artifactId, version, scope
+✅ **Structure Validation**: Proper dependencies section traversal
 ✅ **Data Integrity**: No hardcoded data - all from actual XML
 
 ### Verification Process
@@ -815,9 +817,9 @@ The complete core Maven integration has been executed on **${projectPath}**:
 - **Core XML Parsing** with real DOM processing
 
 ### Demo Output
-\\`\\`\\`
+\`\`\`
 ${output.split('\\n').slice(-20).join('\\n')}
-\\`\\`\\`
+\`\`\`
 
 ### Technical Verification
 ✅ **Core Module Integration**: Maven functions in production DependencyMatrix.dyalog

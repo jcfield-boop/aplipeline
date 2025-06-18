@@ -191,12 +191,28 @@ cd aplipeline
 
 APL-CD features seamless integration with Claude Desktop via MCP (Model Context Protocol), enabling natural language interaction with array-oriented CI/CD operations:
 
+#### Setup Instructions
+
+1. **Build the MCP Server:**
 ```bash
-# Install for Claude Desktop
+cd mcp-server
+npm install
+npm run build
+cd ..
+```
+
+2. **Configure Claude Desktop:**
+```bash
+# Run the setup script
 ./setup-claude-desktop.sh
 ```
 
-**Restart Claude Desktop** and interact with APL-CD using natural language:
+3. **Verify Setup:**
+   - Check that `mcp-server/dist/` contains compiled JavaScript files
+   - Verify `~/Library/Application Support/Claude/claude_desktop_config.json` exists
+   - Restart Claude Desktop application
+
+**After restart**, interact with APL-CD using natural language:
 
 **🧪 Dependency Analysis:**
 ```
@@ -224,6 +240,23 @@ Compare APL-CD with Maven on enterprise projects
 ```
 
 This integration transforms APL-CD into an AI-accessible platform, making array-oriented dependency resolution available through conversational interface.
+
+#### Troubleshooting
+
+**MCP Server Issues:**
+- Ensure Node.js 18+ is installed: `node --version`
+- Verify build completed: Check `mcp-server/dist/index.js` exists
+- Check Claude Desktop Developer settings for MCP status
+
+**File Path Issues:**
+- The setup script uses absolute paths: `$(pwd)` in configuration
+- Ensure the project directory is stable (don't move after setup)
+- Re-run `./setup-claude-desktop.sh` if project is moved
+
+**Claude Desktop Integration:**
+- Restart Claude Desktop after configuration changes
+- Check `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Test with simple command: "Analyze Spring PetClinic dependencies using APL-CD"
 
 ## Usage
 
