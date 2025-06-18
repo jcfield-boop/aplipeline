@@ -19,8 +19,15 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 - `./aplcicd demo` - Array-oriented dependency resolution and parallel execution demo  
 - `./aplcicd test` - Comprehensive system testing with competition validation
 - `dyalog -script maven_integration_demo.apl` - **Real Maven integration (92x speedup)**
-- `dyalog -script maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (1244x speedup)**
+- `dyalog -script maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (169x speedup)**
+- `dyalog -script maven_real_xml_parser.apl` - **Real XML DOM parsing demonstration**
 - `dyalog -script simple_benchmark.apl` - **O(N²) vs O(N³) performance proof**
+
+### Maven Validation Functions (Production-Ready)
+- `ValidateWithRealMaven` - Direct validation against actual Maven installation
+- `LiveMavenDemo` - Real-time side-by-side performance comparison
+- `ParseMavenTreeOutput` - Parse actual Maven dependency:tree output  
+- `ParsePomXMLDependencies` - Real XML DOM parsing of pom.xml files
 
 ### Development Commands
 - `./aplcicd benchmark` - Performance benchmarking vs traditional CI/CD systems

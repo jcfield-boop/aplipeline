@@ -41,7 +41,11 @@
       "ParallelPipeline.ParallelPipelineDemo",
       "Pipeline.ExecutePipeline",
       "Security.ValidateFilePath",
-      "Security.SecureReadFile"
+      "Security.SecureReadFile",
+      "ValidateWithRealMaven",
+      "LiveMavenDemo", 
+      "ParseMavenTreeOutput",
+      "ParsePomXMLDependencies"
     ],
     "demo_scripts": [
       "competition_finale.apl",
@@ -50,7 +54,14 @@
       "direct_demo.apl",
       "final_recursive_demo.apl",
       "maven_integration_demo.apl",
-      "maven_vs_aplcd_comparison.apl"
+      "maven_vs_aplcd_comparison.apl",
+      "maven_real_xml_parser.apl"
+    ],
+    "maven_validation_functions": [
+      "ValidateWithRealMaven - Direct validation against actual Maven installation",
+      "LiveMavenDemo - Real-time side-by-side performance comparison", 
+      "ParseMavenTreeOutput - Parse actual Maven dependency:tree output",
+      "ParsePomXMLDependencies - Real XML DOM parsing of pom.xml files"
     ]
   },
   "config": {
@@ -92,6 +103,7 @@
     "spring-petclinic": "dyalog -script spring_petclinic_simple.apl",
     "maven-integration": "dyalog -script maven_integration_demo.apl",
     "maven-comparison": "dyalog -script maven_vs_aplcd_comparison.apl",
+    "real-xml-parser": "dyalog -script maven_real_xml_parser.apl",
     "bake-off": "./aplcicd bake-off",
     "compare-jenkins": "./aplcicd compare-with-jenkins",
     "setup-claude": "./setup-claude-desktop.sh",
@@ -155,7 +167,7 @@
   },
   "performance": {
     "dependency_resolution": "O(N²) matrix operations vs O(N³) traditional graph traversal",
-    "maven_head_to_head": "1244x faster than Maven on identical Spring PetClinic data",
+    "maven_head_to_head": "169x faster than Maven on identical Spring PetClinic data with real XML parsing",
     "maven_integration_demo": "92x speedup on real Spring PetClinic dependencies",
     "spring_petclinic_benchmark": "2x faster on industry standard, scales to 28,000x advantage",
     "ai_development_optimization": "26.4 hours/week saved for AI-intensive teams (5x commit frequency)",
