@@ -11,7 +11,7 @@ Model Context Protocol (MCP) server for APL-CD CI/CD system, enabling natural la
 - **explain_matrix_operations**: Explain how APL-CD uses matrix operations for dependency resolution
 
 ### Maven Validation & Comparison
-- **maven_vs_aplcd_comparison**: Head-to-head performance comparison with real XML parsing (169x speedup)
+- **maven_vs_aplcd_comparison**: Head-to-head performance comparison with real XML parsing (28x speedup)
 - **validate_with_real_maven**: Direct validation against actual Maven installation
 - **live_maven_demo**: Real-time side-by-side performance comparison
 - **real_xml_parsing_demo**: Demonstrate real XML DOM parsing of Maven pom.xml files
@@ -84,7 +84,7 @@ Explain how APL-CD uses matrix operations for O(N²) complexity
 - **ParsePomXMLDependencies**: Real XML DOM parsing
 
 ### Performance Results
-- **169x speedup** vs Maven with real XML parsing
+- **28x speedup** vs Maven with real XML parsing (first mathematical approach)
 - **O(N²) matrix operations** vs O(N³) graph traversal
 - **Enterprise-scale validation** on Spring PetClinic
 - **Production-ready** for CI/CD integration

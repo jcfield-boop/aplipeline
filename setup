@@ -1,0 +1,31 @@
+#!/bin/bash
+# APL-CD: One-liner setup for immediate demo
+# Usage: ./setup && ./aplcicd finale
+
+set -euo pipefail
+
+echo "🚀 APL-CD Quick Setup for Judges"
+echo "================================="
+
+# Make scripts executable
+chmod +x aplcicd
+chmod +x simple_5min_demo.apl
+
+# Verify Dyalog is available
+if ! command -v dyalog &> /dev/null && [[ ! -x "/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl" ]]; then
+    echo "❌ Dyalog APL not found. Please install Dyalog APL 19.0+"
+    echo "Download: https://www.dyalog.com/download-zone.htm"
+    exit 1
+fi
+
+# Create necessary directories
+mkdir -p logs config
+
+echo "✅ APL-CD ready for demonstration!"
+echo ""
+echo "🎯 Quick Demo Commands:"
+echo "  ./aplcicd 5min      # 5-minute competition finale"
+echo "  ./aplcicd demo      # Array operations demo"
+echo "  ./aplcicd status    # System health check"
+echo ""
+echo "Run: ./aplcicd 5min"

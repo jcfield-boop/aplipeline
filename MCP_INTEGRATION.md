@@ -2,7 +2,7 @@
 
 ## Overview
 
-APL-CD now features seamless integration with Claude Desktop via MCP (Model Context Protocol), making array-oriented CI/CD operations accessible through natural language conversation.
+APL-CD features seamless integration with Claude Desktop via MCP (Model Context Protocol), making the first mathematical approach to dependency resolution accessible through natural language conversation.
 
 ## Quick Start
 
@@ -16,41 +16,35 @@ APL-CD now features seamless integration with Claude Desktop via MCP (Model Cont
 
 ## Available Commands
 
+### 🏆 Competition Finale
+```
+Run 5-minute competition finale demonstration
+```
+**Returns:** Complete judge-optimized demonstration including dramatic opening, matrix visualization, complexity proof, and enterprise validation. Perfect for APL Forge Contest evaluation.
+
 ### 🧪 Dependency Analysis
 ```
 Analyze Spring PetClinic dependencies using APL-CD
 ```
-**Returns:** Real Spring PetClinic dependency matrix analysis with 38 dependencies, parallel task detection, and O(N²) complexity demonstration.
+**Returns:** Real Spring PetClinic dependency matrix analysis with visualization, parallel task detection, and O(N²) complexity demonstration.
 
 ### ⚡ Performance Benchmarking  
 ```
-Run APL-CD performance benchmark comparing with traditional CI/CD
+Run O(N²) vs O(N³) algorithmic complexity benchmarks
 ```
-**Returns:** Live performance comparison showing 384x speedup vs traditional CI/CD, with scalability analysis across different project sizes.
-
-### 🔒 Security Scanning
-```
-Scan APL-CD source code for security issues
-```
-**Returns:** Comprehensive security analysis with risk assessment, 15 security patterns checked, and detailed vulnerability reporting.
+**Returns:** Live algorithmic complexity comparison with scaling analysis showing mathematical advantages of matrix operations over traditional graph traversal.
 
 ### 📚 Educational Explanations
 ```
-Explain how APL-CD uses matrix operations for O(N²) complexity
+Explain how APL-CD uses matrix operations for dependency resolution
 ```
 **Returns:** Mathematical explanations at basic, intermediate, or advanced levels showing how APL's array operations achieve superior algorithmic complexity.
 
-### 🏢 Industry Comparisons
+### 🔄 Maven Integration Demo
 ```
-Compare APL-CD with Maven on enterprise projects
+Demonstrate real Maven integration with Spring PetClinic
 ```
-**Returns:** Detailed comparison with Maven showing concrete performance advantages, memory efficiency, and real-world benchmarks.
-
-### 🔄 Maven Integration Demo (NEW!)
-```
-Run Maven integration demo with real Spring PetClinic dependencies
-```
-**Returns:** Complete demonstration of APL-CD processing actual Maven dependency data, showing 336x speedup over real Maven execution. Proves APL-CD works on enterprise applications, not just simulated data.
+**Returns:** Complete demonstration of APL-CD processing actual Maven dependency data with 28x performance advantage and exponential scaling properties. Proves mathematical approach works on enterprise applications.
 
 ## Technical Architecture
 
@@ -68,9 +62,9 @@ APL-CD Matrix Operations
 
 - **`setup-claude-desktop.sh`** - One-command installation script
 - **`apl-mcp/mcp-wrapper.dyalog`** - APL integration layer with JSON output
-- **`mcp-server/src/index.ts`** - Main MCP server with 5 specialized tools
+- **`mcp-server/src/index.ts`** - Main MCP server with 5 focused tools
+- **`mcp-server/src/tools.ts`** - Clean tool definitions for essential demos
 - **`mcp-server/src/apl-interface.ts`** - Bridge between Node.js and APL
-- **`apl-mcp/test-integration.apl`** - Validation and testing script
 
 ## Configuration
 
@@ -84,7 +78,7 @@ With APL-CD MCP server configuration for automatic connection.
 ## Innovation Impact
 
 This integration represents:
-- **First AI-accessible array-oriented CI/CD system**
+- **First AI-accessible array-oriented dependency resolution system**
 - **Revolutionary demonstration capability** for APL Forge Contest
 - **Zero technical barriers** for evaluating APL-CD functionality
 - **Natural language interface** to complex mathematical operations

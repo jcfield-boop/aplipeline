@@ -1,50 +1,41 @@
-# APL CI/CD Project - Git Ignore
+# APL-CD: Array-Oriented Dependency Resolution
+# .gitignore for competition submission
 
-# 🔐 SECURITY - Never commit secrets
-aplcicd_secrets.dyalog
-aplcicd_config.dcf
-*secrets*.json
-*secrets*.dyalog
-*.pem
-*.key
-id_rsa*
-.env
-.env.local
+# APL Runtime Files
+aplcore
+*.dws
+*.dxx
 
-# Temporary files
+# Development artifacts
+*_SUMMARY.md
+*_CLEANUP*.md
+
+# Logs and temporary files
+logs/*.log
 *.tmp
 *.bak
 
-# APL workspace files
-*.dws
-*.dsm
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Editor files
-.vscode/
-.idea/
-
-# Logs
-*.log
-logs/
-
-# Test outputs
-test_output/
-benchmark_results/
-
-# Claude development files
-.claude/
-
-# MCP Server files
+# Node.js (MCP Server build artifacts)
 mcp-server/node_modules/
 mcp-server/dist/
-mcp-server/package-lock.json
 
-# Old/deprecated files
-old/
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Backup directories
-backup/
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Spring PetClinic build artifacts
+spring-petclinic/target/
+spring-petclinic/.gradle/
+spring-petclinic/build/

@@ -522,9 +522,9 @@ run_complete_demo() {
 # Show help
 show_help() {
     cat << EOF
-🚀 APL-CD v$SCRIPT_VERSION - Array-Oriented Continuous Deployment
+🚀 APL-CD v$SCRIPT_VERSION - Array-Oriented Dependency Resolution
 ================================================================
-APL Forge Contest 2025 - Competition Winner
+APL Forge Contest 2025 - Mathematical Innovation
 
 Usage: ./aplcicd [command] [options]
 
@@ -534,11 +534,10 @@ Essential Commands:
   status            - System health and module status
 
 Competition Demos:
-  finale            - Run competition_finale.apl (5-minute demo)
-  benchmark         - Run simple_benchmark.apl (O(N²) vs O(N³) proof)
-  integration       - Run integration_example.apl (APL Forge analysis)
-  recursive         - Run final_recursive_demo.apl (self-analysis)
-  direct            - Run direct_demo.apl (working system demo)
+  finale            - 5-minute competition finale (judge-optimized)
+  5min              - Same as finale command
+  benchmark         - O(N²) vs O(N³) algorithmic complexity proof
+  integration       - APL Forge mathematical analysis
 
 Development Commands:
   pipeline          - CI/CD pipeline execution
@@ -548,11 +547,10 @@ Development Commands:
   spring-petclinic  - Industry-standard Maven benchmark (Spring Boot)
 
 Examples:
-  ./aplcicd test                                  # Complete system test
-  ./aplcicd finale                               # 5-minute competition demo
-  ./aplcicd benchmark                            # Performance comparison
-  ./aplcicd recursive                            # Self-analysis demo
-  ./aplcicd demo                                 # Contest demonstration
+  ./setup && ./aplcicd finale                    # One-liner for judges  
+  ./aplcicd finale                               # 5-minute competition finale
+  ./aplcicd benchmark                            # Algorithmic complexity proof
+  ./aplcicd demo                                 # Array operations demonstration
 
 Key Features:
   🔢 O(N²) Dependency Resolution (matrix operations vs O(N³) graph traversal)
@@ -652,8 +650,8 @@ main() {
         "recursive")
             run_recursive_demo
             ;;
-        "finale")
-            run_apl_script "competition_finale.apl" "5-minute competition finale demo"
+        "finale"|"5min")
+            run_apl_script "simple_5min_demo.apl" "5-minute competition finale"
             ;;
         "benchmark")
             run_apl_script "simple_benchmark.apl" "O(N²) vs O(N³) performance comparison"

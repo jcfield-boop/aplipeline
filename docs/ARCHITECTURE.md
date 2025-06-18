@@ -2,13 +2,13 @@
 
 ## Overview
 
-APL-CD (Array-Oriented Continuous Deployment) is a CI/CD system built using APL's mathematical foundations. This architecture guide explains the design principles and technical decisions that enable superior algorithmic complexity through array-oriented programming.
+APL-CD (Array-Oriented Dependency Resolution) is a dependency management system built using APL's mathematical foundations. This architecture guide explains the design principles and technical decisions that enable superior algorithmic complexity through array-oriented programming.
 
 ## Core Philosophy: Mathematics Over Objects
 
 ### The Array-First Principle
 
-Traditional CI/CD systems use:
+Traditional dependency management systems use:
 - **Object-oriented patterns**: Classes, inheritance, complex abstractions
 - **O(N³) algorithms**: Nested graph traversal for dependency resolution
 - **Sequential processing**: Step-by-step pipeline execution

@@ -434,11 +434,11 @@
         :EndFor
         
         result.results ← stage_results
-        result.success_rate ← success_count ÷ ≢stage_results
+        result.success_rate ← (0<≢stage_results)⊃0 (success_count ÷ ≢stage_results)
         result.success ← success_count > 0
         result.status ← (result.success_rate ≥ 0.5)⊃'PARTIAL' 'SUCCESS'
         
-        ⎕←'Pipeline ',result.status,': ',⍕⌊100×result.success_rate,'% success rate'
+        ⎕←'Pipeline ',(⍕result.status),': ',⍕⌊0⌈100×result.success_rate,'% success rate'
     ∇
 
     ∇ duration ← CalculateExecutionTime start_time
