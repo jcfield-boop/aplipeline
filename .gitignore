@@ -37,7 +37,11 @@ benchmark_results/
 
 # Claude development files
 .claude/
-CLAUDE.md
+
+# MCP Server files
+mcp-server/node_modules/
+mcp-server/dist/
+mcp-server/package-lock.json
 
 # Old/deprecated files
 old/

@@ -84,5 +84,89 @@ export const TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'maven_vs_aplcd_comparison',
+    description: 'Head-to-head performance comparison between Maven and APL-CD with real XML parsing',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        include_xml_parsing: {
+          type: 'boolean',
+          description: 'Include real XML DOM parsing demonstration',
+          default: true
+        }
+      }
+    }
+  },
+  {
+    name: 'validate_with_real_maven',
+    description: 'Direct validation against actual Maven installation comparing dependency resolution',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        maven_command: {
+          type: 'string',
+          description: 'Maven command to validate against',
+          default: 'dependency:tree'
+        }
+      }
+    }
+  },
+  {
+    name: 'live_maven_demo',
+    description: 'Real-time side-by-side performance comparison with Maven',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        phase_by_phase: {
+          type: 'boolean',
+          description: 'Show phase-by-phase timing breakdown',
+          default: true
+        }
+      }
+    }
+  },
+  {
+    name: 'real_xml_parsing_demo',
+    description: 'Demonstrate real XML DOM parsing of Maven pom.xml files',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        pom_file: {
+          type: 'string',
+          description: 'Path to pom.xml file to parse',
+          default: 'spring-petclinic/pom.xml'
+        }
+      }
+    }
+  },
+  {
+    name: 'parse_spring_petclinic_pom',
+    description: 'Parse Spring PetClinic pom.xml and extract dependency elements',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        include_external_benchmark: {
+          type: 'boolean',
+          description: 'Also check external_benchmark/spring-petclinic/pom.xml',
+          default: true
+        }
+      }
+    }
+  },
+  {
+    name: 'compare_with_maven_timing',
+    description: 'Run mvn dependency:tree and compare results with APL-CD timing',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        show_validation: {
+          type: 'boolean',
+          description: 'Show dependency validation matching',
+          default: true
+        }
+      }
+    }
   }
 ];
