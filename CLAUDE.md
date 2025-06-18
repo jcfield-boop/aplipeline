@@ -23,7 +23,13 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 - `dyalog -script maven_real_xml_parser.apl` - **Real XML DOM parsing demonstration**
 - `dyalog -script simple_benchmark.apl` - **O(N²) vs O(N³) performance proof**
 
-### Maven Validation Functions (Production-Ready)
+### Maven Core Integration (Production-Ready)
+- `DependencyMatrix.ParseMavenPOM filepath` - Core Maven POM parsing function
+- `DependencyMatrix.ExtractMavenDependencies xml_lines` - Real XML DOM parsing
+- `DependencyMatrix.CompareMavenTiming project_path` - Maven command execution timing
+- `DependencyMatrix.ParseProjectDependencies project_path` - Auto-detection with Maven support
+
+### Maven Validation Functions (Demo Scripts)
 - `ValidateWithRealMaven` - Direct validation against actual Maven installation
 - `LiveMavenDemo` - Real-time side-by-side performance comparison
 - `ParseMavenTreeOutput` - Parse actual Maven dependency:tree output  
@@ -125,7 +131,7 @@ The system follows APL package conventions with `aplcicd.dcfg` containing depend
 
 ### Module Dependencies
 Core modules load in sequence via `APLCICD.LoadCoreModules`:
-1. DependencyMatrix (matrix-based dependency resolution)
+1. DependencyMatrix (matrix-based dependency resolution + **Maven integration**)
 2. ParallelPipeline (array-oriented parallel execution)
 3. Benchmark (performance analysis vs traditional CI/CD)
 4. Pipeline (CI/CD automation with validation, security, quality)
@@ -136,6 +142,13 @@ Core modules load in sequence via `APLCICD.LoadCoreModules`:
 9. Security (input validation and security controls)
 10. SelfOptimizer (self-analysis & improvement)
 11. EnterpriseIntegration (enterprise CI/CD integration)
+
+### Core Maven Integration
+The DependencyMatrix module now includes production-ready Maven integration:
+- **ParseMavenPOM**: Real XML DOM parsing of Maven pom.xml files
+- **ExtractMavenDependencies**: Extract dependency elements from XML structure
+- **CompareMavenTiming**: Execute Maven commands and compare performance
+- **Auto-detection**: Automatically detects Maven projects and processes them
 
 ### Self-Improvement Architecture
 The system implements meta-programming through:

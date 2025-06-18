@@ -37,6 +37,10 @@
       "DependencyMatrix.TopologicalSort", 
       "DependencyMatrix.FindParallelTasks",
       "DependencyMatrix.ArrayDependencyDemo",
+      "DependencyMatrix.ParseMavenPOM",
+      "DependencyMatrix.ExtractMavenDependencies",
+      "DependencyMatrix.CompareMavenTiming",
+      "DependencyMatrix.ParseProjectDependencies",
       "ParallelPipeline.ExecuteParallel",
       "ParallelPipeline.ParallelPipelineDemo",
       "Pipeline.ExecutePipeline",
@@ -56,6 +60,12 @@
       "maven_integration_demo.apl",
       "maven_vs_aplcd_comparison.apl",
       "maven_real_xml_parser.apl"
+    ],
+    "maven_core_functions": [
+      "DependencyMatrix.ParseMavenPOM - Core Maven POM parsing function",
+      "DependencyMatrix.ExtractMavenDependencies - Real XML DOM parsing in core",
+      "DependencyMatrix.CompareMavenTiming - Maven command execution timing",
+      "DependencyMatrix.ParseProjectDependencies - Auto-detection with Maven support"
     ],
     "maven_validation_functions": [
       "ValidateWithRealMaven - Direct validation against actual Maven installation",
@@ -100,7 +110,7 @@
     "integration": "dyalog -script integration_example.apl",
     "recursive": "dyalog -script final_recursive_demo.apl",
     "direct": "dyalog -script direct_demo.apl",
-    "spring-petclinic": "dyalog -script spring_petclinic_simple.apl",
+    "spring-petclinic": "dyalog -script spring_petclinic_core_integration.apl",
     "maven-integration": "dyalog -script maven_integration_demo.apl",
     "maven-comparison": "dyalog -script maven_vs_aplcd_comparison.apl",
     "real-xml-parser": "dyalog -script maven_real_xml_parser.apl",

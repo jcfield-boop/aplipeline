@@ -168,5 +168,19 @@ export const TOOLS = [
         }
       }
     }
+  },
+  {
+    name: 'core_maven_integration_demo',
+    description: 'Demonstrate core Maven integration using DependencyMatrix module functions',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        project_path: {
+          type: 'string',
+          description: 'Path to Maven project',
+          default: 'spring-petclinic'
+        }
+      }
+    }
   }
 ];
