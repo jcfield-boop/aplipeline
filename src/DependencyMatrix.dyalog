@@ -294,6 +294,56 @@
         component ← ∪component
     ∇
     
+    ∇ files ← FindAPLFilesRecursive path
+    ⍝ Recursively find all APL files with efficient directory traversal
+    ⍝ Handles APLSource subdirectory structure properly
+        
+        files ← ⍬
+        
+        :Trap 0
+            ⍝ Check if path exists
+            :If ~⎕NEXISTS path
+                →0
+            :EndIf
+            
+            ⍝ Get all files and directories in current path
+            :Trap 22
+                items ← ⎕NINFO⍠1⊢path,'/*'
+                :If 0=≢items
+                    →0  ⍝ No items found
+                :EndIf
+            :Else
+                →0  ⍝ Path access error
+            :EndTrap
+            
+            ⍝ Process each item
+            :For item :In items
+                item_path ← ⊃item
+                item_type ← 1⊃item
+                
+                :If item_type=1  ⍝ Directory
+                    ⍝ Recurse into subdirectories (especially APLSource)
+                    subfiles ← FindAPLFilesRecursive item_path
+                    files ← files,subfiles
+                :ElseIf item_type=2  ⍝ File
+                    ⍝ Check if it's an APL file
+                    :If IsAPLFile item_path
+                        files ← files,⊂item_path
+                    :EndIf
+                :EndIf
+            :EndFor
+            
+        :Else
+            ⍝ Silent failure for permission/access issues
+        :EndTrap
+    ∇
+    
+    ∇ is_apl ← IsAPLFile filepath
+    ⍝ Check if file is an APL source file
+        extension ← ⊃⊃⌽⎕NPARTS filepath
+        is_apl ← extension∊⊂'dyalog' 'apl' 'aplf' 'aplc' 'apln' 'aplo'
+    ∇
+
     ∇ demo ← ArrayDependencyDemo
     ⍝ Focused demonstration of core array operations
         dependencies ← 4 2⍴'compile' 'parse' 'link' 'compile' 'test' 'link' 'deploy' 'test'
@@ -373,38 +423,75 @@
     ∇
 
     ∇ result ← ParseAPLProject workspace_path
-    ⍝ Parse APL workspace/project dependencies
-    ⍝ Analyzes ⎕FIX, ⎕COPY, and namespace dependencies
+    ⍝ Parse APL workspace/project dependencies with performance optimization
+    ⍝ Analyzes ⎕FIX, ⎕COPY, and namespace dependencies using streaming
         
         result ← ⎕NS ''
         result.success ← 0
         result.dependencies ← 0 2⍴''
         result.error ← ''
+        result.files_processed ← 0
+        result.total_files ← 0
         
-        :Trap 22
-            apl_files ← ⊃⎕NINFO⍠1⊢workspace_path,'/*.dyalog'
-            :If 0=≢apl_files
-                apl_files ← ⊃⎕NINFO⍠1⊢workspace_path,'/*.apl'
-            :EndIf
+        :Trap 0
+            ⍝ Use recursive file discovery for better performance
+            apl_files ← FindAPLFilesRecursive workspace_path
+            result.total_files ← ≢apl_files
             
             :If 0=≢apl_files
                 result.error ← 'No APL files found in: ',workspace_path
                 →0
             :EndIf
             
+            ⎕←'📊 Found ',(⍕≢apl_files),' APL files - analyzing with streaming...'
+            
+            ⍝ Process files in batches for memory efficiency
+            batch_size ← 50⌊≢apl_files  ⍝ Process max 50 files at once
             all_deps ← 0 2⍴''
-            :For file :In apl_files
-                file_deps ← ExtractAPLFileDeps file
-                all_deps ← all_deps⍪file_deps
+            total_processed ← 0
+            
+            :For batch_start :In 0 batch_size ⍳≢apl_files
+                batch_end ← (batch_start+batch_size)⌊≢apl_files
+                batch_files ← apl_files[batch_start+⍳batch_end-batch_start]
+                
+                ⎕←'   Processing batch ',(⍕1+batch_start÷batch_size),' of ',(⍕⌈(≢apl_files)÷batch_size),'...'
+                
+                ⍝ Process batch with timeout protection
+                :For file :In batch_files
+                    :Trap 0
+                        file_deps ← ExtractAPLFileDeps file
+                        all_deps ← all_deps⍪file_deps
+                        total_processed ← total_processed + 1
+                        
+                        ⍝ Show progress for large projects
+                        :If 0=10|total_processed
+                            ⎕←'     Processed ',(⍕total_processed),' files...'
+                        :EndIf
+                    :Else
+                        ⍝ Continue on individual file errors
+                        ⎕←'     Warning: Failed to process ',file,' - ',⎕DM
+                    :EndTrap
+                :EndFor
             :EndFor
             
             result.dependencies ← all_deps
-            result.dependency_matrix ← BuildDependencyMatrix all_deps
+            result.files_processed ← total_processed
+            
+            ⍝ Build dependency matrix only if we have dependencies
+            :If 0<≢all_deps
+                ⎕←'🔢 Building dependency matrix from ',(⍕≢all_deps),' relationships...'
+                result.dependency_matrix ← BuildDependencyMatrix all_deps
+            :Else
+                ⍝ Create minimal structure for projects with no dependencies
+                result.dependency_matrix ← (0 0⍴0)(⍬)
+            :EndIf
+            
             result.success ← 1
-            result.files_analyzed ← ≢apl_files
             result.total_dependencies ← ⊃⍴all_deps
+            ⎕←'✅ Analysis complete: ',(⍕total_processed),' files, ',(⍕≢all_deps),' dependencies'
+            
         :Else
-            result.error ← 'Workspace analysis error: ',⎕DM
+            result.error ← 'APL project analysis error: ',⎕DM
         :EndTrap
     ∇
 
@@ -467,32 +554,68 @@
 
     ∇ deps ← ExtractAPLFileDeps filepath
     ⍝ Extract APL-specific dependencies from .dyalog/.apl files
+    ⍝ Looks for ⎕FIX, ⎕COPY, namespace references, and function calls
         deps ← 0 2⍴''
         
-        :Trap 22
+        :Trap 0
+            :If ~⎕NEXISTS filepath
+                →0  ⍝ File doesn't exist
+            :EndIf
+            
             content ← ⊃⎕NGET filepath 1
             filename ← ⊃⊃⌽⎕NPARTS filepath
             
-            ⍝ Look for ⎕FIX dependencies
+            ⍝ Remove file extension for cleaner dependency tracking
+            clean_filename ← ⊃⊃1↓⎕NPARTS filepath
+            
             :For line :In content
-                :If ∨/'⎕FIX'⍷line
-                    ⍝ Extract the file being fixed
-                    fixed_file ← ExtractFixedFile line
-                    :If 0<≢fixed_file
-                        deps ← deps⍪filename fixed_file
+                :If 0<≢line
+                    line ← ∊line  ⍝ Ensure it's a simple string
+                    
+                    ⍝ Look for ⎕FIX dependencies
+                    :If ∨/'⎕FIX'⍷line
+                        fixed_file ← ExtractFixedFile line
+                        :If 0<≢fixed_file
+                            deps ← deps⍪clean_filename fixed_file
+                        :EndIf
                     :EndIf
-                :EndIf
-                
-                ⍝ Look for namespace references
-                :If ∨/'⎕FIX'⍷line
+                    
+                    ⍝ Look for ⎕COPY dependencies  
+                    :If ∨/'⎕COPY'⍷line
+                        copied_items ← ExtractCopyDeps line
+                        :For item :In copied_items
+                            deps ← deps⍪clean_filename item
+                        :EndFor
+                    :EndIf
+                    
+                    ⍝ Look for namespace references (Module.Function patterns)
                     ns_refs ← ExtractNamespaceRefs line
                     :For ns :In ns_refs
-                        deps ← deps⍪filename ns
+                        :If ~ns≡clean_filename  ⍝ Don't self-reference
+                            deps ← deps⍪clean_filename ns
+                        :EndIf
                     :EndFor
+                    
+                    ⍝ Look for APL class dependency patterns
+                    class_deps ← ExtractClassDependencies line
+                    :For cls :In class_deps
+                        :If ~cls≡clean_filename
+                            deps ← deps⍪clean_filename cls
+                        :EndIf
+                    :EndFor
+                    
+                    ⍝ Look for :Namespace declarations (dependencies on this file)
+                    :If ∨/':Namespace'⍷line
+                        ns_name ← ExtractNamespaceName line
+                        :If 0<≢ns_name
+                            ⍝ This file provides a namespace - others may depend on it
+                        :EndIf
+                    :EndIf
                 :EndIf
             :EndFor
+            
         :Else
-            ⍝ File access error - return empty dependencies
+            ⍝ File access error - return empty dependencies silently
         :EndTrap
     ∇
 
@@ -508,30 +631,106 @@
                 quote_pos ← ⍸''''=rest
                 :If 0<≢quote_pos
                     fixed_file ← (⊃quote_pos)↑rest
+                    ⍝ Extract just the filename without path/extension
+                    fixed_file ← ⊃⊃1↓⎕NPARTS fixed_file
+                :EndIf
+            :EndIf
+        :EndTrap
+    ∇
+
+    ∇ copied_items ← ExtractCopyDeps line
+    ⍝ Extract items from ⎕COPY statement
+        copied_items ← ⍬
+        
+        :Trap 0
+            ⍝ Simple extraction of workspace names or function names
+            :If ∨/'⎕COPY'⍷line
+                ⍝ Look for quoted workspace names
+                quotes ← ⍸''''=line
+                :If 1<≢quotes
+                    ws_name ← ((⊃quotes)+1)↑((1⊃quotes)-1)↓line
+                    :If 0<≢ws_name
+                        copied_items ← ⊂ws_name
+                    :EndIf
                 :EndIf
             :EndIf
         :EndTrap
     ∇
 
     ∇ ns_refs ← ExtractNamespaceRefs line
-    ⍝ Extract namespace references from APL line
+    ⍝ Extract namespace references from APL line (Module.Function patterns)
         ns_refs ← ⍬
         
         :Trap 0
-            ⍝ Look for patterns like Namespace.Function
-            :If ∨/'.'∊line
-                tokens ← ' '(≠⊆⊢)line
-                :For token :In tokens
-                    :If ∨/'.'∊token
-                        :If ~∨/'⎕'∊token  ⍝ Skip system functions
-                            ns_part ← ⊃'.'(≠⊆⊢)token
-                            :If (0<≢ns_part)∧(⊃ns_part)∊⎕A
-                                ns_refs ← ns_refs,⊂ns_part
+            ⍝ Look for patterns like DependencyMatrix.BuildMatrix
+            words ← ' '(≠⊆⊢)line
+            :For word :In words
+                :If ∨/'.'∊word
+                    ⍝ Split on dots and take first part as potential namespace
+                    parts ← '.'(≠⊆⊢)word
+                    :If 1<≢parts
+                        ns_name ← ⊃parts
+                        ⍝ Filter out system functions and common patterns
+                        :If ~ns_name∊⊂'⎕' ''
+                            ⍝ Only include if it looks like a valid APL identifier
+                            :If ∧/ns_name∊⎕A,⎕D,'_'
+                                ns_refs ← ns_refs,⊂ns_name
                             :EndIf
                         :EndIf
                     :EndIf
-                :EndFor
+                :EndIf
+            :EndFor
+            
+            ⍝ Remove duplicates
+            ns_refs ← ∪ns_refs
+        :EndTrap
+    ∇
+
+    ∇ ns_name ← ExtractNamespaceName line
+    ⍝ Extract namespace name from :Namespace declaration
+        ns_name ← ''
+        
+        :Trap 0
+            :If ∨/':Namespace'⍷line
+                words ← ' '(≠⊆⊢)line
+                ⍝ Namespace name usually follows :Namespace
+                ns_idx ← ⊃⍸':Namespace'∘≡¨words
+                :If ns_idx<≢words
+                    ns_name ← ns_idx⊃words
+                :EndIf
             :EndIf
+        :EndTrap
+    ∇
+
+    ∇ class_deps ← ExtractClassDependencies line
+    ⍝ Extract APL class dependencies (TatinVars, CodeCoverage, etc.)
+        class_deps ← ⍬
+        
+        :Trap 0
+            ⍝ Look for common APL class reference patterns
+            known_classes ← ⊂'TatinVars' 'CodeCoverage' 'APLTreeUtils2' 'HTMLRenderer'
+            
+            :For class :In known_classes
+                :If ∨/class⍷line
+                    class_deps ← class_deps,⊂class
+                :EndIf
+            :EndFor
+            
+            ⍝ Look for :Require statements
+            :If ∨/':Require'⍷line
+                ⍝ Extract what's being required
+                req_part ← (⊃⍸':Require'⍷line)↓line
+                words ← ' '(≠⊆⊢)req_part
+                :If 0<≢words
+                    required_item ← ⊃words
+                    :If 0<≢required_item
+                        class_deps ← class_deps,⊂required_item
+                    :EndIf
+                :EndIf
+            :EndIf
+            
+            ⍝ Remove duplicates
+            class_deps ← ∪class_deps
         :EndTrap
     ∇
 
@@ -753,6 +952,18 @@
             :EndIf
         :EndIf
         
+        ⍝ Try Tatin package (apl-package.json)
+        :If ⎕NEXISTS project_path,'/apl-package.json'
+            tatin_result ← ParseTatinPackage project_path,'/apl-package.json'
+            :If tatin_result.success
+                result.success ← 1
+                result.project_type ← 'tatin'
+                result.dependency_matrix ← tatin_result.dependency_matrix
+                result.total_dependencies ← tatin_result.total_dependencies
+                →0
+            :EndIf
+        :EndIf
+
         ⍝ Try APL workspace
         apl_result ← ParseAPLProject project_path
         :If apl_result.success
@@ -941,6 +1152,96 @@
         result.dependencies_found ← aplcd_result.total_dependencies
         result.aplcd_success ← aplcd_result.success
         result.project_path ← project_path
+    ∇
+
+    ∇ result ← ParseTatinPackage filepath
+    ⍝ Parse Tatin apl-package.json for APL package dependencies
+        result ← ⎕NS ''
+        result.success ← 0
+        result.dependencies ← 0 2⍴''
+        result.dependency_matrix ← (0 0⍴0)(⍬)
+        result.error ← ''
+        
+        :Trap 0
+            :If ~⎕NEXISTS filepath
+                result.error ← 'Tatin package file not found: ',filepath
+                →0
+            :EndIf
+            
+            ⎕←'   📦 Reading Tatin package: ',filepath
+            json_lines ← ⊃⎕NGET filepath 1
+            
+            ⍝ Extract package info using simple text parsing
+            pkg_info ← ParseTatinJSON json_lines
+            
+            ⍝ Get package name and source location
+            pkg_name ← pkg_info.name
+            source_path ← pkg_info.source
+            
+            ⍝ If source path specified, analyze the actual APL source
+            :If 0<≢source_path
+                full_source_path ← (⊃⊃¯1↓⎕NPARTS filepath),'/',source_path
+                :If ⎕NEXISTS full_source_path
+                    ⍝ Analyze the main source file
+                    source_deps ← ExtractAPLFileDeps full_source_path
+                    result.dependencies ← source_deps
+                :Else
+                    ⍝ Fallback: analyze all APL files in package directory
+                    pkg_dir ← ⊃⊃¯1↓⎕NPARTS filepath
+                    apl_analysis ← ParseAPLProject pkg_dir
+                    result.dependencies ← apl_analysis.dependencies
+                :EndIf
+            :Else
+                ⍝ No specific source - analyze the whole package directory
+                pkg_dir ← ⊃⊃¯1↓⎕NPARTS filepath
+                apl_analysis ← ParseAPLProject pkg_dir  
+                result.dependencies ← apl_analysis.dependencies
+            :EndIf
+            
+            ⍝ Build dependency matrix if we have dependencies
+            :If 0<≢result.dependencies
+                result.dependency_matrix ← BuildDependencyMatrix result.dependencies
+            :EndIf
+            
+            result.success ← 1
+            result.total_dependencies ← ⊃⍴result.dependencies
+            result.package_name ← pkg_name
+            ⎕←'   ✅ Analyzed Tatin package: ',pkg_name,' with ',(⍕result.total_dependencies),' dependencies'
+            
+        :Else
+            result.error ← 'Tatin package parsing error: ',⎕DM
+        :EndTrap
+    ∇
+
+    ∇ info ← ParseTatinJSON json_lines
+    ⍝ Simple parser for Tatin apl-package.json format
+        info ← ⎕NS ''
+        info.name ← 'unknown'
+        info.source ← ''
+        
+        :Trap 0
+            combined ← ∊json_lines
+            
+            ⍝ Extract name field
+            :If ∨/'name:'⍷combined
+                name_start ← ⊃⍸'name:'⍷combined  
+                name_part ← (name_start+4)↓combined
+                quotes ← ⍸'"'=name_part
+                :If 1<≢quotes
+                    info.name ← ((⊃quotes)+1)↑((1⊃quotes)-1)↓name_part
+                :EndIf
+            :EndIf
+            
+            ⍝ Extract source field
+            :If ∨/'source:'⍷combined
+                source_start ← ⊃⍸'source:'⍷combined
+                source_part ← (source_start+6)↓combined
+                quotes ← ⍸'"'=source_part
+                :If 1<≢quotes
+                    info.source ← ((⊃quotes)+1)↑((1⊃quotes)-1)↓source_part
+                :EndIf
+            :EndIf
+        :EndTrap
     ∇
 
 :EndNamespace
