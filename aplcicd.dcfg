@@ -52,10 +52,9 @@
       "ParsePomXMLDependencies"
     ],
     "demo_scripts": [
-      "simple_5min_demo.apl",
-      "simple_benchmark.apl", 
-      "maven_integration_demo.apl",
-      "maven_vs_aplcd_comparison.apl"
+      "mcp-demos/demo-scripts/simple_5min_demo.apl",
+      "mcp-demos/demo-scripts/maven_integration_demo.apl",
+      "mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl"
     ],
     "maven_core_functions": [
       "DependencyMatrix.ParseMavenPOM - Core Maven POM parsing function",
@@ -81,32 +80,29 @@
     "include": [
       "src/*.dyalog",
       "config/*.json",
-      "*.apl",
       "README.md",
       "docs/*.md",
-      "mcp-server/**",
-      "apl-mcp/**",
-      "setup-mcp.sh"
+      "mcp-demos/**"
     ],
     "exclude": [
       "*.tmp",
       "*.log",
       "*.bak",
       "aplcore",
-      "mcp-server/node_modules",
-      "mcp-server/dist"
+      "mcp-demos/mcp-server/node_modules",
+      "mcp-demos/mcp-server/dist"
     ]
   },
   "scripts": {
     "test": "./aplcicd test",
     "demo": "./aplcicd demo", 
     "status": "./aplcicd status",
-    "benchmark": "dyalog -script simple_benchmark.apl",
-    "finale": "dyalog -script simple_5min_demo.apl",
-    "5min": "dyalog -script simple_5min_demo.apl",
-    "maven-integration": "dyalog -script maven_integration_demo.apl",
-    "maven-comparison": "dyalog -script maven_vs_aplcd_comparison.apl",
-    "setup-claude": "./setup-claude-desktop.sh"
+    "benchmark": "./aplcicd benchmark",
+    "finale": "dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl",
+    "5min": "dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl",
+    "maven-integration": "dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl",
+    "maven-comparison": "dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl",
+    "setup-claude": "mcp-demos/setup-claude-desktop.sh"
   },
   "keywords": [
     "APL", 

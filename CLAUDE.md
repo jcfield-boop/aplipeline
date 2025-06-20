@@ -18,9 +18,8 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 - `./aplcicd complete` - Complete system demonstration with all APL-CD features
 - `./aplcicd demo` - Array-oriented dependency resolution and parallel execution demo  
 - `./aplcicd test` - Comprehensive system testing with competition validation
-- `dyalog -script maven_integration_demo.apl` - **Real Maven integration (28x speedup)**
-- `dyalog -script maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (28x speedup)**
-- `dyalog -script maven_real_xml_parser.apl` - **Real XML DOM parsing demonstration**
+- `dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl` - **Real Maven integration (28x speedup)**
+- `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (28x speedup)**
 - `dyalog -script simple_benchmark.apl` - **O(N²) vs O(N³) performance proof**
 
 ### Maven Core Integration (Production-Ready)
@@ -72,6 +71,62 @@ APL-CD is an array-oriented continuous deployment system that uses APL's mathema
 - **config/default.json** - System configuration with pipeline, security, and performance settings
 - **aplcicd.dcfg** - Package descriptor
 - **web/dashboard.html** - Generated real-time dashboard (auto-created)
+
+## Project Structure
+
+### Core APL-CD System (Standalone)
+```
+src/                    # Core Dyalog APL modules
+├── APLCICD.dyalog     # Main system orchestrator
+├── DependencyMatrix.dyalog  # Matrix-based dependency resolution
+├── ParallelPipeline.dyalog  # Array-oriented parallel execution
+├── Pipeline.dyalog    # CI/CD automation
+├── Security.dyalog    # Input validation and security
+├── Monitor.dyalog     # Performance monitoring
+├── Benchmark.dyalog   # Performance analysis
+├── Config.dyalog      # Configuration management
+├── GitAPL.dyalog      # Native APL Git integration
+├── SelfOptimizer.dyalog  # Self-analysis and improvement
+├── EnterpriseIntegration.dyalog  # Enterprise CI/CD integration
+├── Tests.dyalog       # Comprehensive test suite
+└── Utils.dyalog       # Utility functions
+
+config/
+└── default.json       # Core system configuration
+
+aplcicd                # Main executable
+aplcicd.dcfg          # Package descriptor
+setup                 # Setup script
+```
+
+### MCP & Demo Directory (Consolidated)
+```
+mcp-demos/
+├── mcp-server/        # MCP service implementation
+│   ├── src/          # TypeScript source files
+│   ├── package.json  # Node.js dependencies
+│   └── tsconfig.json # TypeScript configuration
+├── apl-mcp/          # APL-MCP wrapper
+│   ├── mcp-wrapper.dyalog
+│   └── test-integration.apl
+├── demo-scripts/     # Consolidated demo files
+│   ├── simple_5min_demo.apl
+│   ├── maven_integration_demo.apl
+│   ├── maven_vs_aplcd_comparison.apl
+│   ├── focused_recursive_test.apl
+│   └── recursive_analysis.apl
+├── test-files/       # Test and validation files
+├── setup-claude-desktop.sh  # Claude Desktop setup
+└── README.md         # MCP-specific documentation
+```
+
+### Documentation & Test Data
+```
+docs/                 # System documentation
+tests/                # Security and system tests
+logs/                 # Runtime logs
+spring-petclinic/     # Maven benchmark data
+```
 
 ## Key Features
 
@@ -172,6 +227,11 @@ Comprehensive system test covering all core functionality including security val
 - `./aplcicd pipeline` - Full CI/CD pipeline with monitoring and analytics
 - `./aplcicd benchmark` - Performance testing and metrics analysis
 - `./aplcicd stats` - View comprehensive usage analytics and trends
+
+**MCP & Demo Testing:**
+- `dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl` - Quick system demonstration
+- `dyalog -script mcp-demos/demo-scripts/focused_recursive_test.apl` - Recursive analysis testing
+- `mcp-demos/setup-claude-desktop.sh` - Setup Claude Desktop MCP integration
 
 **Advanced Testing:**
 - `./aplcicd optimize` - Self-improvement and meta-programming capabilities
@@ -319,6 +379,14 @@ When run on itself, APL-CD can:
 - Run dependency matrix operations on sample data
 - Execute pipeline analysis with performance timing
 - Benchmark execution performance vs traditional approaches
+
+### Demo Script Locations
+All demo scripts have been moved to `mcp-demos/demo-scripts/`:
+- `simple_5min_demo.apl` - Quick system demonstration
+- `maven_integration_demo.apl` - Real Maven integration showcase
+- `maven_vs_aplcd_comparison.apl` - Head-to-head performance comparison
+- `focused_recursive_test.apl` - Recursive analysis testing
+- `recursive_analysis.apl` - Comprehensive recursive analysis
 
 ### Limitations
 - Namespace scope issues prevent some cross-module calls in scripts

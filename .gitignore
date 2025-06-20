@@ -16,8 +16,8 @@ logs/*.log
 *.bak
 
 # Node.js (MCP Server build artifacts)
-mcp-server/node_modules/
-mcp-server/dist/
+mcp-demos/mcp-server/node_modules/
+mcp-demos/mcp-server/dist/
 
 # IDE and Editor files
 .vscode/

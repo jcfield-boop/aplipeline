@@ -160,41 +160,115 @@ Analysis:
 
 ## System Architecture
 
+### Project Structure
+
+APL-CD is organized with clear separation between core functionality and extensions:
+
+```
+### Core APL-CD System (Standalone)
+src/                    # Core Dyalog APL modules
+├── APLCICD.dyalog     # Main system orchestrator
+├── DependencyMatrix.dyalog  # Matrix-based dependency resolution (O(N²))
+├── ParallelPipeline.dyalog  # Array-oriented parallel execution
+├── Pipeline.dyalog    # CI/CD automation and processing
+├── Security.dyalog    # Input validation and security controls
+├── Monitor.dyalog     # Performance monitoring and analytics
+├── Benchmark.dyalog   # Performance analysis vs traditional CI/CD
+├── Config.dyalog      # Configuration management
+├── GitAPL.dyalog      # Native APL Git integration
+├── SelfOptimizer.dyalog  # Self-analysis and improvement
+├── EnterpriseIntegration.dyalog  # Enterprise CI/CD integration
+├── Tests.dyalog       # Comprehensive test suite
+└── Utils.dyalog       # Utility functions
+
+config/
+└── default.json       # Core system configuration
+
+aplcicd                # Main executable
+aplcicd.dcfg          # Package descriptor  
+setup                 # Setup script
+
+### MCP & Demo Extensions (Consolidated)
+mcp-demos/
+├── mcp-server/        # MCP service implementation
+│   ├── src/          # TypeScript source files
+│   ├── package.json  # Node.js dependencies
+│   └── tsconfig.json # TypeScript configuration
+├── apl-mcp/          # APL-MCP wrapper
+│   ├── mcp-wrapper.dyalog
+│   └── test-integration.apl
+├── demo-scripts/     # Consolidated demo files
+│   ├── simple_5min_demo.apl
+│   ├── maven_integration_demo.apl
+│   ├── maven_vs_aplcd_comparison.apl
+│   ├── focused_recursive_test.apl
+│   └── recursive_analysis.apl
+├── test-files/       # Test and validation files
+├── setup-claude-desktop.sh  # Claude Desktop setup
+└── README.md         # MCP-specific documentation
+
+### Supporting Infrastructure
+docs/                 # System documentation
+tests/                # Security and system tests
+logs/                 # Runtime logs
+spring-petclinic/     # Maven benchmark data
+```
+
 ### Module Hierarchy
 
 ```
-APLCICD (Orchestrator)
-├── Vibe (Token Optimization Engine)
-├── SelfOptimizer (Meta-Programming Engine)  
-├── RealPipeline (CI/CD Execution Engine)
-├── RealMonitor (Performance Metrics Engine)
+APLCICD (Core Orchestrator)
+├── DependencyMatrix (O(N²) Matrix Operations)
+├── ParallelPipeline (Array-Oriented Execution)  
+├── Pipeline (CI/CD Processing Engine)
+├── Monitor (Performance Metrics Engine)
+├── Security (Validation & Controls)
+├── Benchmark (Performance Analysis)
+├── Config (Configuration Engine)
 ├── GitAPL (Version Control Engine)
-├── HTMLDashboard (Human Interface Engine)
-└── Config (Configuration Engine)
+├── SelfOptimizer (Meta-Programming Engine)
+├── EnterpriseIntegration (Enterprise Features)
+├── Tests (Test Suite)
+└── Utils (Shared Utilities)
+
+MCP Extensions (Optional)
+├── mcp-server (Claude Desktop Integration)
+├── apl-mcp (APL-MCP Communication)
+└── demo-scripts (Demonstration Suite)
 ```
 
 ### Dependency Graph
 
 ```mermaid
 graph TD
-    A[APLCICD] --> B[Vibe]
-    A --> C[SelfOptimizer]
-    A --> D[RealPipeline]
-    A --> E[RealMonitor]
-    A --> F[GitAPL]
-    A --> G[HTMLDashboard]
+    A[APLCICD] --> B[DependencyMatrix]
+    A --> C[ParallelPipeline]
+    A --> D[Pipeline]
+    A --> E[Monitor]
+    A --> F[Security]
+    A --> G[Benchmark]
     A --> H[Config]
+    A --> I[GitAPL]
+    A --> J[SelfOptimizer]
+    A --> K[EnterpriseIntegration]
+    A --> L[Tests]
+    A --> M[Utils]
     
     D --> F
+    D --> I
     C --> B
-    C --> D
-    C --> E
-    G --> E
-    G --> F
+    J --> B
+    J --> D
+    J --> E
+    E --> H
+    G --> B
+    G --> C
     
     style A fill:#e1f5fe
     style B fill:#f3e5f5
     style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style F fill:#ffebee
 ```
 
 ### Data Flow Architecture

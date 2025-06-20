@@ -98,13 +98,13 @@ APL-CD has been proven to significantly outperform Maven on identical dependency
 
 ```bash
 # 28x speedup on real Spring PetClinic data (first mathematical approach)
-dyalog -script maven_integration_demo.apl
+dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 
 # 28x speedup in head-to-head comparison with real XML parsing (first mathematical approach)
-dyalog -script maven_vs_aplcd_comparison.apl
+dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl
 
-# Real XML DOM parsing demonstration (production-ready)
-dyalog -script maven_real_xml_parser.apl
+# 5-minute comprehensive technical demonstration
+dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl
 ```
 
 ### Technical Verification
@@ -195,20 +195,20 @@ APL-CD features seamless integration with Claude Desktop via MCP (Model Context 
 
 1. **Build the MCP Server:**
 ```bash
-cd mcp-server
+cd mcp-demos/mcp-server
 npm install
 npm run build
-cd ..
+cd ../..
 ```
 
 2. **Configure Claude Desktop:**
 ```bash
 # Run the setup script
-./setup-claude-desktop.sh
+mcp-demos/setup-claude-desktop.sh
 ```
 
 3. **Verify Setup:**
-   - Check that `mcp-server/dist/` contains compiled JavaScript files
+   - Check that `mcp-demos/mcp-server/dist/` contains compiled JavaScript files
    - Verify `~/Library/Application Support/Claude/claude_desktop_config.json` exists
    - Restart Claude Desktop application
 
@@ -245,13 +245,13 @@ This integration transforms APL-CD into an AI-accessible platform, making array-
 
 **MCP Server Issues:**
 - Ensure Node.js 18+ is installed: `node --version`
-- Verify build completed: Check `mcp-server/dist/index.js` exists
+- Verify build completed: Check `mcp-demos/mcp-server/dist/index.js` exists
 - Check Claude Desktop Developer settings for MCP status
 
 **File Path Issues:**
 - The setup script uses absolute paths: `$(pwd)` in configuration
 - Ensure the project directory is stable (don't move after setup)
-- Re-run `./setup-claude-desktop.sh` if project is moved
+- Re-run `mcp-demos/setup-claude-desktop.sh` if project is moved
 
 **Claude Desktop Integration:**
 - Restart Claude Desktop after configuration changes
@@ -273,7 +273,7 @@ This integration transforms APL-CD into an AI-accessible platform, making array-
 ./aplcicd demo
 
 # Real Maven integration demo
-dyalog -script maven_integration_demo.apl
+dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 
 # Algorithmic complexity proof
 ./aplcicd benchmark
