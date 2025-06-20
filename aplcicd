@@ -426,7 +426,7 @@ run_jenkins_comparison() {
     local project_path="${1:-src}"
     log_header "APL-CD vs Jenkins Performance Comparison"
     
-    run_apl_script "jenkins_comparison_demo.apl" "Jenkins performance comparison"
+    run_apl_script "mcp-demos/demo-scripts/jenkins_comparison_demo.apl" "Jenkins performance comparison"
 }
 
 # Run real-world bake-off
@@ -434,7 +434,7 @@ run_real_world_bakeoff() {
     local project_path="${1:-.}"
     log_header "Real-World Bake-off: APL-CD vs Jenkins"
     
-    run_apl_script "real_bakeoff_simple.apl" "Real-world enterprise project comparison"
+    run_apl_script "mcp-demos/demo-scripts/real_bakeoff_simple.apl" "Real-world enterprise project comparison"
 }
 
 # Run Spring PetClinic benchmark
@@ -447,7 +447,7 @@ run_spring_petclinic_benchmark() {
         git clone https://github.com/spring-projects/spring-petclinic.git external_benchmark/spring-petclinic
     fi
     
-    run_apl_script "spring_petclinic_simple.apl" "Spring PetClinic industry-standard benchmark"
+    run_apl_script "mcp-demos/demo-scripts/spring_petclinic_simple.apl" "Spring PetClinic industry-standard benchmark"
 }
 
 
@@ -652,16 +652,16 @@ main() {
             run_recursive_demo
             ;;
         "finale"|"5min")
-            run_apl_script "simple_5min_demo.apl" "5-minute technical demonstration"
+            run_apl_script "mcp-demos/demo-scripts/simple_5min_demo.apl" "5-minute technical demonstration"
             ;;
         "benchmark")
-            run_apl_script "simple_benchmark.apl" "O(N²) vs O(N³) performance comparison"
+            run_apl_script "mcp-demos/demo-scripts/simple_benchmark.apl" "O(N²) vs O(N³) performance comparison"
             ;;
         "integration")
-            run_apl_script "integration_example.apl" "APL Forge submission analysis"
+            run_apl_script "mcp-demos/demo-scripts/integration_example.apl" "APL Forge submission analysis"
             ;;
         "direct")
-            run_apl_script "direct_demo.apl" "Direct working system demo"
+            run_apl_script "mcp-demos/demo-scripts/direct_demo.apl" "Direct working system demo"
             ;;
         "competition")
             run_competition_server

@@ -64,7 +64,7 @@ class APLCDMCPServer {
   private async run5MinDemo(args: any) {
     const includeVisuals = args?.include_visuals !== false;
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://apl-mcp/mcp-wrapper.dyalog'
+      ⎕FIX'file://mcp-demos/apl-mcp/mcp-wrapper.dyalog'
       MCPWrapper.Initialize
       result ← MCPWrapper.FiveMinuteDemo ${includeVisuals ? 1 : 0}
       MCPWrapper.ToJSON result
@@ -81,7 +81,7 @@ class APLCDMCPServer {
   }
   private async analyzeSpringPetclinic(args: any) {
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://apl-mcp/mcp-wrapper.dyalog'
+      ⎕FIX'file://mcp-demos/apl-mcp/mcp-wrapper.dyalog'
       MCPWrapper.Initialize
       result ← MCPWrapper.SpringPetclinicAnalysis
       MCPWrapper.ToJSON result
@@ -100,7 +100,7 @@ class APLCDMCPServer {
   private async benchmarkPerformance(args: any) {
     const sizes = args?.project_sizes || [10, 25, 50, 100];
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://apl-mcp/mcp-wrapper.dyalog'
+      ⎕FIX'file://mcp-demos/apl-mcp/mcp-wrapper.dyalog'
       MCPWrapper.Initialize
       result ← MCPWrapper.PerformanceBenchmark ${sizes.join(' ')}
       MCPWrapper.ToJSON result
@@ -119,7 +119,7 @@ class APLCDMCPServer {
   private async runSecurityScan(args: any) {
     const file = args?.file || 'src/APLCICD.dyalog';
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://apl-mcp/mcp-wrapper.dyalog'
+      ⎕FIX'file://mcp-demos/apl-mcp/mcp-wrapper.dyalog'
       MCPWrapper.Initialize
       result ← MCPWrapper.SecurityScanMCP '${file}'
       MCPWrapper.ToJSON result
@@ -384,7 +384,7 @@ Demonstrates the first mathematical approach to dependency resolution using APL'
 
   private async mavenIntegrationDemo(args: any) {
     const result = await this.aplInterface.execute(`
-      dyalog -script maven_integration_demo.apl 2>&1
+      dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl 2>&1
     `);
     
     return {
@@ -438,7 +438,7 @@ This demonstrates APL-CD's matrix operations working on actual enterprise applic
   private async mavenVsAplcdComparison(args: any) {
     const includeXmlParsing = args?.include_xml_parsing !== false;
     const result = await this.aplInterface.execute(`
-      dyalog -script maven_vs_aplcd_comparison.apl 2>&1
+      dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl 2>&1
     `);
     
     return {
@@ -510,7 +510,7 @@ This demonstrates APL-CD's matrix operations working on actual enterprise applic
   private async validateWithRealMaven(args: any) {
     const mavenCommand = args?.maven_command || 'dependency:tree';
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://maven_vs_aplcd_comparison.apl'
+      ⎕FIX'file://mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl'
       result ← ValidateWithRealMaven
       result
     `);
@@ -528,7 +528,7 @@ This demonstrates APL-CD's matrix operations working on actual enterprise applic
   private async liveMavenDemo(args: any) {
     const phaseByPhase = args?.phase_by_phase !== false;
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://maven_vs_aplcd_comparison.apl'
+      ⎕FIX'file://mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl'
       result ← LiveMavenDemo
       result
     `);
@@ -546,7 +546,7 @@ This demonstrates APL-CD's matrix operations working on actual enterprise applic
   private async realXmlParsingDemo(args: any) {
     const pomFile = args?.pom_file || 'spring-petclinic/pom.xml';
     const result = await this.aplInterface.execute(`
-      dyalog -script maven_real_xml_parser.apl 2>&1
+      dyalog -script mcp-demos/demo-scripts/maven_real_xml_parser.apl 2>&1
     `);
     
     return {
@@ -730,7 +730,7 @@ This demonstrates APL-CD performs REAL XML DOM parsing, not simulation or hardco
   private async parseSpringPetclinicPom(args: any) {
     const includeExternalBenchmark = args?.include_external_benchmark !== false;
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://maven_vs_aplcd_comparison.apl'
+      ⎕FIX'file://mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl'
       result ← ParseSpringPetClinicPOM
       result
     `);
@@ -748,7 +748,7 @@ This demonstrates APL-CD performs REAL XML DOM parsing, not simulation or hardco
   private async compareWithMavenTiming(args: any) {
     const showValidation = args?.show_validation !== false;
     const result = await this.aplInterface.execute(`
-      ⎕FIX'file://maven_vs_aplcd_comparison.apl'
+      ⎕FIX'file://mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl'
       result ← CompareWithMaven
       result
     `);
@@ -866,7 +866,7 @@ This proves APL-CD's revolutionary mathematical approach to dependency resolutio
   private async coreMavenIntegrationDemo(args: any) {
     const projectPath = args?.project_path || 'spring-petclinic';
     const result = await this.aplInterface.execute(`
-      dyalog -script spring_petclinic_core_integration.apl 2>&1
+      dyalog -script mcp-demos/demo-scripts/spring_petclinic_core_integration.apl 2>&1
     `);
     
     return {
