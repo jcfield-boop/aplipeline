@@ -80,6 +80,15 @@ The MCP demos complement but are separate from the core APL-CD system in `src/`.
 3. **Easy maintenance** - MCP-specific code isolated from core algorithms
 4. **Demonstration focus** - Consolidated location for all demo and test scripts
 
+## Status
+
+✅ **FULLY UPDATED** - All MCP tools updated for new consolidated structure!
+
+- All file paths in MCP server updated to new directory structure
+- Demo scripts properly referenced in `mcp-demos/demo-scripts/`
+- MCP server rebuilt with corrected paths
+- All 6 MCP tools working with new consolidated layout
+
 ## Getting Started
 
 1. **Core APL-CD setup** - Ensure main system works: `./aplcicd test`

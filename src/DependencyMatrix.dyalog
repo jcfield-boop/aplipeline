@@ -563,10 +563,11 @@
             :EndIf
             
             content ← ⊃⎕NGET filepath 1
-            filename ← ⊃⊃⌽⎕NPARTS filepath
+            parts ← ⎕NPARTS filepath
+            filename ← ⊃⊃⌽parts
             
             ⍝ Remove file extension for cleaner dependency tracking
-            clean_filename ← ⊃⊃1↓⎕NPARTS filepath
+            clean_filename ← 1⊃parts  ⍝ Get filename without extension
             
             :For line :In content
                 :If 0<≢line
@@ -626,13 +627,20 @@
         :Trap 0
             ⍝ Look for file:// pattern
             :If ∨/'file://'⍷line
-                start ← ⊃⍸'file://'⍷line
-                rest ← (start+6)↓line
-                quote_pos ← ⍸''''=rest
-                :If 0<≢quote_pos
-                    fixed_file ← (⊃quote_pos)↑rest
+                ⍝ Find all quotes in the line
+                quote_pos ← ⍸''''=line
+                :If 1<≢quote_pos
+                    ⍝ Extract content between first pair of quotes
+                    start_quote ← ⊃quote_pos
+                    end_quote ← 1⊃quote_pos
+                    length ← (end_quote-start_quote)-1
+                    file_path ← length↑(start_quote+1)↓line
+                    ⍝ Remove file:// prefix if present
+                    :If ∨/'file://'⍷file_path
+                        file_path ← 7↓file_path
+                    :EndIf
                     ⍝ Extract just the filename without path/extension
-                    fixed_file ← ⊃⊃1↓⎕NPARTS fixed_file
+                    fixed_file ← 1⊃⎕NPARTS file_path
                 :EndIf
             :EndIf
         :EndTrap

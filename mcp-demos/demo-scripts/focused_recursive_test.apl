@@ -46,8 +46,9 @@ total_deps ← 0 2⍴''
     :Trap 0
         file_deps ← DependencyMatrix.ExtractAPLFileDeps file
         total_deps ← total_deps⍪file_deps
-        filename ← ⊃⊃⌽⎕NPARTS file
-        ⎕←'Analyzed: ',filename,' - ',⍕⊃⍴file_deps,' dependencies'
+        filename ← 1⊃⎕NPARTS file
+        dep_count ← ⊃⍴file_deps
+        ⎕←'Analyzed: ',filename,' - ',⍕dep_count,' dependencies'
     :Else
         ⎕←'Failed to analyze: ',file,' - ',⎕DM
     :EndTrap
@@ -203,7 +204,8 @@ final_health ← ⌊100×health_score÷3
 ⎕←'### Performance Characteristics'
 :If 0<≢perf_times
     ⎕←'• Matrix construction: ',⍕avg_perf,'ms average'
-    ⎕←'• Consistency: ',⍕⌈/perf_times-⌊/perf_times,'ms variance'
+    variance ← (⌈/perf_times)-(⌊/perf_times)
+    ⎕←'• Consistency: ',⍕variance,'ms variance'
 :EndIf
 ⎕←'• System health: ',⍕final_health,'% operational status'
 ⎕←''
