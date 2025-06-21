@@ -122,7 +122,14 @@
     ⍝ Ensure Spring PetClinic exists
     :If ~⎕NEXISTS 'spring-petclinic'
         ⎕←'📁 Cloning Spring PetClinic for validation...'
-        ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
+        :Trap 11
+            ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
+        :Else
+            ⎕←'❌ Git not available - cannot clone Spring PetClinic'
+            ⎕←'Please install Git or manually place spring-petclinic/ directory'
+            result.validation_status ← 'REQUIRES_GIT'
+            →result
+        :EndTrap
     :EndIf
     
     ⍝ Get Maven's dependency tree
@@ -228,8 +235,12 @@
         ⎕←'✅ Spring PetClinic repository ready'
     :Else
         ⎕←'📁 Cloning Spring PetClinic...'
-        ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
-        ⎕←'✅ Repository cloned'
+        :Trap 11
+            ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
+            ⎕←'✅ Repository cloned'
+        :Else
+            ⎕←'❌ Git not available - using pre-bundled data'
+        :EndTrap
     :EndIf
     
     ⎕←''
@@ -335,8 +346,12 @@
     ⎕←'📁 Step 1: Ensuring Spring PetClinic repository...'
     :If ~⎕NEXISTS 'spring-petclinic'
         ⎕←'   Cloning Spring PetClinic repository...'
-        ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
-        ⎕←'   ✅ Repository cloned'
+        :Trap 11
+            ⎕SH 'git clone --depth 1 https://github.com/spring-projects/spring-petclinic.git'
+            ⎕←'   ✅ Repository cloned'
+        :Else
+            ⎕←'   ❌ Git not available - using existing Spring PetClinic if present'
+        :EndTrap
     :Else
         ⎕←'   ✅ Repository already exists'
     :EndIf
