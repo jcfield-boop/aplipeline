@@ -271,13 +271,18 @@ cd ../..
 
 2. **Configure Claude Desktop:**
 ```bash
-# Run the setup script
+# Run the automated setup script (works from any directory)
 mcp-demos/setup-claude-desktop.sh
 ```
 
+**For Windows/Linux users:** The script automatically detects paths and works on any system where the project is cloned. It uses `$(pwd)` and relative path resolution to work regardless of the installation directory.
+
 3. **Verify Setup:**
    - Check that `mcp-demos/mcp-server/dist/` contains compiled JavaScript files
-   - Verify `~/Library/Application Support/Claude/claude_desktop_config.json` exists
+   - Verify Claude config exists:
+     - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+     - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+     - **Linux**: `~/.config/Claude/claude_desktop_config.json`
    - Restart Claude Desktop application
 
 **After restart**, interact with APL-CD using natural language:
