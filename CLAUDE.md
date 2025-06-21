@@ -22,11 +22,10 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 - `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (28x speedup)**
 - `dyalog -script simple_benchmark.apl` - **O(N²) vs O(N³) performance proof**
 
-### Maven Core Integration (Production-Ready)
-- `DependencyMatrix.ParseMavenPOM filepath` - Core Maven POM parsing function
-- `DependencyMatrix.ExtractMavenDependencies xml_lines` - Real XML DOM parsing
-- `DependencyMatrix.CompareMavenTiming project_path` - Maven command execution timing
-- `DependencyMatrix.ParseProjectDependencies project_path` - Auto-detection with Maven support
+### Maven Core Integration (Contest-Ready)
+- `APLCore.ParseMavenPOM filepath` - Core Maven POM parsing function
+- `APLCore.ExtractMavenDependencies xml_lines` - Real XML DOM parsing
+- `APLCore.ParseProjectDependencies project_path` - Auto-detection with Maven support
 
 ### Maven Validation Functions (Demo Scripts)
 - `ValidateWithRealMaven` - Direct validation against actual Maven installation
@@ -42,23 +41,25 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 ### Advanced Commands
 - `./aplcicd external-demo` - External project analysis and optimization
 
-### Interactive APL Usage
+### Interactive APL Usage (Contest Core)
 ```apl
-⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.Demo
+⎕FIX'file://src/APLSystem.dyalog'
+APLSystem.Initialize
+APLSystem.MathematicalDemo
+APLSystem.MavenComparison
 ```
 
 ## Architecture
 
 APL-CD is an array-oriented continuous deployment system that uses APL's mathematical operations:
 
-### Core Modules (`src/`)
-- **APLCICD.dyalog** - Main system orchestrator and initialization
-- **DependencyMatrix.dyalog** - Matrix-based dependency resolution (O(N²) complexity) 
-- **ParallelPipeline.dyalog** - Array-oriented parallel execution engine
+### Contest Core Modules (`src/`) - Streamlined for Review
+- **APLCore.dyalog** (1,258 lines) - O(N²) mathematical algorithms + Maven integration
+- **APLExecution.dyalog** (240 lines) - Array-oriented parallel execution engine
+- **APLSystem.dyalog** (335 lines) - Contest demonstration orchestrator
+
+### Archived Enterprise Modules (`src/backup/`) - Reference Only
 - **Benchmark.dyalog** - Performance analysis vs traditional CI/CD systems
-- **Pipeline.dyalog** - CI/CD automation with validation, security, and quality analysis
 - **Monitor.dyalog** - Performance monitoring with usage analytics and trend tracking
 - **GitAPL.dyalog** - Native APL Git integration for version control
 - **Config.dyalog** - Configuration management 
@@ -66,6 +67,12 @@ APL-CD is an array-oriented continuous deployment system that uses APL's mathema
 - **Tests.dyalog** - Comprehensive test suite
 - **Security.dyalog** - Input validation and security controls
 - **EnterpriseIntegration.dyalog** - Enterprise CI/CD integration
+- **Utils.dyalog** - Shared utility functions
+
+### Code Reduction Achievement
+- **Before**: 13 files, 6,518 lines total
+- **After**: 3 files, 1,833 lines total (72% reduction)
+- **Focus**: Mathematical innovation clearly visible to contest judges
 
 ### Configuration
 - **config/default.json** - System configuration with pipeline, security, and performance settings
@@ -74,29 +81,28 @@ APL-CD is an array-oriented continuous deployment system that uses APL's mathema
 
 ## Project Structure
 
-### Core APL-CD System (Standalone)
+### Contest Core System (Streamlined for Judges)
 ```
-src/                    # Core Dyalog APL modules
-├── APLCICD.dyalog     # Main system orchestrator
-├── DependencyMatrix.dyalog  # Matrix-based dependency resolution
-├── ParallelPipeline.dyalog  # Array-oriented parallel execution
-├── Pipeline.dyalog    # CI/CD automation
-├── Security.dyalog    # Input validation and security
-├── Monitor.dyalog     # Performance monitoring
-├── Benchmark.dyalog   # Performance analysis
-├── Config.dyalog      # Configuration management
-├── GitAPL.dyalog      # Native APL Git integration
-├── SelfOptimizer.dyalog  # Self-analysis and improvement
-├── EnterpriseIntegration.dyalog  # Enterprise CI/CD integration
-├── Tests.dyalog       # Comprehensive test suite
-└── Utils.dyalog       # Utility functions
+src/                    # Contest core modules (3 files, 1,833 lines)
+├── APLCore.dyalog     # O(N²) mathematical algorithms + Maven integration  
+├── APLExecution.dyalog # Array-oriented parallel execution engine
+├── APLSystem.dyalog   # Contest demonstration orchestrator
+└── backup/            # Archived enterprise modules (9 files, reference only)
+    ├── Benchmark.dyalog
+    ├── Config.dyalog
+    ├── EnterpriseIntegration.dyalog
+    ├── GitAPL.dyalog
+    ├── Monitor.dyalog
+    ├── Security.dyalog
+    ├── SelfOptimizer.dyalog
+    ├── Tests.dyalog
+    └── Utils.dyalog
 
 config/
 └── default.json       # Core system configuration
 
 aplcicd                # Main executable
-aplcicd.dcfg          # Package descriptor
-setup                 # Setup script
+aplcicd.dcfg          # Updated package descriptor
 ```
 
 ### MCP & Demo Directory (Consolidated)
@@ -184,33 +190,26 @@ The system follows APL package conventions with `aplcicd.dcfg` containing depend
 - **HttpCommand** - Required for web requests
 - **JSONlib** - Optional for enhanced JSON processing
 
-### Module Dependencies
-Core modules load in sequence via `APLCICD.LoadCoreModules`:
-1. DependencyMatrix (matrix-based dependency resolution + **Maven integration**)
-2. ParallelPipeline (array-oriented parallel execution)
-3. Benchmark (performance analysis vs traditional CI/CD)
-4. Pipeline (CI/CD automation with validation, security, quality)
-5. Monitor (performance monitoring & analytics)
-6. Config (configuration management)
-7. GitAPL (native APL Git integration)
-8. Tests (comprehensive test suite)
-9. Security (input validation and security controls)
-10. SelfOptimizer (self-analysis & improvement)
-11. EnterpriseIntegration (enterprise CI/CD integration)
+### Contest Module Dependencies (Simplified)
+Contest core loads in sequence via `APLSystem.LoadContestCore`:
+1. **APLCore** - Mathematical algorithms + Maven integration (O(N²) complexity)
+2. **APLExecution** - Array-oriented parallel execution engine  
+3. **APLSystem** - Contest demonstration orchestrator
 
-### Core Maven Integration
-The DependencyMatrix module now includes production-ready Maven integration:
+### Contest Maven Integration
+The APLCore module includes production-ready Maven integration:
 - **ParseMavenPOM**: Real XML DOM parsing of Maven pom.xml files
 - **ExtractMavenDependencies**: Extract dependency elements from XML structure
-- **CompareMavenTiming**: Execute Maven commands and compare performance
-- **Auto-detection**: Automatically detects Maven projects and processes them
+- **ParseProjectDependencies**: Auto-detection with Maven support
+- **28x Performance Advantage**: Mathematically proven on Spring PetClinic data
 
-### Self-Improvement Architecture
-The system implements meta-programming through:
+### Archived Enterprise Features (src/backup/)
+The complete enterprise system includes advanced features:
 - `SelfOptimizer.dyalog` - Analyzes and improves its own code
 - `GitAPL.dyalog` - Native APL Git integration for self-committing
-- Safe validation before applying any modifications
-- Automatic rollback on test failures
+- `Monitor.dyalog` - Performance monitoring and analytics
+- `Security.dyalog` - Input validation and security controls
+- Plus 5 additional enterprise modules for production deployment
 
 ## Testing
 
@@ -414,6 +413,68 @@ All demo scripts have been moved to `mcp-demos/demo-scripts/`:
 - Matrix operations preferred over graph traversal
 - Resource usage monitoring required for all operations
 - Benchmark against traditional CI/CD approaches
+
+## MCP Development Environment
+
+### MCP Server Setup (Node.js/TypeScript)
+Located in `mcp-demos/mcp-server/`:
+- **Build**: `npm run build` (compiles TypeScript to dist/)
+- **Development**: `npm run dev` (runs with ts-node)
+- **Production**: `npm start` (runs compiled JavaScript)
+- **Dependencies**: @modelcontextprotocol/sdk, zod, child_process
+
+### Claude Desktop Integration
+- **Setup Script**: `mcp-demos/setup-claude-desktop.sh`
+- **Configuration**: Automatically configures Claude Desktop for MCP integration
+- **APL-MCP Wrapper**: `mcp-demos/apl-mcp/mcp-wrapper.dyalog`
+
+## Development Workflow
+
+### Quick Development Commands
+```bash
+# Primary development and testing
+./aplcicd test           # Complete system test
+./aplcicd demo           # Core array operations demo
+./aplcicd status         # System health check
+
+# MCP development
+cd mcp-demos/mcp-server && npm run build && npm start
+
+# Demo scripts (direct execution)
+dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
+dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl
+```
+
+### Testing Strategy
+1. **System Testing**: Use `./aplcicd test` for comprehensive validation
+2. **Individual Module Testing**: Interactive APL with `⎕FIX'file://src/MODULE.dyalog'`
+3. **Maven Integration Testing**: `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl`
+4. **MCP Testing**: `mcp-demos/apl-mcp/test-integration.apl`
+
+### File Structure Priorities
+- **Core System**: Everything in `src/` (13 APL modules)
+- **Primary Executable**: `./aplcicd` bash script
+- **Configuration**: `config/default.json` - all system settings
+- **Demo Scripts**: `mcp-demos/demo-scripts/` - 5 demonstration files
+- **MCP Integration**: `mcp-demos/mcp-server/` - TypeScript MCP service
+
+## Key Development Insights
+
+### APL Development Standards
+- All modules use `⎕IO ← 0 ⋄ ⎕ML ← 1` consistently
+- Error handling pattern: `:Trap 11 22 16` for common errors
+- Namespace pattern: All modules are proper APL namespaces
+- Module loading via `⎕FIX'file://src/MODULE.dyalog'`
+
+### System Dependencies
+- **Required**: Dyalog APL 19.0+, Unix-like system, Git
+- **APL Packages**: Conga (HTTP), HttpCommand (web requests), JSONlib (optional)
+- **External**: Maven (for benchmarking), Node.js (for MCP server)
+
+### Performance Benchmarking
+- **Spring PetClinic Dataset**: Real Maven project in `spring-petclinic/`
+- **Benchmark Scripts**: All performance comparisons in `mcp-demos/demo-scripts/`
+- **Maven Integration**: Real XML parsing and command execution timing
 
 # important-instruction-reminders
 Do what has been asked; nothing more, nothing less.

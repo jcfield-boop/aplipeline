@@ -5,8 +5,8 @@
   "author": "APL Forge Contest 2025",
   "license": "MIT",
   "dyalog_version": "19.0",
-  "main": "./src/APLCICD.dyalog",
-  "startup": "APLCICD.Initialize",
+  "main": "./src/APLSystem.dyalog",
+  "startup": "APLSystem.Initialize",
   "target": "1",
   "dependencies": {
     "Conga": "*",
@@ -16,40 +16,32 @@
     "JSONlib": "*"
   },
   "core_modules": {
-    "APLCICD": "./src/APLCICD.dyalog",
-    "DependencyMatrix": "./src/DependencyMatrix.dyalog",
-    "ParallelPipeline": "./src/ParallelPipeline.dyalog",
-    "Pipeline": "./src/Pipeline.dyalog"
+    "APLCore": "./src/APLCore.dyalog",
+    "APLExecution": "./src/APLExecution.dyalog", 
+    "APLSystem": "./src/APLSystem.dyalog"
   },
   "exports": {
-    "APLCICD": "./src/APLCICD.dyalog",
-    "DependencyMatrix": "./src/DependencyMatrix.dyalog",
-    "ParallelPipeline": "./src/ParallelPipeline.dyalog",
-    "Pipeline": "./src/Pipeline.dyalog",
-    "Security": "./src/Security.dyalog"
+    "APLCore": "./src/APLCore.dyalog",
+    "APLExecution": "./src/APLExecution.dyalog",
+    "APLSystem": "./src/APLSystem.dyalog"
   },
   "api": {
     "entry_points": [
-      "APLCICD.Initialize",
-      "APLCICD.HealthCheck",
-      "APLCICD.Status",
-      "DependencyMatrix.BuildDependencyMatrix",
-      "DependencyMatrix.TopologicalSort", 
-      "DependencyMatrix.FindParallelTasks",
-      "DependencyMatrix.ArrayDependencyDemo",
-      "DependencyMatrix.ParseMavenPOM",
-      "DependencyMatrix.ExtractMavenDependencies",
-      "DependencyMatrix.CompareMavenTiming",
-      "DependencyMatrix.ParseProjectDependencies",
-      "ParallelPipeline.ExecuteParallel",
-      "ParallelPipeline.ParallelPipelineDemo",
-      "Pipeline.ExecutePipeline",
-      "Security.ValidateFilePath",
-      "Security.SecureReadFile",
-      "ValidateWithRealMaven",
-      "LiveMavenDemo", 
-      "ParseMavenTreeOutput",
-      "ParsePomXMLDependencies"
+      "APLSystem.Initialize",
+      "APLSystem.ContestStatus",
+      "APLSystem.MathematicalDemo",
+      "APLSystem.MavenComparison",
+      "APLSystem.ParallelExecution",
+      "APLSystem.QuickDemo",
+      "APLCore.BuildDependencyMatrix",
+      "APLCore.TopologicalSort", 
+      "APLCore.FindParallelTasks",
+      "APLCore.DetectCycles",
+      "APLCore.ParseMavenPOM",
+      "APLCore.ExtractMavenDependencies",
+      "APLCore.ParseProjectDependencies",
+      "APLExecution.ExecuteParallel",
+      "APLExecution.ParallelExecutionDemo"
     ],
     "demo_scripts": [
       "mcp-demos/demo-scripts/simple_5min_demo.apl",
@@ -57,16 +49,15 @@
       "mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl"
     ],
     "maven_core_functions": [
-      "DependencyMatrix.ParseMavenPOM - Core Maven POM parsing function",
-      "DependencyMatrix.ExtractMavenDependencies - Real XML DOM parsing in core",
-      "DependencyMatrix.CompareMavenTiming - Maven command execution timing",
-      "DependencyMatrix.ParseProjectDependencies - Auto-detection with Maven support"
+      "APLCore.ParseMavenPOM - Core Maven POM parsing function",
+      "APLCore.ExtractMavenDependencies - Real XML DOM parsing in core",
+      "APLCore.ParseProjectDependencies - Auto-detection with Maven support"
     ],
-    "maven_validation_functions": [
-      "ValidateWithRealMaven - Direct validation against actual Maven installation",
-      "LiveMavenDemo - Real-time side-by-side performance comparison", 
-      "ParseMavenTreeOutput - Parse actual Maven dependency:tree output",
-      "ParsePomXMLDependencies - Real XML DOM parsing of pom.xml files"
+    "contest_demonstrations": [
+      "APLSystem.MathematicalDemo - O(N²) algorithms demonstration",
+      "APLSystem.MavenComparison - Real Maven vs APL-CD performance", 
+      "APLSystem.ParallelExecution - Array-oriented parallel execution",
+      "APLSystem.QuickDemo - 2-minute mathematical overview"
     ]
   },
   "config": {
@@ -156,10 +147,12 @@
     "parallel_execution": "Array-based task grouping with vectorized operations"
   },
   "architecture": {
-    "core_modules": "Production-ready modules - APLCICD, DependencyMatrix, ParallelPipeline, Pipeline",
-    "demo_scripts": "4 focused demonstration scripts including Maven integration",
-    "enterprise_validation": "Tested against Spring PetClinic enterprise application",
+    "contest_core": "3 streamlined modules - APLCore (O(N²) algorithms), APLExecution (parallel), APLSystem (orchestrator)",
+    "code_reduction": "72% reduction from 13 files (6,518 lines) to 3 files (1,833 lines)",
+    "demo_scripts": "5 focused demonstration scripts including Maven integration",
+    "enterprise_validation": "Tested against Spring PetClinic enterprise application", 
     "mathematical_foundation": "Built on matrix operations and array-oriented algorithms",
-    "algorithmic_innovation": "First dependency resolution system using array-oriented programming"
+    "algorithmic_innovation": "First dependency resolution system using array-oriented programming",
+    "archived_modules": "9 enterprise modules moved to src/backup/ for reference"
   }
 }

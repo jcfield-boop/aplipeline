@@ -6,15 +6,13 @@
 ⎕←'Analyzing REAL Spring PetClinic dependencies vs Maven'
 ⎕←''
 
-⍝ Load APL-CD system with robust error handling
+⍝ Load APL-CD contest core with robust error handling
 :Trap 0
-    ⎕FIX'file://src/APLCICD.dyalog'
-    APLCICD.Initialize
-    ⎕FIX'file://src/DependencyMatrix.dyalog'
-    DependencyMatrix.Initialize
-    ⎕←'✅ APL-CD core modules loaded successfully'
+    ⎕FIX'file://src/APLSystem.dyalog'
+    APLSystem.Initialize
+    ⎕←'✅ APL-CD contest core loaded successfully'
 :Else
-    ⎕←'❌ Failed to load APL-CD modules: ',⎕DM
+    ⎕←'❌ Failed to load APL-CD contest core: ',⎕DM
     ⎕←'Ensure you are running from the aplipeline root directory'
     →0
 :EndTrap
@@ -28,7 +26,7 @@
     ⍝ First try to parse real pom.xml if available
     :If ⎕NEXISTS 'spring-petclinic/pom.xml'
         ⎕←'   🔍 Parsing real Spring PetClinic pom.xml...'
-        maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+        maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
         :If maven_result.success
             pom_data.dependencies ← maven_result.dependencies
             pom_data.project_name ← 'spring-petclinic'

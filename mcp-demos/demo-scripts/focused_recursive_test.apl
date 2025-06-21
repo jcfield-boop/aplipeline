@@ -5,13 +5,11 @@
 ⎕←'===================================='
 ⎕←''
 
-⍝ Load core system with enhanced error handling
+⍝ Load contest core with enhanced error handling
 :Trap 0
-    ⎕FIX'file://src/APLCICD.dyalog'
-    APLCICD.Initialize
-    ⎕FIX'file://src/DependencyMatrix.dyalog'
-    DependencyMatrix.Initialize
-    ⎕←'✅ Core system loaded for recursive analysis'
+    ⎕FIX'file://src/APLSystem.dyalog'
+    APLSystem.Initialize
+    ⎕←'✅ Contest core loaded for recursive analysis'
 :Else
     ⎕←'❌ System load failed: ',⎕DM
     ⎕←'Ensure you are running from the aplipeline root directory'
@@ -73,7 +71,7 @@ total_deps ← simple_deps
 
 :If 0<⊃⍴total_deps
     :Trap 0
-        dep_matrix ← DependencyMatrix.BuildDependencyMatrix total_deps
+        dep_matrix ← APLCore.BuildDependencyMatrix total_deps
         matrix ← ⊃dep_matrix
         tasks ← 1⊃dep_matrix
         
@@ -136,7 +134,7 @@ total_deps ← simple_deps
     
     :For test :In ⍳3
         start_time ← ⎕AI[3]
-        test_matrix ← DependencyMatrix.BuildDependencyMatrix total_deps
+        test_matrix ← APLCore.BuildDependencyMatrix total_deps
         end_time ← ⎕AI[3]
         perf_times ← perf_times,end_time-start_time
         ⎕←'Matrix build test ',(⍕test),': ',(⍕end_time-start_time),'ms'
@@ -155,7 +153,7 @@ health_score ← 0
 
 ⍝ Test 1: Basic system health
 :Trap 0
-    health ← APLCICD.HealthCheck
+    health ← APLSystem.ContestStatus
     health_score ← health_score + 1
     ⎕←'✅ System health check: PASS'
 :Else
@@ -178,7 +176,7 @@ health_score ← 0
 ⍝ Test 3: Matrix operations
 :Trap 0
     test_deps ← 2 2⍴'A' 'B' 'B' 'C'
-    test_matrix ← DependencyMatrix.BuildDependencyMatrix test_deps
+    test_matrix ← APLCore.BuildDependencyMatrix test_deps
     health_score ← health_score + 1
     ⎕←'✅ Matrix operations: PASS'
 :Else

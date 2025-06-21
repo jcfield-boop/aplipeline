@@ -23,16 +23,14 @@
 ⎕←'How is this possible? Let us show you...'
 ⎕←''
 
-⍝ Load core system with progress and robust error handling
-⎕←'🔧 Loading APL-CD array-oriented engine...'
+⍝ Load contest core system with progress
+⎕←'🔧 Loading APL-CD contest core...'
 :Trap 0
-    ⎕FIX'file://src/APLCICD.dyalog'
-    APLCICD.Initialize
-    ⎕FIX'file://src/DependencyMatrix.dyalog'
-    DependencyMatrix.Initialize
+    ⎕FIX'file://src/APLSystem.dyalog'
+    APLSystem.Initialize
     ⎕←'✅ Ready for mathematical demonstration!'
 :Else
-    ⎕←'❌ Failed to load APL-CD modules: ',⎕DM
+    ⎕←'❌ Failed to load APL-CD contest core: ',⎕DM
     ⎕←'Ensure you are running from the aplipeline root directory'
     →0
 :EndTrap
@@ -53,7 +51,7 @@
 ⎕←'🔢 Building dependency matrix using O(N²) operations...'
 
 deps ← 4 2⍴'A' 'B' 'B' 'C' 'A' 'D' 'D' 'C'
-result ← DependencyMatrix.BuildDependencyMatrix deps
+result ← APLCore.BuildDependencyMatrix deps
 matrix ← ⊃result
 tasks ← 1⊃result
 
@@ -70,7 +68,7 @@ header ← '    ',(1↓∊' ',¨tasks)
 
 ⍝ Real-time build order computation
 ⎕←'🧮 Computing optimal build order with APL array operations...'
-order ← DependencyMatrix.TopologicalSort result
+order ← APLCore.TopologicalSort result
 ⎕←'⚡ Optimal Build Order: ',⍕tasks[order]
 ⎕←'✅ Computed in microseconds using matrix operations!'
 ⎕←''
@@ -119,7 +117,7 @@ order ← DependencyMatrix.TopologicalSort result
 :If ⎕NEXISTS 'spring-petclinic/pom.xml'
     ⎕←'🔍 Analyzing real enterprise application...'
     ⎕←'📄 Parsing Spring PetClinic pom.xml...'
-    maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+    maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
     
     :If maven_result.success
         ⎕←'✅ XML parsing complete: ',⍕≢maven_result.dependencies,' dependencies'

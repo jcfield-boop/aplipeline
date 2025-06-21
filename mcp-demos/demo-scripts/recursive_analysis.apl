@@ -6,15 +6,13 @@
 ⎕←'Analyzing APL-CD using its own mathematical dependency resolution'
 ⎕←''
 
-⍝ Load APL-CD system for self-analysis with robust handling
+⍝ Load APL-CD contest core for self-analysis
 :Trap 0
-    ⎕FIX'file://src/APLCICD.dyalog'
-    APLCICD.Initialize
-    ⎕FIX'file://src/DependencyMatrix.dyalog'
-    DependencyMatrix.Initialize
-    ⎕←'✅ APL-CD system loaded for recursive self-analysis'
+    ⎕FIX'file://src/APLSystem.dyalog'
+    APLSystem.Initialize
+    ⎕←'✅ APL-CD contest core loaded for recursive self-analysis'
 :Else
-    ⎕←'❌ Failed to load APL-CD: ',⎕DM
+    ⎕←'❌ Failed to load APL-CD contest core: ',⎕DM
     ⎕←'Ensure you are running from the aplipeline root directory'
     →0
 :EndTrap
@@ -25,7 +23,7 @@
 
 ⍝ Analyze complete project structure
 start_time ← ⎕AI[3]
-result ← DependencyMatrix.ParseProjectDependencies '.'
+result ← APLCore.ParseProjectDependencies '.'
 analysis_time ← ⎕AI[3] - start_time
 
 ⎕←'Project Type: ',result.project_type
@@ -175,7 +173,7 @@ analysis_time ← ⎕AI[3] - start_time
 run_times ← ⍬
 :For run :In ⍳5
     run_start ← ⎕AI[3]
-    run_result ← DependencyMatrix.ParseProjectDependencies '.'
+    run_result ← APLCore.ParseProjectDependencies '.'
     run_time ← ⎕AI[3] - run_start
     run_times ← run_times,run_time
     ⎕←'Run ',⍕run,': ',⍕run_time,'ms'

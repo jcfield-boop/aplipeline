@@ -7,15 +7,13 @@
 ⎕←'Comparing Maven traditional approach vs APL-CD matrix operations'
 ⎕←''
 
-⍝ Load APL-CD system with robust error handling
+⍝ Load APL-CD contest core with robust error handling
 :Trap 0
-    ⎕FIX'file://src/APLCICD.dyalog'
-    APLCICD.Initialize
-    ⎕FIX'file://src/DependencyMatrix.dyalog'
-    DependencyMatrix.Initialize
-    ⎕←'✅ APL-CD core modules loaded successfully'
+    ⎕FIX'file://src/APLSystem.dyalog'
+    APLSystem.Initialize
+    ⎕←'✅ APL-CD contest core loaded successfully'
 :Else
-    ⎕←'❌ Failed to load APL-CD modules: ',⎕DM
+    ⎕←'❌ Failed to load APL-CD contest core: ',⎕DM
     ⎕←'Ensure you are running from the aplipeline root directory'
     →0
 :EndTrap
@@ -263,7 +261,7 @@
     
     ⎕←'🔍 Parsing real pom.xml...'
     parse_start ← ⎕AI[3]
-    maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+    maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
     :If maven_result.success
         dependencies ← maven_result.dependencies
         parse_time ← ⎕AI[3] - parse_start
@@ -400,7 +398,7 @@
     ⍝ Parse real dependencies from pom.xml (judge-verifiable)
     :If ⎕NEXISTS 'spring-petclinic/pom.xml'
         ⎕←'   🔍 Parsing real pom.xml dependencies...'
-        maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+        maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
         :If maven_result.success
             dependencies ← maven_result.dependencies
             ⎕←'   ✅ Found ',⍕≢dependencies,' real dependencies from XML'

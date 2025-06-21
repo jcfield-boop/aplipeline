@@ -72,13 +72,13 @@
             ⍝ Proper APL domain management - avoid division by zero
             safe_elapsed ← elapsed_ms⌈1  ⍝ Ensure minimum 1ms
             ops_per_ms ← 1000 ÷ safe_elapsed
-            perf.basic_ops_per_sec ← ⌊⍬⌈ops_per_ms
+            perf.basic_ops_per_sec ← ⌊ops_per_ms
             
             ⍝ Simple scoring with proper domain handling
             speed_score ← 10×perf.basic_ops_per_sec>1000
             memory_score ← 10×perf.memory_mb<100
             raw_score ← speed_score + memory_score
-            perf.score ← ⌊⍬⌈raw_score⌊10  ⍝ Ensure valid range 0-10
+            perf.score ← ⌊0⌈raw_score⌊10  ⍝ Ensure valid range 0-10
         :Else
             ⍝ Default values if measurement fails
             perf.memory_mb ← 50
