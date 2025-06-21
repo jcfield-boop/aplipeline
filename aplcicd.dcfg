@@ -61,19 +61,16 @@
     ]
   },
   "config": {
-    "default_config": "./config/default.json",
     "log_level": "info",
-    "web_port": 8081,
-    "auto_start_dashboard": true,
     "benchmark_mode": true
   },
   "files": {
     "include": [
       "src/*.dyalog",
-      "config/*.json",
       "README.md",
       "docs/*.md",
-      "mcp-demos/**"
+      "mcp-demos/**",
+      "spring-petclinic/**"
     ],
     "exclude": [
       "*.tmp",
