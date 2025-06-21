@@ -23,13 +23,19 @@
 ⎕←'How is this possible? Let us show you...'
 ⎕←''
 
-⍝ Load core system with progress
+⍝ Load core system with progress and robust error handling
 ⎕←'🔧 Loading APL-CD array-oriented engine...'
-⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-⎕FIX'file://src/DependencyMatrix.dyalog'
-DependencyMatrix.Initialize
-⎕←'✅ Ready for mathematical demonstration!'
+:Trap 0
+    ⎕FIX'file://src/APLCICD.dyalog'
+    APLCICD.Initialize
+    ⎕FIX'file://src/DependencyMatrix.dyalog'
+    DependencyMatrix.Initialize
+    ⎕←'✅ Ready for mathematical demonstration!'
+:Else
+    ⎕←'❌ Failed to load APL-CD modules: ',⎕DM
+    ⎕←'Ensure you are running from the aplipeline root directory'
+    →0
+:EndTrap
 ⎕←''
 
 ⍝ === BUILD ANTICIPATION: Matrix Visualization ===
@@ -46,18 +52,18 @@ DependencyMatrix.Initialize
 ⎕←''
 ⎕←'🔢 Building dependency matrix using O(N²) operations...'
 
-deps ← ('A' 'B')('B' 'C')('A' 'D')('D' 'C')
+deps ← 4 2⍴'A' 'B' 'B' 'C' 'A' 'D' 'D' 'C'
 result ← DependencyMatrix.BuildDependencyMatrix deps
 matrix ← ⊃result
 tasks ← 1⊃result
 
 ⎕←''
 ⎕←'📋 ASCII Matrix Visualization:'
-⎕←'    A B C D'
-⎕←'A │',⍕matrix[0;],'│'
-⎕←'B │',⍕matrix[1;],'│' 
-⎕←'C │',⍕matrix[2;],'│'
-⎕←'D │',⍕matrix[3;],'│'
+header ← '    ',(1↓∊' ',¨tasks)
+⎕←header
+:For i :In ⍳≢tasks
+    ⎕←(tasks[i]),' │',(⍕matrix[i;]),'│'
+:EndFor
 ⎕←''
 ⎕←'✨ Beautiful! Dependencies encoded as mathematical matrix'
 ⎕←''
@@ -117,7 +123,8 @@ order ← DependencyMatrix.TopologicalSort result
     
     :If maven_result.success
         ⎕←'✅ XML parsing complete: ',⍕≢maven_result.dependencies,' dependencies'
-        ⎕←'🔢 Building matrix: ',⍕⊃⍴⊃maven_result.matrix,'×',⍕1⊃⍴⊃maven_result.matrix,' dependency matrix'
+        dep_matrix ← ⊃maven_result.dependency_matrix
+        ⎕←'🔢 Building matrix: ',⍕⊃⍴dep_matrix,'×',⍕1⊃⍴dep_matrix,' dependency matrix'
         ⎕←'⚡ Matrix construction: <1ms using APL array operations'
     :Else
         ⎕←'⚠️  Demo mode (Spring PetClinic not available)'

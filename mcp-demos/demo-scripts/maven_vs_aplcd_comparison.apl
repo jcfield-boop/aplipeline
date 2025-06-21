@@ -7,9 +7,18 @@
 ⎕←'Comparing Maven traditional approach vs APL-CD matrix operations'
 ⎕←''
 
-⍝ Load APL-CD system
-⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
+⍝ Load APL-CD system with robust error handling
+:Trap 0
+    ⎕FIX'file://src/APLCICD.dyalog'
+    APLCICD.Initialize
+    ⎕FIX'file://src/DependencyMatrix.dyalog'
+    DependencyMatrix.Initialize
+    ⎕←'✅ APL-CD core modules loaded successfully'
+:Else
+    ⎕←'❌ Failed to load APL-CD modules: ',⎕DM
+    ⎕←'Ensure you are running from the aplipeline root directory'
+    →0
+:EndTrap
 
 ∇ clean ← RemoveWhitespace text
 ⍝ Remove leading/trailing whitespace from text
@@ -26,13 +35,15 @@ APLCICD.Initialize
     :EndIf
 ∇
 
-∇ value ← element_name ExtractXMLValue line
+∇ value ← element_name ExtractXMLElement line
 ⍝ Extract value from XML element like <groupId>org.springframework</groupId>
+⍝ Local implementation to avoid namespace issues
     value ← ''
     start_tag ← '<',element_name,'>'
     end_tag ← '</',element_name,'>'
     start_pos ← ⍸start_tag⍷line
     end_pos ← ⍸end_tag⍷line
+    
     :If (0<≢start_pos) ∧ (0<≢end_pos)
         start_idx ← (⊃start_pos) + ≢start_tag
         end_idx ← (⊃end_pos) - 1
@@ -69,16 +80,16 @@ APLCICD.Initialize
                 :EndIf
             :ElseIf in_dependency
                 :If ∨/'<groupId>'⍷trimmed_line
-                    groupId ← 'groupId' ExtractXMLValue trimmed_line
+                    groupId ← 'groupId' ExtractXMLElement trimmed_line
                     current_dep ,← ⊂groupId
                 :ElseIf ∨/'<artifactId>'⍷trimmed_line
-                    artifactId ← 'artifactId' ExtractXMLValue trimmed_line
+                    artifactId ← 'artifactId' ExtractXMLElement trimmed_line
                     current_dep ,← ⊂artifactId
                 :ElseIf ∨/'<version>'⍷trimmed_line
-                    version ← 'version' ExtractXMLValue trimmed_line
+                    version ← 'version' ExtractXMLElement trimmed_line
                     current_dep ,← ⊂version
                 :ElseIf ∨/'<scope>'⍷trimmed_line
-                    scope ← 'scope' ExtractXMLValue trimmed_line
+                    scope ← 'scope' ExtractXMLElement trimmed_line
                     current_dep ,← ⊂scope
                 :EndIf
             :EndIf
@@ -206,8 +217,9 @@ APLCICD.Initialize
     ⎕←'----------------------------'
     
     :Trap 11
-        maven_version ← ⊃⎕SH 'mvn --version'
-        ⎕←'✅ Maven available: ',maven_version
+        maven_version ← ⎕SH 'mvn --version'
+        maven_version_line ← ⊃maven_version
+        ⎕←'✅ Maven available: ',maven_version_line
         result.maven_available ← 1
     :Else
         ⎕←'❌ Maven not available - using simulated timing'
@@ -251,10 +263,16 @@ APLCICD.Initialize
     
     ⎕←'🔍 Parsing real pom.xml...'
     parse_start ← ⎕AI[3]
-    xml_content ← ⊃⎕NGET 'spring-petclinic/pom.xml' 1
-    dependencies ← ParsePomXMLDependencies xml_content
-    parse_time ← ⎕AI[3] - parse_start
-    ⎕←'✅ Parsed ',⍕≢dependencies,' deps in: ',⍕parse_time,'ms'
+    maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+    :If maven_result.success
+        dependencies ← maven_result.dependencies
+        parse_time ← ⎕AI[3] - parse_start
+        ⎕←'✅ Parsed ',⍕≢dependencies,' deps in: ',⍕parse_time,'ms'
+    :Else
+        ⎕←'⚠️  Failed to parse pom.xml: ',maven_result.error
+        dependencies ← 0 4⍴''
+        parse_time ← ⎕AI[3] - parse_start
+    :EndIf
     
     ⎕←'🔢 Building dependency matrix...'
     matrix_start ← ⎕AI[3]
@@ -382,9 +400,14 @@ APLCICD.Initialize
     ⍝ Parse real dependencies from pom.xml (judge-verifiable)
     :If ⎕NEXISTS 'spring-petclinic/pom.xml'
         ⎕←'   🔍 Parsing real pom.xml dependencies...'
-        xml_content ← ⊃⎕NGET 'spring-petclinic/pom.xml' 1
-        dependencies ← ParsePomXMLDependencies xml_content
-        ⎕←'   ✅ Found ',⍕≢dependencies,' real dependencies from XML'
+        maven_result ← DependencyMatrix.ParseMavenPOM 'spring-petclinic/pom.xml'
+        :If maven_result.success
+            dependencies ← maven_result.dependencies
+            ⎕←'   ✅ Found ',⍕≢dependencies,' real dependencies from XML'
+        :Else
+            ⎕←'   ⚠️  Failed to parse pom.xml: ',maven_result.error
+            dependencies ← 0 4⍴''
+        :EndIf
     :Else
         ⍝ Fallback to known Spring PetClinic dependencies
         dependencies ← ⍬
