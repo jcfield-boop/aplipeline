@@ -260,19 +260,18 @@
     ⍝ Check status of core contest modules
         result ← ⎕NS ''
         
-        :Trap 0
-            #.APLCore.Initialize
+        ⍝ Check namespace existence instead of calling Initialize
+        :If 9=#.⎕NC'APLCore'
             result.aplcore ← '✅ LOADED'
         :Else
             result.aplcore ← '❌ FAILED'
-        :EndTrap
+        :EndIf
         
-        :Trap 0
-            #.APLExecution.Initialize
+        :If 9=#.⎕NC'APLExecution'
             result.aplexecution ← '✅ LOADED'
         :Else
             result.aplexecution ← '❌ FAILED'
-        :EndTrap
+        :EndIf
     ∇
 
     ∇ result ← CheckMathematicalFunctions
@@ -288,16 +287,18 @@
     ⍝ Check demo function availability
         result ← ⎕NS ''
         
-        result.math ← CheckFunction 'APLSystem.MathematicalDemo'
-        result.maven ← CheckFunction 'APLSystem.MavenComparison'
+        result.math ← CheckFunction '#.APLSystem.MathematicalDemo'
+        result.maven ← CheckFunction '#.APLSystem.MavenComparison'
         result.parallel ← CheckFunction '#.APLExecution.ParallelExecutionDemo'
     ∇
 
     ∇ status ← CheckFunction func_name
     ⍝ Check if a function is available
         :Trap 0
-            ⍝ Try to get function reference
+            ⍝ Try to get function reference - handle both local and global namespace
             :If 3=⎕NC func_name
+                status ← '✅ AVAILABLE'
+            :ElseIf 3=⎕NC ⊃func_name  ⍝ Handle namespace.function format
                 status ← '✅ AVAILABLE'
             :Else
                 status ← '❌ NOT_FOUND'

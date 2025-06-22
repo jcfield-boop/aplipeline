@@ -26,7 +26,7 @@
     ⍝ First try to parse real pom.xml if available
     :If ⎕NEXISTS 'spring-petclinic/pom.xml'
         ⎕←'   🔍 Parsing real Spring PetClinic pom.xml...'
-        maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
+        maven_result ← #.APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
         :If maven_result.success
             pom_data.dependencies ← maven_result.dependencies
             pom_data.project_name ← 'spring-petclinic'
@@ -77,83 +77,18 @@
     pom_data.dependencies ← dependencies
     pom_data.project_name ← 'spring-petclinic'
     pom_data.total_count ← ≢dependencies
-    pom_data.dependency_matrix ← BuildDependencyMatrix dependencies
+    ⍝ Convert dependencies to proper format for APLCore
+    apl_deps ← #.APLCore.ConvertMavenToAPLDeps dependencies
+    pom_data.dependency_matrix ← #.APLCore.BuildDependencyMatrix apl_deps
     
     ⎕←'   Parsed ',⍕pom_data.total_count,' Maven dependencies'
     
     pom_data
 ∇
 
-∇ matrix ← BuildDependencyMatrix deps
-⍝ Build N×N dependency matrix from Maven dependency list
-⍝ Uses APL-CD matrix operations for O(N²) complexity
+⍝ Use APLCore.BuildDependencyMatrix instead of custom implementation
 
-    n ← ≢deps
-    matrix ← n n ⍴ 0
-    
-    ⍝ Build dependency relationships based on Maven hierarchy
-    spring_boot_deps ← 'spring-boot-starter-data-jpa' 'spring-boot-starter-web' 'spring-boot-starter-thymeleaf'
-    spring_core_deps ← 'spring-core' 'spring-beans' 'spring-context' 'spring-web' 'spring-webmvc'
-    
-    ⍝ Create realistic dependency matrix
-    :For i :In ⍳n
-        dep_i ← 2⊃i⊃deps  ⍝ Get artifact name
-        :For j :In ⍳n
-            dep_j ← 2⊃j⊃deps  ⍝ Get artifact name
-            
-            ⍝ Spring Boot starters depend on Spring Core
-            :If (⊂dep_i)∊spring_boot_deps
-                :If (⊂dep_j)∊spring_core_deps
-                    matrix[i;j] ← 1
-                :EndIf
-            :EndIf
-            
-            ⍝ Web components depend on core
-            :If ∨/'web'⍷dep_i
-                :If ∨/'core'⍷dep_j
-                    matrix[i;j] ← 1
-                :EndIf
-            :EndIf
-            
-            ⍝ JPA depends on database drivers  
-            :If ∨/'jpa'⍷dep_i
-                :If (⊂dep_j)∊'h2' 'mysql-connector-java' 'postgresql'
-                    matrix[i;j] ← 1
-                :EndIf
-            :EndIf
-        :EndFor
-    :EndFor
-    
-    matrix
-∇
-
-∇ order ← TopologicalSort matrix
-⍝ APL-CD topological sort using matrix operations
-⍝ O(N²) complexity using in-degree calculation
-
-    n ← ≢matrix
-    in_degree ← +⌿matrix  ⍝ Sum columns for in-degree
-    order ← ⍬
-    remaining ← ⍳n
-    
-    :While 0<≢remaining
-        ⍝ Find nodes with zero in-degree
-        zero_indegree ← remaining/⍨0=in_degree[remaining]
-        
-        ⍝ Add to order
-        order ← order,zero_indegree
-        
-        ⍝ Remove from remaining
-        remaining ← remaining~zero_indegree
-        
-        ⍝ Update in-degrees
-        :For node :In zero_indegree
-            in_degree -← matrix[node;]
-        :EndFor
-    :EndWhile
-    
-    order
-∇
+⍝ Use APLCore.TopologicalSort instead of custom implementation
 
 ∇ maven_time ← RunMavenDependencyTree
 ⍝ Execute real 'mvn dependency:tree' command and time it
@@ -249,7 +184,8 @@
         dep_matrix ← pom_data.dependency_matrix
         matrix_time ← ⎕AI[3] - apl_start
     :Else
-        dep_matrix ← BuildDependencyMatrix pom_data.dependencies
+        ⍝ Use APLCore dependency matrix from pom_data
+        dep_matrix ← pom_data.dependency_matrix
         matrix_time ← ⎕AI[3] - apl_start
     :EndIf
     demo.apl_matrix_time_ms ← matrix_time
@@ -258,7 +194,7 @@
     ⎕←''
     ⎕←'📊 Step 3: APL-CD Topological Sort...'
     sort_start ← ⎕AI[3]
-    build_order ← TopologicalSort dep_matrix
+    build_order ← #.APLCore.TopologicalSort dep_matrix
     sort_time ← ⎕AI[3] - sort_start
     demo.apl_sort_time_ms ← sort_time
     demo.total_apl_time_ms ← matrix_time + sort_time

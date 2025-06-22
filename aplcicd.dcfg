@@ -46,7 +46,8 @@
     "demo_scripts": [
       "mcp-demos/demo-scripts/simple_5min_demo.apl",
       "mcp-demos/demo-scripts/maven_integration_demo.apl",
-      "mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl"
+      "mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl",
+      "mcp-demos/demo-scripts/focused_recursive_test.apl"
     ],
     "maven_core_functions": [
       "APLCore.ParseMavenPOM - Core Maven POM parsing function",
@@ -146,7 +147,7 @@
   "architecture": {
     "contest_core": "3 complete modules - APLCore (O(N²) algorithms + utilities), APLExecution (parallel + monitoring), APLSystem (orchestrator + enterprise)",
     "consolidated_design": "All functionality integrated into focused core modules",
-    "demo_scripts": "5 focused demonstration scripts including Maven integration",
+    "demo_scripts": "4 working demonstration scripts including Maven integration",
     "enterprise_validation": "Tested against Spring PetClinic enterprise application", 
     "mathematical_foundation": "Built on matrix operations and array-oriented algorithms",
     "algorithmic_innovation": "First dependency resolution system using array-oriented programming",

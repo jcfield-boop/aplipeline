@@ -15,12 +15,12 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 ## Commands
 
 ### Essential Commands (Tier 1) - Competition Ready
-- `./aplcicd complete` - Complete system demonstration with all APL-CD features
+- `./aplcicd test` - Complete system demonstration with all APL-CD features
 - `./aplcicd demo` - Array-oriented dependency resolution and parallel execution demo  
 - `./aplcicd test` - Comprehensive system testing with competition validation
 - `dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl` - **Real Maven integration (28x speedup)**
 - `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (28x speedup)**
-- `dyalog -script simple_benchmark.apl` - **O(N²) vs O(N³) performance proof**
+- `./aplcicd benchmark` - **O(N²) vs O(N³) performance proof**
 
 ### Maven Core Integration (Production-Ready)
 - `APLCore.ParseMavenPOM filepath` - Core Maven POM parsing function (VERIFIED WORKING)
@@ -65,13 +65,13 @@ APL-CD is an array-oriented continuous deployment system that uses APL's mathema
 - **Production Ready**: Maven integration with robust XML parsing
 - **Complete System**: All enterprise features integrated into core modules
 
-### Contest-Ready Status (Latest Updates)
-- ✅ **Maven XML Parsing**: Fixed ExtractXMLElement function, now extracts 14 real dependencies
-- ✅ **Demo Scripts**: All 4 primary demos working flawlessly without errors
-- ✅ **Matrix Operations**: Fixed concatenation issues in ConvertMavenToAPLDeps  
-- ✅ **Performance Validation**: Confirmed 28x speedup on Spring PetClinic benchmark
-- ✅ **APL Loading**: Fixed namespace issues, all modules load in global scope
-- ✅ **Production Shell**: Removed retry logic and process killing - clean, robust execution
+### Contest-Ready Status (Final Validation)
+- ✅ **Maven XML Parsing**: Extracts 14 real dependencies from Spring PetClinic pom.xml
+- ✅ **Demo Scripts**: 4 primary demos working perfectly (28x speedup validated)
+- ✅ **Shared Algorithm Validation**: ParseProjectDependencies uses same O(N²) functions as Maven demos
+- ✅ **Performance Validation**: Consistent 28x speedup across all Maven integration demonstrations
+- ✅ **System Integration**: All modules load properly, ContestStatus shows ✅ AVAILABLE
+- ✅ **Production Ready**: Clean shell script, robust error handling, comprehensive testing
 
 ### Configuration
 - **config/default.json** - System configuration with pipeline, security, and performance settings

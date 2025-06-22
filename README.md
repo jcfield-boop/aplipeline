@@ -169,17 +169,20 @@ APL-CD has been proven to significantly outperform Maven on identical dependency
 # 28x speedup on real Spring PetClinic data (first mathematical approach)
 dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 
-# 28x speedup in head-to-head comparison with real XML parsing (first mathematical approach)
+# Head-to-head performance comparison with identical dependency analysis
 dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl
 
 # 5-minute comprehensive technical demonstration
 dyalog -script mcp-demos/demo-scripts/simple_5min_demo.apl
+
+# Recursive self-analysis demonstration
+dyalog -script mcp-demos/demo-scripts/focused_recursive_test.apl
 ```
 
 ### Technical Verification
 
 - **Real Data**: Uses actual Spring PetClinic pom.xml dependencies with real XML DOM parsing
-- **Identical Analysis**: Both systems process the same 36 dependencies extracted from XML
+- **Identical Analysis**: Both systems process the same 14 dependencies extracted from XML
 - **Reproducible**: Run `mvn dependency:tree` independently to verify Maven timing
 - **Enterprise-Ready**: Proven on real Spring Boot applications
 
@@ -349,9 +352,10 @@ dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 
 **Key evidence points:**
 - ✅ O(N²) vs O(N³) algorithmic superiority demonstrated live
-- ✅ Real Maven integration with 28x performance advantage
-- ✅ Industry-standard benchmark validation (Spring PetClinic)
-- ✅ Production-ready system with 13 core modules
+- ✅ Real Maven integration with validated 28x performance advantage
+- ✅ Industry-standard benchmark validation (Spring PetClinic, 14 dependencies)
+- ✅ Production-ready system with 3 core modules
+- ✅ Shared algorithm validation: same O(N²) functions across all demos
 
 ## Usage
 

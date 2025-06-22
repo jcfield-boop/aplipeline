@@ -1,7 +1,7 @@
 {
   "name": "aplcd-mcp-server",
   "version": "1.0.0",
-  "description": "MCP service for APL-CD CI/CD system with production Maven integration extracting 14 dependencies",
+  "description": "MCP service for APL-CD CI/CD system with validated Maven integration (28x performance advantage, 14 dependencies)",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {

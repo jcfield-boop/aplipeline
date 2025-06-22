@@ -272,7 +272,7 @@
     
     ⎕←'🔍 Parsing real pom.xml...'
     parse_start ← ⎕AI[3]
-    maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
+    maven_result ← #.APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
     :If maven_result.success
         dependencies ← maven_result.dependencies
         parse_time ← ⎕AI[3] - parse_start
@@ -415,7 +415,7 @@
     ⍝ Parse real dependencies from pom.xml (judge-verifiable)
     :If ⎕NEXISTS 'spring-petclinic/pom.xml'
         ⎕←'   🔍 Parsing real pom.xml dependencies...'
-        maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
+        maven_result ← #.APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
         :If maven_result.success
             dependencies ← maven_result.dependencies
             dep_count ← ⊃⍴dependencies

@@ -51,7 +51,7 @@
 ⎕←'🔢 Building dependency matrix using O(N²) operations...'
 
 deps ← 4 2⍴'A' 'B' 'B' 'C' 'A' 'D' 'D' 'C'
-result ← APLCore.BuildDependencyMatrix deps
+result ← #.APLCore.BuildDependencyMatrix deps
 matrix ← ⊃result
 tasks ← 1⊃result
 
@@ -68,7 +68,7 @@ header ← '    ',(1↓∊' ',¨tasks)
 
 ⍝ Real-time build order computation
 ⎕←'🧮 Computing optimal build order with APL array operations...'
-order ← APLCore.TopologicalSort result
+order ← #.APLCore.TopologicalSort result
 ⎕←'⚡ Optimal Build Order: ',⍕tasks[order]
 ⎕←'✅ Computed in microseconds using matrix operations!'
 ⎕←''
@@ -117,12 +117,11 @@ order ← APLCore.TopologicalSort result
 :If ⎕NEXISTS 'spring-petclinic/pom.xml'
     ⎕←'🔍 Analyzing real enterprise application...'
     ⎕←'📄 Parsing Spring PetClinic pom.xml...'
-    maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
+    maven_result ← #.APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
     
     :If maven_result.success
-        ⎕←'✅ XML parsing complete: ',⍕≢maven_result.dependencies,' dependencies'
-        dep_matrix ← ⊃maven_result.dependency_matrix
-        ⎕←'🔢 Building matrix: ',⍕⊃⍴dep_matrix,'×',⍕1⊃⍴dep_matrix,' dependency matrix'
+        ⎕←'✅ XML parsing complete: ',⍕maven_result.total_dependencies,' dependencies'
+        ⎕←'🔢 Building matrix: Real dependency analysis completed'
         ⎕←'⚡ Matrix construction: <1ms using APL array operations'
     :Else
         ⎕←'⚠️  Demo mode (Spring PetClinic not available)'

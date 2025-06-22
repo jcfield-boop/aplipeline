@@ -25,15 +25,15 @@
 core_files ← 'src/APLCICD.dyalog' 'src/DependencyMatrix.dyalog' 'src/ParallelPipeline.dyalog' 'src/Pipeline.dyalog' 'src/Security.dyalog' 'src/Config.dyalog'
 demo_files ← 'maven_integration_demo.apl' 'maven_vs_aplcd_comparison.apl' 'simple_5min_demo.apl'
 
-⎕←'Core modules found: ',⍕≢core_files
-⎕←'Demo scripts found: ',⍕≢demo_files
+⎕←'Core modules found: ',⍕⊃⍴core_files
+⎕←'Demo scripts found: ',⍕⊃⍴demo_files
 
 ⍝ Verify files exist
 existing_core ← core_files/⍨⎕NEXISTS¨core_files
 existing_demos ← demo_files/⍨⎕NEXISTS¨demo_files
 
-⎕←'Verified core modules: ',⍕≢existing_core
-⎕←'Verified demo scripts: ',⍕≢existing_demos
+⎕←'Verified core modules: ',⍕⊃⍴existing_core
+⎕←'Verified demo scripts: ',⍕⊃⍴existing_demos
 
 ⍝ Manual dependency analysis
 ⎕←''
@@ -71,13 +71,13 @@ total_deps ← simple_deps
 
 :If 0<⊃⍴total_deps
     :Trap 0
-        dep_matrix ← APLCore.BuildDependencyMatrix total_deps
+        dep_matrix ← #.APLCore.BuildDependencyMatrix total_deps
         matrix ← ⊃dep_matrix
         tasks ← 1⊃dep_matrix
         
         ⎕←'Matrix built successfully'
         ⎕←'Dimensions: ',⍕⍴matrix
-        ⎕←'Tasks: ',⍕≢tasks
+        ⎕←'Tasks: ',⍕⊃⍴tasks
         
         ⍝ Analyze matrix properties
         :If 0<≢tasks
@@ -134,7 +134,7 @@ total_deps ← simple_deps
     
     :For test :In ⍳3
         start_time ← ⎕AI[3]
-        test_matrix ← APLCore.BuildDependencyMatrix total_deps
+        test_matrix ← #.APLCore.BuildDependencyMatrix total_deps
         end_time ← ⎕AI[3]
         perf_times ← perf_times,end_time-start_time
         ⎕←'Matrix build test ',(⍕test),': ',(⍕end_time-start_time),'ms'
@@ -165,9 +165,9 @@ health_score ← 0
     discovered ← ⊃⎕NINFO⍠1⊢'src/*.dyalog'
     :If 5≤≢discovered
         health_score ← health_score + 1
-        ⎕←'✅ File discovery: PASS (',⍕≢discovered,' files)'
+        ⎕←'✅ File discovery: PASS (',⍕⊃⍴discovered,' files)'
     :Else
-        ⎕←'⚠️ File discovery: PARTIAL (',⍕≢discovered,' files)'
+        ⎕←'⚠️ File discovery: PARTIAL (',⍕⊃⍴discovered,' files)'
     :EndIf
 :Else
     ⎕←'❌ File discovery: FAIL'
@@ -176,7 +176,7 @@ health_score ← 0
 ⍝ Test 3: Matrix operations
 :Trap 0
     test_deps ← 2 2⍴'A' 'B' 'B' 'C'
-    test_matrix ← APLCore.BuildDependencyMatrix test_deps
+    test_matrix ← #.APLCore.BuildDependencyMatrix test_deps
     health_score ← health_score + 1
     ⎕←'✅ Matrix operations: PASS'
 :Else
@@ -194,8 +194,8 @@ final_health ← ⌊100×health_score÷3
 ⎕←'## APL-CD Recursive Analysis Summary'
 ⎕←''
 ⎕←'### System Architecture'
-⎕←'• Core modules: ',(⍕≢existing_core),' verified APL components'
-⎕←'• Demo scripts: ',(⍕≢existing_demos),' executable demonstrations'
+⎕←'• Core modules: ',(⍕⊃⍴existing_core),' verified APL components'
+⎕←'• Demo scripts: ',(⍕⊃⍴existing_demos),' executable demonstrations'
 ⎕←'• Dependencies: ',(⍕⊃⍴total_deps),' relationships identified'
 ⎕←''
 ⎕←'### Performance Characteristics'
