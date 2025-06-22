@@ -161,7 +161,7 @@
         :If 2≤≢aplcd_dep
             group_artifact ← (⊃aplcd_dep),':',(2⊃aplcd_dep)
             :For j :In ⍳≢maven_deps
-                maven_dep ← j⊃maven_deps
+                maven_dep ← maven_deps[j;]
                 :If group_artifact⍷maven_dep
                     matches ← matches + 1
                     ⎕←'✅ Match: ',group_artifact
@@ -276,7 +276,8 @@
     :If maven_result.success
         dependencies ← maven_result.dependencies
         parse_time ← ⎕AI[3] - parse_start
-        ⎕←'✅ Parsed ',⍕≢dependencies,' deps in: ',⍕parse_time,'ms'
+        dep_count ← ⊃⍴dependencies
+        ⎕←'✅ Parsed ',(⍕dep_count),' deps in: ',⍕parse_time,'ms'
     :Else
         ⎕←'⚠️  Failed to parse pom.xml: ',maven_result.error
         dependencies ← 0 4⍴''
@@ -316,7 +317,8 @@
     ⎕←'==================='
     speedup ← ⌊total_maven ÷ total_aplcd⌈1
     
-    ⎕←'📊 Dependencies analyzed: ',⍕≢dependencies,' (identical dataset)'
+    dep_count ← ⊃⍴dependencies
+    ⎕←'📊 Dependencies analyzed: ',(⍕dep_count),' (identical dataset)'
     ⎕←'⏱️  Maven total time:     ',⍕total_maven,'ms'
     ⎕←'⚡ APL-CD total time:    ',⍕total_aplcd,'ms'
     ⎕←'🚀 Performance advantage: 28x FASTER (first mathematical approach)'
@@ -416,7 +418,8 @@
         maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
         :If maven_result.success
             dependencies ← maven_result.dependencies
-            ⎕←'   ✅ Found ',⍕≢dependencies,' real dependencies from XML'
+            dep_count ← ⊃⍴dependencies
+            ⎕←'   ✅ Found ',(⍕dep_count),' real dependencies from XML'
         :Else
             ⎕←'   ⚠️  Failed to parse pom.xml: ',maven_result.error
             dependencies ← 0 4⍴''
@@ -445,7 +448,8 @@
     
     parse_time ← ⎕AI[3] - parse_start
     comparison_result.aplcd_parse_time_ms ← parse_time
-    ⎕←'   ✅ Parsed ',⍕≢dependencies,' dependencies in ',⍕parse_time,'ms'
+    dep_count ← ⊃⍴dependencies
+    ⎕←'   ✅ Parsed ',(⍕dep_count),' dependencies in ',⍕parse_time,'ms'
     
     ⍝ Build dependency matrix using APL-CD
     ⎕←'🔢 Building dependency matrix (O(N²) complexity)...'
@@ -456,14 +460,14 @@
     
     ⍝ Build realistic dependency relationships
     :For i :In ⍳n
-        dep_i ← i⊃dependencies
+        dep_i ← dependencies[i;]
         scope_i ← 'compile'
         :If 4≤≢dep_i
             scope_i ← 4⊃dep_i
         :EndIf
         
         :For j :In ⍳n
-            dep_j ← j⊃dependencies
+            dep_j ← dependencies[j;]
             scope_j ← 'compile'
             :If 4≤≢dep_j
                 scope_j ← 4⊃dep_j
@@ -536,7 +540,8 @@
     ⎕←''
     ⎕←'🏆 HEAD-TO-HEAD COMPARISON RESULTS'
     ⎕←'=================================='
-    ⎕←'📊 Dependencies Analyzed:    ',⍕≢dependencies,' (identical dataset)'
+    dep_count ← ⊃⍴dependencies
+    ⎕←'📊 Dependencies Analyzed:    ',(⍕dep_count),' (identical dataset)'
     ⎕←'⏱️  Maven Total Time:         ',⍕total_maven_time,'ms'
     ⎕←'⚡ APL-CD Total Time:        ',⍕total_aplcd_time,'ms'
     ⎕←'🚀 Performance Advantage:    28x FASTER (first mathematical approach)'
@@ -577,7 +582,8 @@
         ⎕←'📁 Reading Spring PetClinic pom.xml: ',pom_path
         xml_content ← ⊃⎕NGET pom_path 1
         deps ← ParsePomXMLDependencies xml_content
-        ⎕←'✅ Extracted ',⍕≢deps,' dependencies from real pom.xml'
+        dep_count ← ⊃⍴deps
+        ⎕←'✅ Extracted ',(⍕dep_count),' dependencies from real pom.xml'
     :Else
         ⎕←'❌ Spring PetClinic pom.xml not found'
         ⎕←'   Searched: spring-petclinic/pom.xml and external_benchmark/spring-petclinic/pom.xml'
@@ -625,7 +631,8 @@
         comparison.maven_time_ms ← maven_time
         
         ⎕←'✅ Maven completed in ',⍕maven_time,'ms'
-        ⎕←'✅ Found ',⍕≢maven_deps,' Maven dependencies'
+        dep_count ← ⊃⍴maven_deps
+        ⎕←'✅ Found ',(⍕dep_count),' Maven dependencies'
         
     :Else
         ⍝ Maven not available - simulate
@@ -667,7 +674,7 @@
             :If 2≤≢aplcd_dep
                 group_artifact ← (⊃aplcd_dep),':',(2⊃aplcd_dep)
                 :For j :In ⍳≢maven_deps
-                    maven_dep ← j⊃maven_deps
+                    maven_dep ← maven_deps[j;]
                     :If group_artifact⍷maven_dep
                         matches ← matches + 1
                         :Leave

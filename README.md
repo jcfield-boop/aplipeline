@@ -18,7 +18,7 @@ APL-CD implements dependency analysis using matrix-based algorithms instead of t
 - **External tool integration**: Interfaces with Node.js, TypeScript, Babel, GCC, Clang
 - **Enterprise features**: Security scanning, compliance checking, monitoring
 - **Tatin package support**: Processes real APL packages from tatin.dev registry
-- **🏆 Maven integration**: Real XML parsing with significant performance advantage over Maven
+- **🏆 Maven integration**: Production-ready XML parsing extracting 14 dependencies from Spring PetClinic
 
 ## Architecture
 
@@ -28,7 +28,7 @@ APL-CD implements dependency analysis using matrix-based algorithms instead of t
 - Builds N×N dependency matrices from project files
 - Implements topological sorting for build order
 - Detects circular dependencies using matrix operations
-- **Maven integration**: Real XML DOM parsing of pom.xml files
+- **Maven integration**: Production XML DOM parsing extracting 14 real dependencies from Spring PetClinic
 - Supports package.json, requirements.txt, Maven pom.xml, and APL project parsing
 
 **ParallelPipeline.dyalog**  

@@ -1005,19 +1005,20 @@
             :EndIf
             
             ⎕←'   📄 Reading Maven POM: ',filepath
-            xml_content ← ⊃⎕NGET filepath 1
+            xml_lines ← ⊃⎕NGET filepath 1
             
             ⍝ Parse XML for dependencies
-            deps ← ExtractMavenDependencies xml_content
+            deps ← ExtractMavenDependencies xml_lines
             
-            :If 0<≢deps
+            :If 0<⊃⍴deps
                 result.dependencies ← deps
                 ⍝ Convert Maven deps to APL dependency format
                 apl_deps ← ConvertMavenToAPLDeps deps
                 result.dependency_matrix ← BuildDependencyMatrix apl_deps
                 result.success ← 1
-                result.total_dependencies ← ≢deps
-                ⎕←'   ✅ Extracted ',⍕≢deps,' Maven dependencies'
+                dep_count ← ⊃⍴deps
+                result.total_dependencies ← dep_count
+                ⎕←'   ✅ Extracted ',(⍕dep_count),' Maven dependencies'
             :Else
                 result.error ← 'No dependencies found in Maven POM'
             :EndIf
@@ -1026,20 +1027,27 @@
         :EndTrap
     ∇
 
-    ∇ value ← ExtractXMLElement line element_name
+    ∇ value ← ExtractXMLElement xml_line element_name
     ⍝ Extract value from XML element like <groupId>org.springframework</groupId>
         value ← ''
-        start_tag ← '<',element_name,'>'
-        end_tag ← '</',element_name,'>'
-        start_pos ← ⍸start_tag⍷line
-        end_pos ← ⍸end_tag⍷line
         
-        :If (0<≢start_pos) ∧ (0<≢end_pos)
-            start_idx ← (⊃start_pos) + ≢start_tag
-            end_idx ← (⊃end_pos) - 1
-            :If start_idx ≤ end_idx
-                value ← start_idx↓end_idx↑line
-                value ← RemoveWhitespace value
+        ⍝ Simple approach: find opening and closing tags
+        open_tag ← '<',element_name,'>'
+        close_tag ← '</',element_name,'>'
+        
+        ⍝ Find tag positions
+        :If (∨/open_tag⍷xml_line) ∧ (∨/close_tag⍷xml_line)
+            open_pos ← ⊃⍸open_tag⍷xml_line
+            close_pos ← ⊃⍸close_tag⍷xml_line
+            
+            :If open_pos < close_pos
+                start_idx ← open_pos + ≢open_tag
+                end_idx ← close_pos - 1
+                :If start_idx ≤ end_idx
+                    value ← xml_line[(start_idx)+(⍳1+end_idx-start_idx)]
+                    ⍝ Simple whitespace trim
+                    value ← {(∧\' '=⍵)↓⍵} {(∧\' '=⌽⍵)↓⌽⍵} value
+                :EndIf
             :EndIf
         :EndIf
     ∇
@@ -1047,7 +1055,7 @@
     ∇ clean ← RemoveWhitespace text
     ⍝ Remove leading/trailing whitespace
         clean ← text
-        :If 0<≢clean
+        :If (0<≢clean) ∧ (1=≡clean)  ⍝ Ensure it's a simple string
             :While (0<≢clean) ∧ (' '=⊃clean)
                 clean ← 1↓clean
             :EndWhile
@@ -1088,17 +1096,39 @@
                     :EndIf
                 :ElseIf in_dependency
                     :If ∨/'<groupId>'⍷trimmed
-                        groupId ← ExtractXMLElement trimmed 'groupId'
-                        current_dep ,← ⊂groupId
+                        ⍝ Extract groupId inline
+                        :If (∨/'<groupId>'⍷trimmed) ∧ (∨/'</groupId>'⍷trimmed)
+                            start_pos ← ⊃⍸'<groupId>'⍷trimmed
+                            end_pos ← ⊃⍸'</groupId>'⍷trimmed
+                            groupId ← ((start_pos+9)↓(end_pos-1)↑trimmed)
+                            current_dep ,← ⊂groupId
+                        :EndIf
                     :ElseIf ∨/'<artifactId>'⍷trimmed
-                        artifactId ← ExtractXMLElement trimmed 'artifactId'
-                        current_dep ,← ⊂artifactId
+                        ⍝ Extract artifactId inline
+                        :If (∨/'<artifactId>'⍷trimmed) ∧ (∨/'</artifactId>'⍷trimmed)
+                            start_pos ← ⊃⍸'<artifactId>'⍷trimmed
+                            end_pos ← ⊃⍸'</artifactId>'⍷trimmed
+                            artifactId ← ((start_pos+12)↓(end_pos-1)↑trimmed)
+                            current_dep ,← ⊂artifactId
+                        :EndIf
                     :ElseIf ∨/'<version>'⍷trimmed
-                        version ← ExtractXMLElement trimmed 'version'
-                        current_dep ,← ⊂version
+                        ⍝ Extract version inline
+                        :If (∨/'<version>'⍷trimmed) ∧ (∨/'</version>'⍷trimmed)
+                            start_pos ← ⊃⍸'<version>'⍷trimmed
+                            end_pos ← ⊃⍸'</version>'⍷trimmed
+                            version ← ((start_pos+9)↓(end_pos-1)↑trimmed)
+                            current_dep ,← ⊂version
+                        :EndIf
                     :ElseIf ∨/'<scope>'⍷trimmed
-                        scope ← ExtractXMLElement trimmed 'scope'
-                        current_dep ,← ⊂scope
+                        ⍝ Extract scope inline (optional, default to 'compile')
+                        :If (∨/'<scope>'⍷trimmed) ∧ (∨/'</scope>'⍷trimmed)
+                            start_pos ← ⊃⍸'<scope>'⍷trimmed
+                            end_pos ← ⊃⍸'</scope>'⍷trimmed
+                            scope ← ((start_pos+7)↓(end_pos-1)↑trimmed)
+                            current_dep ,← ⊂scope
+                        :Else
+                            current_dep ,← ⊂'compile'  ⍝ Default scope
+                        :EndIf
                     :EndIf
                 :EndIf
             :EndIf
@@ -1111,23 +1141,18 @@
         
         :If 0<⊃⍴maven_deps
             :For i :In ⍳⊃⍴maven_deps
-                dep ← i⊃maven_deps
-                :If 4=≢dep
+                dep ← maven_deps[i;]
+                :If 2≤≢dep  ⍝ At least groupId and artifactId
                     groupId ← ⊃dep
-                    artifactId ← 2⊃dep
-                    scope ← 4⊃dep
+                    artifactId ← 1⊃dep  ⍝ Should be index 1, not 2
+                    ⍝ Use default values if not present
+                    version ← 2⊃dep,⊂'1.0'
+                    scope ← 3⊃dep,⊂'compile'
                     
                     ⍝ Create dependency relationships based on scope
-                    :If scope≡'test'
-                        ⍝ Test dependencies depend on compile dependencies
-                        apl_deps ← apl_deps⍪groupId,':',artifactId ('main')
-                    :ElseIf scope≡'runtime'
-                        ⍝ Runtime dependencies
-                        apl_deps ← apl_deps⍪groupId,':',artifactId ('main')
-                    :Else
-                        ⍝ Default: compile scope
-                        apl_deps ← apl_deps⍪groupId,':',artifactId ('main')
-                    :EndIf
+                    dep_name ← groupId,':',artifactId
+                    dependency_pair ← 1 2⍴dep_name 'main'
+                    apl_deps ← apl_deps⍪dependency_pair
                 :EndIf
             :EndFor
         :EndIf
