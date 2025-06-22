@@ -80,7 +80,7 @@
         ⎕←'ALGORITHMIC VALIDATION:'
         ⎕←'  APLCore.BuildDependencyMatrix   - Matrix-based approach'
         ⎕←'  APLCore.TopologicalSort         - Mathematical sorting'
-        ⎕←'  APLCore.ParseMavenPOM           - Real Maven integration'
+        ⎕←'  APLCore.ParseMavenPOM           - Basic Maven XML parsing (limited)'
         ⎕←''
     ∇
 

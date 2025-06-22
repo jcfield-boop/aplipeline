@@ -12,9 +12,9 @@
 ⍝   OptimizeBuildOrder     - Linear algebra optimization of build sequence
 ⍝   CalculateMinimalRebuild - Vector operations for incremental builds
 ⍝
-⍝ MAVEN INTEGRATION (CONTEST VALIDATION):
-⍝   ParseMavenPOM          - Real XML DOM parsing of Maven pom.xml files
-⍝   ExtractMavenDependencies - Extract <dependency> elements from XML
+⍝ MAVEN INTEGRATION (LIMITED DEMO):
+⍝   ParseMavenPOM          - Basic string parsing of simple Maven pom.xml files
+⍝   ExtractMavenDependencies - Fragile XML string extraction (not proper parser)
 ⍝   CompareMavenTiming     - Execute Maven commands for performance comparison
 
     ⎕IO ← 0 ⋄ ⎕ML ← 1
@@ -1069,6 +1069,8 @@
 
     ∇ result ← ParseMavenPOM filepath
     ⍝ Parse dependencies from Maven pom.xml file
+    ⍝ WARNING: Uses fragile string parsing, not proper XML parser
+    ⍝ May fail on real-world Maven POMs with attributes, namespaces, etc.
     ⍝ Returns: namespace with success, dependencies, dependency_matrix
         result ← ⎕NS ''
         result.success ← 0
@@ -1145,6 +1147,9 @@
 
     ∇ deps ← ExtractMavenDependencies xml_lines
     ⍝ Extract <dependency> elements from Maven pom.xml content
+    ⍝ WARNING: This is basic string parsing, NOT proper XML parsing
+    ⍝ BREAKS on: XML attributes, namespaces, CDATA, comments, multi-line elements
+    ⍝ ONLY WORKS on simple, well-formatted XML like Spring PetClinic
         deps ← 0 4⍴''
         in_dependencies ← 0
         in_dependency ← 0
