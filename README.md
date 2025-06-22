@@ -6,6 +6,56 @@
 
 **Revolutionary mathematical approach to APL dependency resolution using array-oriented programming.** APL-CD replaces traditional O(N³) graph algorithms with O(N²) matrix operations, achieving exponential scaling advantages for APL projects while maintaining mathematical correctness.
 
+## ⚡ Quickstart: Experience the Mathematical Breakthrough
+
+> **🏆 FASTEST PATH TO VALUE: 2-Minute Mathematical Demo**  
+> Skip the theory - see APL-CD's O(N²) innovation in action immediately!
+
+```bash
+# Clone and run instantly (no setup required!)
+git clone https://github.com/jcfield-boop/aplipeline.git
+cd aplipeline
+
+# 🎯 Core mathematical demonstration
+./aplcicd demo
+
+# 🔬 Real Maven vs APL-CD comparison (28x speedup proof)
+dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
+
+# 📊 System health check
+./aplcicd status
+```
+
+**What You'll See:**
+- ✨ **Live Matrix Operations**: O(N²) dependency resolution in action
+- 🧮 **Mathematical Proof**: 28x performance advantage over traditional approaches
+- 📈 **Scaling Demonstration**: Why complexity class matters for APL projects
+- 🏆 **Production Ready**: Real enterprise validation with Spring PetClinic
+
+**Instant APL Analysis via Natural Language** (Optional):
+```bash
+# Setup Claude Desktop integration (2 commands)
+cd mcp-demos/mcp-server && npm install && npm run build
+../setup-claude-desktop.sh
+
+# Then use Claude Desktop: "Analyze my APL project using mathematical dependency resolution"
+```
+
+**Prerequisites:** Dyalog APL 19.0+, Unix-like system (macOS/Linux/WSL)
+
+## 📋 Table of Contents
+
+- [⚡ Quickstart](#-quickstart-experience-the-mathematical-breakthrough) - Get started in 2 minutes
+- [🚀 Mathematical Innovation](#-mathematical-innovation-why-this-changes-everything) - The breakthrough explained
+- [🎯 APL-First Architecture](#apl-first-architecture-with-mathematical-foundation) - Language support & features
+- [🏆 Maven Validation](#-mathematical-validation-maven-benchmark-proves-on²-superiority) - 28x performance proof
+- [📦 Installation](#installation) - Setup and Claude Desktop integration
+- [⚡ Quick Evaluation](#-experience-the-mathematical-breakthrough) - Demo commands
+- [🔧 Usage](#usage) - APL interface and commands
+- [🎯 APL Ecosystem](#apl-ecosystem-integration--future-impact) - Future roadmap
+
+---
+
 ## 🚀 Mathematical Innovation: Why This Changes Everything
 
 ### The APL Dependency Problem 
