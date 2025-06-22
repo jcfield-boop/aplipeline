@@ -103,7 +103,7 @@
         ⎕←'Sample dependencies: A→B, B→C, A→D, D→C'
         
         start_time ← ⎕AI[3]
-        matrix_result ← APLCore.BuildDependencyMatrix deps
+        matrix_result ← #.APLCore.BuildDependencyMatrix deps
         matrix_time ← ⎕AI[3] - start_time
         
         matrix ← ⊃matrix_result
@@ -121,7 +121,7 @@
         ⎕←'----------------------------------------------'
         
         start_time ← ⎕AI[3]
-        build_order ← APLCore.TopologicalSort matrix_result
+        build_order ← #.APLCore.TopologicalSort matrix_result
         sort_time ← ⎕AI[3] - start_time
         
         ⎕←'Optimal build order: ',⍕tasks[build_order]
@@ -155,13 +155,14 @@
             ⍝ APL-CD analysis
             ⎕←'🔄 APL-CD Analysis:'
             apl_start ← ⎕AI[3]
-            maven_result ← APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
+            maven_result ← #.APLCore.ParseMavenPOM 'spring-petclinic/pom.xml'
             apl_time ← ⎕AI[3] - apl_start
             
             :If maven_result.success
-                ⎕←'  ✅ Parsed ',⍕≢maven_result.dependencies,' dependencies in ',⍕apl_time,'ms'
+                dep_count ← ⊃⍴maven_result.dependencies
+                ⎕←'  ✅ Parsed ',(⍕dep_count),' dependencies in ',⍕apl_time,'ms'
                 result.apl_time ← apl_time
-                result.dependencies ← ≢maven_result.dependencies
+                result.dependencies ← dep_count
                 
                 ⍝ Maven timing (if available)
                 ⎕←'🔄 Maven Analysis:'
@@ -209,7 +210,7 @@
         ⎕←'==================================='
         ⎕←''
         
-        result ← APLExecution.ParallelExecutionDemo
+        result ← #.APLExecution.ParallelExecutionDemo
         
         ⎕←''
         ⎕←'✅ Parallel execution demonstration complete'
@@ -260,14 +261,14 @@
         result ← ⎕NS ''
         
         :Trap 0
-            APLCore.Initialize
+            #.APLCore.Initialize
             result.aplcore ← '✅ LOADED'
         :Else
             result.aplcore ← '❌ FAILED'
         :EndTrap
         
         :Trap 0
-            APLExecution.Initialize
+            #.APLExecution.Initialize
             result.aplexecution ← '✅ LOADED'
         :Else
             result.aplexecution ← '❌ FAILED'
@@ -278,9 +279,9 @@
     ⍝ Check availability of core mathematical functions
         result ← ⎕NS ''
         
-        result.matrix ← CheckFunction 'APLCore.BuildDependencyMatrix'
-        result.sort ← CheckFunction 'APLCore.TopologicalSort'
-        result.maven ← CheckFunction 'APLCore.ParseMavenPOM'
+        result.matrix ← CheckFunction '#.APLCore.BuildDependencyMatrix'
+        result.sort ← CheckFunction '#.APLCore.TopologicalSort'
+        result.maven ← CheckFunction '#.APLCore.ParseMavenPOM'
     ∇
 
     ∇ result ← CheckDemoAvailability
@@ -289,7 +290,7 @@
         
         result.math ← CheckFunction 'APLSystem.MathematicalDemo'
         result.maven ← CheckFunction 'APLSystem.MavenComparison'
-        result.parallel ← CheckFunction 'APLExecution.ParallelExecutionDemo'
+        result.parallel ← CheckFunction '#.APLExecution.ParallelExecutionDemo'
     ∇
 
     ∇ status ← CheckFunction func_name
@@ -319,12 +320,12 @@
         
         ⍝ Quick mathematical demonstration
         deps ← 3 2⍴'A' 'B' 'B' 'C' 'C' 'A'
-        matrix_result ← APLCore.BuildDependencyMatrix deps
-        order ← APLCore.TopologicalSort matrix_result
+        matrix_result ← #.APLCore.BuildDependencyMatrix deps
+        order ← #.APLCore.TopologicalSort matrix_result
         
         ⎕←'🧮 Live Demo - Dependency Resolution:'
         ⎕←'    Dependencies: A→B, B→C, C→A (cycle!)'
-        cycles ← APLCore.DetectCycles matrix_result
+        cycles ← #.APLCore.DetectCycles matrix_result
         :If 0<≢cycles
             ⎕←'    ✅ Cycle detected using O(N²) matrix operations'
         :EndIf
