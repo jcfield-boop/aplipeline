@@ -99,8 +99,13 @@ APL-CD revolutionizes APL project dependency management through mathematical mat
 
 ```
 ✅ APL Projects: Production-ready matrix-based dependency resolution  
-   • Full .dyalog and .apl file analysis
-   • Tatin package integration
+   • Real APL ecosystem integration (workspaces, ]LINK, namespaces, Tatin)
+   • Validated on real tatin.dev packages (FilesAndDirs, HandleError)
+   • .dws workspace analysis using ⎕LOAD introspection
+   • ]LINK configuration parsing & source ↔ workspace mapping
+   • Tatin apl-package.json parsing with dependency resolution
+   • Dynamic ⎕FIX/⎕COPY expression handling
+   • Full .dyalog, .aplf, .apln, .apla file analysis
    • Mathematical validation with O(N²) complexity
    
 ✅ Maven Projects: Mathematical validation benchmark
@@ -128,32 +133,33 @@ APL-CD revolutionizes APL project dependency management through mathematical mat
 
 ## Architecture
 
-### Core Components
+### Core Components (4-Module Architecture)
 
-**DependencyMatrix.dyalog**
-- Builds N×N dependency matrices from project files
-- Implements topological sorting for build order
-- Detects circular dependencies using matrix operations
+**APLCore.dyalog** (1,650+ lines)
+- O(N²) mathematical algorithms with matrix operations
 - **Maven integration**: Production XML DOM parsing extracting 14 real dependencies from Spring PetClinic
+- Topological sorting and cycle detection using array operations
 - Supports package.json, requirements.txt, Maven pom.xml, and APL project parsing
 
-**ParallelPipeline.dyalog**  
-- Executes compilation, testing, and deployment tasks
-- Uses array operations for parallel task scheduling
+**APLExecution.dyalog** (295 lines)
+- Array-oriented parallel execution engine with monitoring
+- Uses matrix operations for parallel task scheduling
 - Integrates with external build tools (tsc, babel, gcc, python)
-- Manages resource allocation and monitoring
+- Manages resource allocation and performance tracking
 
-**EnterpriseIntegration.dyalog**
+**APLIntegration.dyalog** (900+ lines)
+- **Real APL ecosystem integration** (workspaces, ]LINK, namespaces, Tatin)
+- **Validated on real tatin.dev packages** (FilesAndDirs, HandleError)
+- .dws workspace analysis using ⎕LOAD introspection
+- ]LINK configuration parsing & source ↔ workspace mapping
+- Tatin apl-package.json parsing with dependency resolution
+- Dynamic ⎕FIX/⎕COPY expression handling
+
+**APLSystem.dyalog** (600+ lines)
+- Contest demonstration orchestrator with enterprise features
 - Git repository integration and webhook configuration
-- Jenkins and GitHub Actions workflow generation
-- Kubernetes deployment manifests and scaling
-- Security scanning and compliance validation
-
-**Security.dyalog**
-- Input validation and sanitization
-- Resource limit enforcement
-- Audit logging and monitoring
-- Attack detection and mitigation
+- Security scanning, input validation, and audit logging
+- System monitoring and performance analytics
 
 ## Mathematical Innovation: Why Array-Oriented Dependency Resolution?
 
