@@ -358,8 +358,8 @@ dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 ### Basic Operations
 
 ```bash
-# 🏆 ONE-LINER SETUP: Complete setup and demo
-./setup && ./aplcicd finale
+# 🏆 PRODUCTION-READY: No setup required!
+./aplcicd test
 
 # 5-minute technical demonstration
 ./aplcicd finale

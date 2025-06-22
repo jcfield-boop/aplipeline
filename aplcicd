@@ -1,242 +1,87 @@
 #!/bin/bash
-# APLCICD - Complete Self-Improving APL CI/CD System
-# Dyalog APL Forge Contest 2025 - Single Script Solution
+# APL-CD: Array-Oriented Continuous Deployment
+# Production-ready shell interface
 
-set -euo pipefail  # Exit on error, undefined vars, pipe failures
+set -euo pipefail
 
 # Script metadata
-SCRIPT_VERSION="2.0.0"
-SCRIPT_NAME="APLCICD"
+readonly SCRIPT_VERSION="3.0.0"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 
 # Colors for output
-readonly RED='\033[0;31m'
 readonly GREEN='\033[0;32m'
 readonly YELLOW='\033[1;33m'
 readonly BLUE='\033[0;34m'
 readonly PURPLE='\033[0;35m'
-readonly CYAN='\033[0;36m'
-readonly NC='\033[0m' # No Color
-
-# Get script directory for relative paths
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+readonly NC='\033[0m'
 
 # Logging functions
-log_info() {
-    echo -e "${BLUE}ℹ️  $1${NC}"
-}
-
-log_success() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
-
-log_warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
-}
-
-log_error() {
-    echo -e "${RED}❌ $1${NC}"
-}
-
-log_header() {
+log_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+log_success() { echo -e "${GREEN}✅ $1${NC}"; }
+log_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+log_header() { 
     echo -e "${PURPLE}🚀 $1${NC}"
     echo -e "${PURPLE}$(printf '=%.0s' $(seq 1 ${#1}))${NC}"
 }
 
 # Find Dyalog APL installation
 find_dyalog() {
-    local dyalog_path=""
-    
     # Try environment variable first
     if [[ -n "${DYALOG:-}" ]] && command -v "$DYALOG" &> /dev/null; then
-        dyalog_path="$DYALOG"
-    # Try macOS installation first (full path more reliable than alias)
+        echo "$DYALOG"
+    # macOS installation
     elif [[ -x "/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl" ]]; then
-        dyalog_path="/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl"
-    # Try common system paths  
+        echo "/Applications/Dyalog-19.0.app/Contents/Resources/Dyalog/mapl"
+    # System paths
     elif command -v dyalog &> /dev/null; then
-        dyalog_path="dyalog"
-    # Try Linux installation
+        echo "dyalog"
+    # Linux installation
     elif [[ -x "/opt/mdyalog/19.0/64/unicode/mapl" ]]; then
-        dyalog_path="/opt/mdyalog/19.0/64/unicode/mapl"
-    # Try other common locations
+        echo "/opt/mdyalog/19.0/64/unicode/mapl"
+    # Other common locations
     elif [[ -x "/usr/local/bin/mapl" ]]; then
-        dyalog_path="/usr/local/bin/mapl"
+        echo "/usr/local/bin/mapl"
     elif [[ -x "/usr/bin/mapl" ]]; then
-        dyalog_path="/usr/bin/mapl"
-    fi
-    
-    echo "$dyalog_path"
-}
-
-# Kill any existing Dyalog processes to ensure clean state
-restart_dyalog() {
-    log_info "Restarting Dyalog APL for clean execution..."
-    
-    # More robust process cleanup
-    find_and_kill_dyalog
-    
-    # Clean up any APL workspace files
-    find "$SCRIPT_DIR" -name "aplcore" -delete 2>/dev/null || true
-    find "$SCRIPT_DIR" -name "*.dws" -delete 2>/dev/null || true
-    
-    log_success "Dyalog environment cleaned"
-}
-
-# Improved process cleanup with waiting
-find_and_kill_dyalog() {
-    if pgrep -f "dyalog\|mapl\|aplcicd" &> /dev/null; then
-        log_warning "Terminating existing APL processes..."
-        pkill -f "dyalog\|mapl\|aplcicd" 2>/dev/null || true
-        sleep 3
-        
-        # Wait for processes to actually die
-        local wait_count=0
-        while pgrep -f "dyalog\|mapl" >/dev/null 2>&1; do
-            if [[ $wait_count -ge 10 ]]; then
-                log_warning "Force killing stubborn processes..."
-                pkill -9 -f "dyalog\|mapl" 2>/dev/null || true
-                break
-            fi
-            sleep 1
-            wait_count=$((wait_count + 1))
-        done
+        echo "/usr/bin/mapl"
     fi
 }
 
-# Robust APL command execution with retry logic and exponential backoff
-run_apl() {
+# Simple APL script execution
+run_apl_script() {
+    local script_file="$1"
+    local description="$2"
+    
+    if [[ ! -f "$script_file" ]]; then
+        log_warning "Script file not found: $script_file"
+        return 1
+    fi
+    
+    log_header "$description"
+    log_info "Running: $script_file"
+    
+    "$DYALOG_PATH" -script "$script_file"
+}
+
+# Direct APL command execution
+run_apl_command() {
     local apl_code="$1"
-    local description="${2:-Running APL command}"
-    local max_retries="${3:-2}"
-    local timeout="${4:-10}"
-    local retry_count=0
+    local description="$2"
     
-    while [[ $retry_count -le $max_retries ]]; do
-        log_info "$description (attempt $((retry_count + 1))/$((max_retries + 1)))..."
-        
-        # Restart Dyalog on retries
-        if [[ $retry_count -gt 0 ]]; then
-            restart_dyalog
-        fi
-        
-        # Create temporary file for APL script with better error handling
-        local temp_script="/tmp/aplcicd_$$_$(date +%s).apl"
-        echo "$apl_code" > "$temp_script"
-        # Execute APL code with timeout  
-        "$DYALOG_PATH" < "$temp_script" > /tmp/apl_output_$$.txt 2>&1 &
-        local apl_pid=$!
-        
-        # Wait for completion or timeout
-        local count=0
-        while kill -0 $apl_pid 2>/dev/null; do
-            sleep 1
-            count=$((count + 1))
-            if [[ $count -ge $timeout ]]; then
-                kill $apl_pid 2>/dev/null
-                wait $apl_pid 2>/dev/null
-                break
-            fi
-        done
-        
-        # Get the output
-        output=$(cat /tmp/apl_output_$$.txt 2>/dev/null)
-        rm -f /tmp/apl_output_$$.txt
-        exit_code=0
-        
-        # Clean up temporary file
-        rm -f "$temp_script"
-        
-        # Check for success indicators and absence of error indicators
-        success_pattern="APLCICD.*System Status\|Health Status: OK\|Status: OK\|✅.*ready\|🚀.*APLCICD\|✅.*loaded\|Test completed successfully\|Performance Benchmark\|🏆.*CONTEST DEMONSTRATION\|🎯.*PART.*RESULTS\|Thank you, judges\|PART.*RESULTS.*demonstrated\|Meta-programming capabilities demonstrated\|Live pipeline visualization completed\|🎯 CONTEST ACHIEVEMENT\|📊 REAL SYSTEM STATISTICS"
-        
-        if echo "$output" | grep -q "$success_pattern"; then
-            # Check for fatal errors only (ignore trace output from TRACE_ON_ERROR)
-            if ! echo "$output" | grep -q "SYNTAX ERROR.*\|VALUE ERROR.*\|WS FULL.*\|INTERRUPT.*"; then
-                # Display the actual APL output for impressive content
-                echo ""
-                echo "$output"
-                echo ""
-                log_success "$description completed"
-                return 0
-            fi
-        fi
-        
-        retry_count=$((retry_count + 1))
-        if [[ $retry_count -le $max_retries ]]; then
-            # Exponential backoff: 2^retry_count seconds
-            local wait_time=$((2 ** retry_count))
-            log_warning "$description failed, retrying in ${wait_time}s..."
-            sleep "$wait_time"
-        fi
-    done
-    
-    log_error "$description failed after $((max_retries + 1)) attempts"
-    return 1
+    log_header "$description"
+    echo "$apl_code" | "$DYALOG_PATH"
 }
 
-# Validate demo environment before running
-validate_demo_environment() {
-    log_info "Validating demo environment..."
-    
-    # Check all required files exist
-    local required_files=("src/APLSystem.dyalog" "src/APLCore.dyalog" "src/APLExecution.dyalog")
-    for file in "${required_files[@]}"; do
-        if [[ ! -e "$file" ]]; then
-            log_error "Required file missing: $file"
-            return 1
-        fi
-    done
-    
-    # Check required directories exist
-    local required_dirs=("src" "mcp-demos")
-    for dir in "${required_dirs[@]}"; do
-        if [[ ! -d "$dir" ]]; then
-            log_error "Required directory missing: $dir"
-            return 1
-        fi
-    done
-    
-    # Test Dyalog responds
-    log_info "Testing Dyalog APL response..."
-    # Use timeout if available, otherwise use a simpler test
-    if command -v timeout >/dev/null 2>&1; then
-        if ! echo "⎕←'APLCICD_TEST'" | timeout 10 "$DYALOG_PATH" 2>/dev/null | grep -q "APLCICD_TEST"; then
-            log_error "Dyalog APL not responding correctly"
-            return 1
-        fi
-    elif command -v gtimeout >/dev/null 2>&1; then
-        if ! echo "⎕←'APLCICD_TEST'" | gtimeout 10 "$DYALOG_PATH" 2>/dev/null | grep -q "APLCICD_TEST"; then
-            log_error "Dyalog APL not responding correctly"
-            return 1
-        fi
-    else
-        # Fallback: skip detailed test on macOS without timeout
-        log_warning "APL response test skipped (timeout not available on this system)"
-    fi
-    
-    # Check source files are valid APL
-    local apl_files=(src/*.dyalog)
-    for file in "${apl_files[@]}"; do
-        if [[ -f "$file" ]] && ! grep -q ":Namespace\|∇" "$file"; then
-            log_warning "APL file may be invalid: $file"
-        fi
-    done
-    
-    log_success "Demo environment validation passed"
-    return 0
-}
-
-# Initialize system and check requirements
+# Initialize system
 initialize() {
-    log_header "APLCICD v$SCRIPT_VERSION - Self-Improving APL CI/CD System"
-    echo "Dyalog APL Forge Contest 2025"
+    log_header "APL-CD v$SCRIPT_VERSION - Array-Oriented Dependency Resolution"
+    echo "Mathematical Innovation for CI/CD"
     echo ""
     
     # Find Dyalog
     DYALOG_PATH=$(find_dyalog)
     if [[ -z "$DYALOG_PATH" ]]; then
-        log_error "Dyalog APL not found!"
+        echo "❌ Dyalog APL not found!"
         echo "Please install Dyalog APL 19.0+ or set DYALOG environment variable"
         echo "Download from: https://www.dyalog.com/download-zone.htm"
         exit 1
@@ -244,279 +89,59 @@ initialize() {
     
     log_success "Found Dyalog APL: $DYALOG_PATH"
     
-    # Validate demo environment
-    validate_demo_environment
-    
-    # No directories to create for contest submission
-    
-    # Clean start
-    restart_dyalog
+    # Verify core files exist
+    local required_files=("src/APLCore.dyalog" "src/APLExecution.dyalog" "src/APLSystem.dyalog")
+    for file in "${required_files[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            echo "❌ Required file missing: $file"
+            exit 1
+        fi
+    done
     
     log_success "System initialized"
 }
 
-
-# Run APL CI/CD demo
+# Core demo functions
 run_demo() {
-    log_header "Contest Demonstration"
-    
-    local apl_demo_code="⎕FIX'file://src/APLSystem.dyalog'
-APLSystem.Initialize
-APLSystem.MathematicalDemo
-⎕OFF"
-    
-    run_apl "$apl_demo_code" "Contest demonstration"
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.MathematicalDemo ⋄ ⎕OFF" "Contest Demonstration"
 }
 
-
-# Run performance benchmark
-run_benchmark() {
-    log_header "APL-CD Performance Benchmark vs Traditional CI/CD"
-    
-    local apl_benchmark_code="⎕FIX'file://src/APLSystem.dyalog'
-APLSystem.Initialize
-APLSystem.QuickDemo
-⎕OFF"
-    
-    run_apl "$apl_benchmark_code" "APL-CD performance benchmarking"
-}
-
-# Run system status check
 run_status() {
-    log_header "System Status"
-    
-    local apl_status_code="⎕FIX'file://src/APLSystem.dyalog'
-APLSystem.Initialize
-APLSystem.ContestStatus
-⎕OFF"
-    
-    run_apl "$apl_status_code" "System status check"
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.ContestStatus ⋄ ⎕OFF" "System Status"
 }
 
-# Run complete CI/CD pipeline
+run_benchmark() {
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.QuickDemo ⋄ ⎕OFF" "Performance Benchmark"
+}
+
 run_pipeline() {
-    log_header "CI/CD Pipeline Execution"
-    
-    local apl_pipeline_code="⎕FIX'file://src/APLSystem.dyalog'
-APLSystem.Initialize
-APLSystem.ParallelExecution
-⎕OFF"
-    
-    run_apl "$apl_pipeline_code" "CI/CD pipeline execution"
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.ParallelExecution ⋄ ⎕OFF" "Pipeline Execution"
 }
 
-# Run real implementation demo
-run_real_demo() {
-    log_header "Real Implementation Demo"
-    
-    local apl_real_demo_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.RealDemo
-⎕OFF"
-    
-    run_apl "$apl_real_demo_code" "Real implementation demo"
+run_maven_comparison() {
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.MavenComparison ⋄ ⎕OFF" "Maven Comparison"
 }
 
-# Self-optimization process
-run_self_optimize() {
-    log_header "Self-Optimization Process"
+# Complete system test
+run_test() {
+    log_header "Complete APL-CD System Test"
     
-    local apl_optimize_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.SelfOptimize
-⎕OFF"
-    
-    run_apl "$apl_optimize_code" "Self-optimization process"
-}
-
-
-run_recursive_demo() {
-    log_header "Recursive Self-Testing"
-    run_apl_script "final_recursive_demo.apl" "Recursive self-testing"
-}
-
-# Run APL script directly
-run_apl_script() {
-    local script_file="$1"
-    local description="$2"
-    
-    if [[ ! -f "$script_file" ]]; then
-        log_error "Script file not found: $script_file"
-        return 1
-    fi
-    
-    log_header "$description"
-    log_info "Running script: $script_file"
-    
-    if command -v dyalog >/dev/null 2>&1; then
-        dyalog -script "$script_file"
-        if [[ $? -eq 0 ]]; then
-            log_success "$description completed"
-        else
-            log_error "$description failed"
-            return 1
-        fi
-    else
-        log_error "Dyalog APL not found. Please install Dyalog APL."
-        return 1
-    fi
-}
-
-run_competition_server() {
-    log_header "Competition Web Server"
-    
-    local apl_server_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.LoadAdvancedModules
-APLCICD.CompetitionServer
-⎕OFF"
-    
-    run_apl "$apl_server_code" "Competition web server"
-}
-
-
-run_project_analysis_demo() {
-    log_header "ProjectLoader External Analysis Demo"
-    
-    local apl_project_analysis_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.ProjectAnalysisDemo
-⎕OFF"
-    
-    run_apl "$apl_project_analysis_code" "ProjectLoader external analysis demo"
-}
-
-run_monitoring_demo() {
-    log_header "RealMonitor Live Monitoring Demo"
-    
-    local apl_monitoring_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.RealMonitoringDemo
-⎕OFF"
-    
-    run_apl "$apl_monitoring_code" "RealMonitor live monitoring demo"
-}
-
-run_integrated_demo() {
-    log_header "Integrated APLCICD Demonstration"
-    
-    local apl_integrated_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.IntegratedDemo
-⎕OFF"
-    
-    run_apl "$apl_integrated_code" "Integrated demonstration"
-}
-
-
-run_monitoring_stats() {
-    log_header "Platform Monitoring Statistics"
-    
-    local apl_stats_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.MonitoringStats
-⎕OFF"
-    
-    run_apl "$apl_stats_code" "Platform monitoring statistics"
-}
-
-# Run Jenkins comparison demo
-run_jenkins_comparison() {
-    local project_path="${1:-src}"
-    log_header "APL-CD vs Jenkins Performance Comparison"
-    
-    run_apl_script "mcp-demos/demo-scripts/jenkins_comparison_demo.apl" "Jenkins performance comparison"
-}
-
-# Run real-world bake-off
-run_real_world_bakeoff() {
-    local project_path="${1:-.}"
-    log_header "Real-World Bake-off: APL-CD vs Jenkins"
-    
-    run_apl_script "mcp-demos/demo-scripts/real_bakeoff_simple.apl" "Real-world enterprise project comparison"
-}
-
-# Run Spring PetClinic benchmark
-run_spring_petclinic_benchmark() {
-    log_header "Spring PetClinic Industry-Standard Benchmark"
-    
-    # Check if Spring PetClinic is cloned
-    if [[ ! -d "external_benchmark/spring-petclinic" ]]; then
-        log_info "Cloning Spring PetClinic benchmark project..."
-        git clone https://github.com/spring-projects/spring-petclinic.git external_benchmark/spring-petclinic
-    fi
-    
-    run_apl_script "mcp-demos/demo-scripts/spring_petclinic_simple.apl" "Spring PetClinic industry-standard benchmark"
-}
-
-
-run_test_self() {
-    log_header "Self-Testing Showcase"
-    
-    local apl_self_test_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.TestPipelineOnItself
-⎕OFF"
-    
-    run_apl "$apl_self_test_code" "Self-testing showcase"
-}
-
-run_complete_competition_demo() {
-    log_header "Complete Competition Demonstration"
-    
-    local apl_complete_code="⎕FIX'file://src/APLCICD.dyalog'
-APLCICD.Initialize
-APLCICD.LoadAdvancedModules
-result ← APLCICD.CompleteCompetitionDemo
-⎕←'🏆 Competition demonstration complete!'
-⎕OFF"
-    
-    run_apl "$apl_complete_code" "Complete competition demo"
-}
-
-
-# Complete system demonstration (combination of key features)
-run_complete_demo() {
-    log_header "Complete APLCICD System Demonstration"
-    
-    log_info "Running comprehensive system demo..."
-    
-    # 1. System status
     run_status
     echo ""
-    
-    
-    # 3. Real implementation demo
-    run_real_demo
+    run_demo  
     echo ""
-    
-    # 4. Dashboard note (HTMLRenderer removed for compatibility)
-    log_info "Dashboard functionality available via text-based interface"
+    run_benchmark
     echo ""
-    
-    # 5. Run pipeline test
     run_pipeline
     echo ""
     
-    # 6. Advanced module demonstrations
-    log_info "Demonstrating advanced modules..."
-    run_project_analysis_demo
+    log_success "Complete system test finished!"
     echo ""
-    
-    run_monitoring_demo
-    echo ""
-    
-    log_success "Complete demonstration finished!"
-    echo ""
-    echo "🎯 Key Achievements Demonstrated:"
-    echo "   ✅ Self-improving CI/CD pipeline"
-    echo "   ✅ Real-time monitoring and logging"
-    echo "   ✅ Meta-programming capabilities"
+    echo "🎯 Key Features Demonstrated:"
+    echo "   ✅ O(N²) mathematical dependency resolution"
+    echo "   ✅ Array-oriented parallel execution"
+    echo "   ✅ Real Maven integration (28x performance advantage)"
     echo "   ✅ Production-ready architecture"
-    echo "   ✅ Zero-mock implementation"
-    echo "   ✅ External project analysis capabilities"
-    echo "   ✅ Live system monitoring and metrics"
-    echo "   ✅ Integrated ProjectLoader + RealMonitor workflow"
 }
 
 # Show help
@@ -524,82 +149,59 @@ show_help() {
     cat << EOF
 🚀 APL-CD v$SCRIPT_VERSION - Array-Oriented Dependency Resolution
 ================================================================
-APL Forge Contest 2025 - Mathematical Innovation
+Mathematical Innovation for CI/CD
 
-Usage: ./aplcicd [command] [options]
+Usage: ./aplcicd [command]
 
-Essential Commands:
-  test              - Comprehensive system demonstration 
-  demo              - Contest demonstration with array operations
+Core Commands:
+  test              - Complete system demonstration 
+  demo              - Mathematical demonstration with O(N²) algorithms
   status            - System health and module status
+  benchmark         - Performance comparison vs traditional CI/CD
+  pipeline          - Parallel execution demonstration
+  maven             - Maven integration demo (28x speedup)
 
-Technical Demos:
-  finale            - 5-minute technical demonstration
-  5min              - Same as finale command
-  benchmark         - O(N²) vs O(N³) algorithmic complexity proof
-  integration       - Mathematical analysis demonstration
-
-Development Commands:
-  pipeline          - CI/CD pipeline execution
-  stats             - System statistics and monitoring
-  compare-with-jenkins [path] - Performance comparison with Jenkins
-  bake-off [path]   - Real-world enterprise project comparison
-  spring-petclinic  - Industry-standard Maven benchmark (Spring Boot)
+Demo Scripts:
+  5min              - 5-minute technical demonstration
+  comparison        - Maven vs APL-CD head-to-head comparison
+  integration       - Real Maven integration showcase
 
 Examples:
-  ./setup && ./aplcicd finale                    # One-liner setup and demo  
-  ./aplcicd finale                               # 5-minute technical demonstration
-  ./aplcicd benchmark                            # Algorithmic complexity proof
-  ./aplcicd demo                                 # Array operations demonstration
+  ./aplcicd test                     # Complete system test
+  ./aplcicd demo                     # Core mathematical demo
+  ./aplcicd 5min                     # 5-minute presentation
+  ./aplcicd maven                    # Maven integration demo
 
 Key Features:
-  🔢 O(N²) Dependency Resolution (matrix operations vs O(N³) graph traversal)
-  ⚡ Array-Oriented Parallel Execution (vectorized task scheduling)
-  📊 Mathematical Optimization (topological sorting with APL arrays)
-  🏆 Maven Integration (28x performance advantage with real XML parsing)
-  🎯 Technical Demonstrations (5 focused demo scripts)
-  📈 Spring PetClinic Validation (enterprise benchmark testing)
+  🔢 O(N²) Dependency Resolution (vs traditional O(N³))
+  ⚡ Array-Oriented Parallel Execution  
+  📊 Mathematical Optimization with APL
+  🏆 Maven Integration (14 real dependencies extracted)
+  📈 Spring PetClinic Validation (447 XML lines processed)
 
 Architecture:
-  • 3 Core Modules: APLCore (algorithms), APLExecution (parallel), APLSystem (orchestrator)
-  • 5 Demo Scripts: Maven integration and mathematical demonstrations
-  • Contest-focused: 72% reduction from 13 files to 3 focused modules
+  • 3 Core Modules: APLCore, APLExecution, APLSystem
+  • 5 Demo Scripts: Maven integration and mathematical proofs
+  • Production Ready: Clean, robust implementation
 
-System Requirements:
+Requirements:
   • Dyalog APL 19.0+ (automatically detected)
   • Unix-like system (macOS/Linux/WSL)
-  • Git (for repository operations)
-
-Quick Start:
-  1. chmod +x aplcicd
-  2. ./aplcicd test
-  3. ./aplcicd pipeline  (run full CI/CD with monitoring)
-  4. ./aplcicd stats     (view usage analytics and trends)
-
-For Interactive Use:
-  ⎕FIX'file://src/APLCICD.dyalog'
-  APLCICD.Initialize
-  APLCICD.TestCI              ⍝ Run full CI/CD pipeline
-  APLCICD.MonitoringStats     ⍝ View usage analytics
-  APLCICD.Demo                ⍝ Array-oriented demonstration
 
 Repository: https://github.com/jcfield-boop/aplipeline
-Contest: Dyalog APL Forge 2025 - Array Processing Category
+Contest: Dyalog APL Forge 2025
 EOF
 }
 
 # Main command processing
 main() {
-    # Initialize system
     initialize
     
-    # Parse command
     local cmd="${1:-help}"
     
     case "$cmd" in
-        # Tier 1 - Essential Commands
         "test")
-            run_complete_demo
+            run_test
             ;;
         "demo")
             run_demo
@@ -607,82 +209,23 @@ main() {
         "status")
             run_status
             ;;
-        
-        # Tier 2 - Development Commands  
-        "pipeline")
-            run_pipeline
-            ;;
         "benchmark")
             run_benchmark
             ;;
-        
-        # Tier 3 - Advanced Commands
-        "optimize")
-            run_self_optimize
+        "pipeline")
+            run_pipeline
             ;;
-        "dashboard")
-            log_info "Dashboard requires HTMLRenderer dependency"
-            log_info "Use './aplcicd status' for text-based interface"
+        "maven")
+            run_maven_comparison
             ;;
-        "stats")
-            run_monitoring_stats
+        "5min"|"finale")
+            run_apl_script "mcp-demos/demo-scripts/simple_5min_demo.apl" "5-Minute Technical Demonstration"
             ;;
-        "compare-with-jenkins")
-            run_jenkins_comparison "${2:-src}"
-            ;;
-        "bake-off"|"bakeoff")
-            run_real_world_bakeoff "${2:-.}"
-            ;;
-        "spring-petclinic"|"petclinic")
-            run_spring_petclinic_benchmark
-            ;;
-        
-        # Legacy commands for backward compatibility
-        "complete"|"full")
-            run_complete_demo
-            ;;
-        "realdemo")
-            run_real_demo
-            ;;
-        "selfoptimize")
-            run_self_optimize
-            ;;
-        "recursive")
-            run_recursive_demo
-            ;;
-        "finale"|"5min")
-            run_apl_script "mcp-demos/demo-scripts/simple_5min_demo.apl" "5-minute technical demonstration"
-            ;;
-        "benchmark")
-            run_apl_script "mcp-demos/demo-scripts/simple_benchmark.apl" "O(N²) vs O(N³) performance comparison"
+        "comparison")
+            run_apl_script "mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl" "Maven vs APL-CD Comparison"
             ;;
         "integration")
-            run_apl_script "mcp-demos/demo-scripts/integration_example.apl" "APL Forge submission analysis"
-            ;;
-        "direct")
-            run_apl_script "mcp-demos/demo-scripts/direct_demo.apl" "Direct working system demo"
-            ;;
-        "competition")
-            run_competition_server
-            ;;
-        "complete-demo")
-            run_complete_competition_demo
-            ;;
-        "project-analysis")
-            run_project_analysis_demo
-            ;;
-        "monitoring")
-            run_monitoring_demo
-            ;;
-        "integrated")
-            run_integrated_demo
-            ;;
-        "test-self"|"self-test")
-            run_test_self
-            ;;
-        "restart")
-            restart_dyalog
-            log_success "Dyalog APL restarted"
+            run_apl_script "mcp-demos/demo-scripts/maven_integration_demo.apl" "Maven Integration Demo"
             ;;
         "help"|"-h"|"--help"|*)
             show_help
@@ -690,8 +233,5 @@ main() {
     esac
 }
 
-# Handle script interruption
-trap 'log_warning "Script interrupted"; exit 1' INT TERM
-
-# Run main function with all arguments
+# Run main function
 main "$@"
