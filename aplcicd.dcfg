@@ -17,12 +17,14 @@
   },
   "core_modules": {
     "APLCore": "./src/APLCore.dyalog",
-    "APLExecution": "./src/APLExecution.dyalog", 
+    "APLExecution": "./src/APLExecution.dyalog",
+    "APLIntegration": "./src/APLIntegration.dyalog",
     "APLSystem": "./src/APLSystem.dyalog"
   },
   "exports": {
     "APLCore": "./src/APLCore.dyalog",
     "APLExecution": "./src/APLExecution.dyalog",
+    "APLIntegration": "./src/APLIntegration.dyalog",
     "APLSystem": "./src/APLSystem.dyalog"
   },
   "api": {
@@ -32,6 +34,9 @@
       "APLSystem.MathematicalDemo",
       "APLSystem.MavenComparison",
       "APLSystem.ParallelExecution",
+      "APLSystem.APLIntegrationDemo",
+      "APLSystem.TatinPackageDemo",
+      "APLSystem.WorkspaceAnalysisDemo",
       "APLSystem.QuickDemo",
       "APLCore.BuildDependencyMatrix",
       "APLCore.TopologicalSort", 
@@ -40,6 +45,12 @@
       "APLCore.ParseMavenPOM",
       "APLCore.ExtractMavenDependencies",
       "APLCore.ParseProjectDependencies",
+      "APLIntegration.AnalyzeWorkspace",
+      "APLIntegration.ParseLINKConfig",
+      "APLIntegration.ExtractNamespaceHierarchy",
+      "APLIntegration.ParseTatinPackage",
+      "APLIntegration.AnalyzeDynamicAPL",
+      "APLIntegration.AnalyzeAPLProject",
       "APLExecution.ExecuteParallel",
       "APLExecution.ParallelExecutionDemo"
     ],
@@ -58,7 +69,18 @@
       "APLSystem.MathematicalDemo - O(N²) algorithms demonstration",
       "APLSystem.MavenComparison - Real Maven vs APL-CD performance", 
       "APLSystem.ParallelExecution - Array-oriented parallel execution",
+      "APLSystem.APLIntegrationDemo - Real workspace, ]LINK, namespace analysis",
+      "APLSystem.TatinPackageDemo - Tatin package dependency resolution",
+      "APLSystem.WorkspaceAnalysisDemo - Real .dws workspace introspection",
       "APLSystem.QuickDemo - 2-minute mathematical overview"
+    ],
+    "apl_integration_functions": [
+      "APLIntegration.AnalyzeWorkspace - Real .dws workspace analysis using ⎕LOAD",
+      "APLIntegration.ParseLINKConfig - ]LINK configuration & source mapping",
+      "APLIntegration.ExtractNamespaceHierarchy - Parent-child namespace relationships",
+      "APLIntegration.ParseTatinPackage - Real package.dcfg parsing & dependencies",
+      "APLIntegration.AnalyzeDynamicAPL - ⎕FIX/⎕COPY expression handling",
+      "APLIntegration.AnalyzeAPLProject - Comprehensive APL-aware analysis"
     ]
   },
   "config": {
@@ -106,7 +128,14 @@
     "Dyalog APL",
     "Performance Benchmarking",
     "MCP",
-    "Claude Desktop"
+    "Claude Desktop",
+    "APL Workspaces",
+    "]LINK Integration",
+    "Namespace Hierarchy",
+    "Tatin Packages",
+    "⎕FIX Analysis",
+    "⎕COPY Tracking",
+    "APL Ecosystem"
   ],
   "homepage": "https://github.com/jcfield-boop/aplipeline",
   "repository": {
@@ -125,7 +154,12 @@
       "Matrix-based topological sorting for optimal build order determination",
       "Array-oriented parallel execution with vectorized task scheduling",
       "Claude Desktop integration for natural language project analysis",
-      "Tatin.dev package compatibility for APL ecosystem integration",
+      "Real APL workspace analysis using ⎕LOAD and namespace introspection",
+      "]LINK configuration parsing and source ↔ workspace mapping",
+      "Namespace hierarchy analysis with parent-child relationships",
+      "Tatin package system integration with package.dcfg parsing",
+      "Dynamic ⎕FIX/⎕COPY expression handling and dependency tracking",
+      "Comprehensive APL-aware dependency analysis (not just file listing)",
       "Mathematical validation using linear algebra operations"
     ],
     "innovations": [
@@ -145,12 +179,13 @@
     "parallel_execution": "Array-based task grouping with vectorized operations"
   },
   "architecture": {
-    "contest_core": "3 complete modules - APLCore (O(N²) algorithms + utilities), APLExecution (parallel + monitoring), APLSystem (orchestrator + enterprise)",
+    "contest_core": "4 complete modules - APLCore (O(N²) algorithms + utilities), APLExecution (parallel + monitoring), APLIntegration (real APL ecosystem support), APLSystem (orchestrator + enterprise)",
     "consolidated_design": "All functionality integrated into focused core modules",
     "demo_scripts": "4 working demonstration scripts including Maven integration",
     "enterprise_validation": "Tested against Spring PetClinic enterprise application", 
     "mathematical_foundation": "Built on matrix operations and array-oriented algorithms",
     "algorithmic_innovation": "First dependency resolution system using array-oriented programming",
+    "apl_ecosystem_integration": "Real workspace analysis, ]LINK support, namespace hierarchy, Tatin packages",
     "production_ready": "Clean implementation with robust error handling and testing"
   }
 }
