@@ -1026,6 +1026,37 @@
         :EndTrap
     ∇
 
+    ∇ value ← ExtractXMLElement line element_name
+    ⍝ Extract value from XML element like <groupId>org.springframework</groupId>
+        value ← ''
+        start_tag ← '<',element_name,'>'
+        end_tag ← '</',element_name,'>'
+        start_pos ← ⍸start_tag⍷line
+        end_pos ← ⍸end_tag⍷line
+        
+        :If (0<≢start_pos) ∧ (0<≢end_pos)
+            start_idx ← (⊃start_pos) + ≢start_tag
+            end_idx ← (⊃end_pos) - 1
+            :If start_idx ≤ end_idx
+                value ← start_idx↓end_idx↑line
+                value ← RemoveWhitespace value
+            :EndIf
+        :EndIf
+    ∇
+
+    ∇ clean ← RemoveWhitespace text
+    ⍝ Remove leading/trailing whitespace
+        clean ← text
+        :If 0<≢clean
+            :While (0<≢clean) ∧ (' '=⊃clean)
+                clean ← 1↓clean
+            :EndWhile
+            :While (0<≢clean) ∧ (' '=¯1↑clean)
+                clean ← ¯1↓clean
+            :EndWhile
+        :EndIf
+    ∇
+
     ∇ deps ← ExtractMavenDependencies xml_lines
     ⍝ Extract <dependency> elements from Maven pom.xml content
         deps ← 0 4⍴''
@@ -1072,37 +1103,6 @@
                 :EndIf
             :EndIf
         :EndFor
-    ∇
-
-    ∇ value ← ExtractXMLElement line element_name
-    ⍝ Extract value from XML element like <groupId>org.springframework</groupId>
-        value ← ''
-        start_tag ← '<',element_name,'>'
-        end_tag ← '</',element_name,'>'
-        start_pos ← ⍸start_tag⍷line
-        end_pos ← ⍸end_tag⍷line
-        
-        :If (0<≢start_pos) ∧ (0<≢end_pos)
-            start_idx ← (⊃start_pos) + ≢start_tag
-            end_idx ← (⊃end_pos) - 1
-            :If start_idx ≤ end_idx
-                value ← start_idx↓end_idx↑line
-                value ← RemoveWhitespace value
-            :EndIf
-        :EndIf
-    ∇
-
-    ∇ clean ← RemoveWhitespace text
-    ⍝ Remove leading/trailing whitespace
-        clean ← text
-        :If 0<≢clean
-            :While (0<≢clean) ∧ (' '=⊃clean)
-                clean ← 1↓clean
-            :EndWhile
-            :While (0<≢clean) ∧ (' '=¯1↑clean)
-                clean ← ¯1↓clean
-            :EndWhile
-        :EndIf
     ∇
 
     ∇ apl_deps ← ConvertMavenToAPLDeps maven_deps

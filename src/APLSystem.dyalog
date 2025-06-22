@@ -32,11 +32,11 @@
         result ← ⎕NS ''
         result.loaded_modules ← ⍬
         
-        ⍝ Load core mathematical module first
+        ⍝ Load core mathematical module first (globally)
         :Trap 0
-            ⎕FIX'file://src/APLCore.dyalog'
-            :If 9=⎕NC'APLCore'
-                APLCore.Initialize
+            #.⎕FIX'file://src/APLCore.dyalog'
+            :If 9=#.⎕NC'APLCore'
+                #.APLCore.Initialize
                 result.loaded_modules ,← ⊂'APLCore'
             :Else
                 ⎕←'❌ APLCore namespace not found after loading'
@@ -45,11 +45,11 @@
             ⎕←'❌ Failed to load APLCore: ',⎕DM
         :EndTrap
         
-        ⍝ Load parallel execution engine
+        ⍝ Load parallel execution engine (globally)
         :Trap 0
-            ⎕FIX'file://src/APLExecution.dyalog'
-            :If 9=⎕NC'APLExecution'
-                APLExecution.Initialize
+            #.⎕FIX'file://src/APLExecution.dyalog'
+            :If 9=#.⎕NC'APLExecution'
+                #.APLExecution.Initialize
                 result.loaded_modules ,← ⊂'APLExecution'
             :Else
                 ⎕←'❌ APLExecution namespace not found after loading'
@@ -59,8 +59,8 @@
         :EndTrap
         
         result.total_loaded ← ≢result.loaded_modules
-        result.aplcore_available ← 9=⎕NC'APLCore'
-        result.aplexecution_available ← 9=⎕NC'APLExecution'
+        result.aplcore_available ← 9=#.⎕NC'APLCore'
+        result.aplexecution_available ← 9=#.⎕NC'APLExecution'
     ∇
 
     ∇ ContestHelp
