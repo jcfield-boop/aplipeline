@@ -1,14 +1,14 @@
 :Namespace APLCore
-⍝ APL-CD Contest Core: Revolutionary O(N²) Dependency Resolution
+⍝ APL-CD Contest Core: Array-Oriented Dependency Resolution
 ⍝ 
-⍝ Mathematical innovation using APL's array paradigm for CI/CD
-⍝ Core algorithmic contribution: O(N²) matrix operations vs traditional O(N³)
+⍝ Alternative implementation using APL's array paradigm for CI/CD
+⍝ NOTE: Same algorithmic complexity as traditional approaches, different style
 ⍝
 ⍝ MATHEMATICAL CORE ALGORITHMS:
 ⍝   BuildDependencyMatrix    - Create N×N dependency matrix from build graph  
 ⍝   TopologicalSort         - Array-based topological sorting for build order
 ⍝   FindParallelTasks       - Matrix operations to identify concurrent execution
-⍝   DetectCycles           - O(N²) cycle detection using matrix powers
+⍝   DetectCycles           - Cycle detection using matrix powers (space trade-off)
 ⍝   OptimizeBuildOrder     - Linear algebra optimization of build sequence
 ⍝   CalculateMinimalRebuild - Vector operations for incremental builds
 ⍝
@@ -21,7 +21,9 @@
 
     ∇ Initialize
     ⍝ Initialize array-oriented dependency resolution
-        ⎕←'  🔢 Matrix-based dependency resolution (O(N²))'
+    ⍝ NOTE: Matrix approach is O(N²) but traditional graph algorithms are O(V+E)
+    ⍝ This is an alternative implementation, not an algorithmic breakthrough
+        ⎕←'  🔢 Matrix-based dependency resolution (alternative approach)'
     ∇
 
     ⍝ ═══════════════════════════════════════════════════════════════
@@ -30,6 +32,8 @@
 
     ∇ matrix ← BuildDependencyMatrix dependencies
     ⍝ Create N×N boolean dependency matrix from dependency list
+    ⍝ NOTE: This is O(N²) space/time, traditional graph representation is O(V+E)
+    ⍝ Trade-off: more memory usage for array-oriented operations
         
         :Trap 11 16 5  ⍝ DOMAIN, RANK, LENGTH errors
             :If 0=≢dependencies
@@ -72,7 +76,8 @@
 
     ∇ order ← TopologicalSort dep_matrix
     ⍝ Array-based topological sorting using APL matrix operations
-    ⍝ Achieves optimal build order in O(N²) time complexity
+    ⍝ NOTE: Same complexity as traditional Kahn's algorithm O(V+E)
+    ⍝ This is a different implementation style, not faster algorithm
     ⍝ 
     ⍝ Arguments:
     ⍝   dep_matrix (boolean matrix): Dependency matrix from BuildDependencyMatrix

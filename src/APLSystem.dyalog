@@ -18,11 +18,11 @@
         load_result ← LoadContestCore
         
         ⎕←'🔢 APL-CD Contest Core Loaded:'
-        ⎕←'✅ APLCore - O(N²) mathematical algorithms + Maven integration'
-        ⎕←'✅ APLExecution - Array-oriented parallel execution engine'
+        ⎕←'✅ APLCore - Array-oriented algorithms + Maven integration'
+        ⎕←'✅ APLExecution - Matrix-based parallel execution engine'
         ⎕←'✅ APLSystem - Contest demonstration orchestrator'
         ⎕←''
-        ⎕←'🚀 Ready for mathematical CI/CD demonstrations!'
+        ⎕←'🚀 Ready for array-oriented CI/CD demonstrations!'
         ⎕←''
         ContestHelp
     ∇
@@ -69,7 +69,7 @@
         ⎕←'================================='
         ⎕←''
         ⎕←'MATHEMATICAL CORE:'
-        ⎕←'  APLSystem.MathematicalDemo      - O(N²) matrix algorithms demonstration'
+        ⎕←'  APLSystem.MathematicalDemo      - Array-oriented algorithms demonstration'
         ⎕←'  APLSystem.MavenComparison       - Real Maven vs APL-CD performance'
         ⎕←'  APLSystem.ParallelExecution     - Array-oriented parallel execution'
         ⎕←''
@@ -78,7 +78,7 @@
         ⎕←'  APLSystem.QuickDemo             - 2-minute mathematical overview'
         ⎕←''
         ⎕←'ALGORITHMIC VALIDATION:'
-        ⎕←'  APLCore.BuildDependencyMatrix   - Core O(N²) algorithm'
+        ⎕←'  APLCore.BuildDependencyMatrix   - Matrix-based approach'
         ⎕←'  APLCore.TopologicalSort         - Mathematical sorting'
         ⎕←'  APLCore.ParseMavenPOM           - Real Maven integration'
         ⎕←''
@@ -87,16 +87,17 @@
     ∇ result ← MathematicalDemo
     ⍝ Core mathematical demonstration for contest judges
         ⎕←''
-        ⎕←'🧮 MATHEMATICAL INNOVATION DEMONSTRATION'
-        ⎕←'========================================'
+        ⎕←'🧮 ARRAY-ORIENTED PROGRAMMING DEMONSTRATION'
+        ⎕←'=========================================='
+        ⎕←'NOTE: This shows alternative implementation approach, not algorithmic breakthrough'
         ⎕←''
         
         result ← ⎕NS ''
         result.timestamp ← ⎕TS
         
-        ⍝ Demonstrate O(N²) matrix operations
-        ⎕←'📊 Part 1: O(N²) Dependency Matrix Construction'
-        ⎕←'---------------------------------------------'
+        ⍝ Demonstrate matrix-based operations  
+        ⎕←'📊 Part 1: Matrix-Based Dependency Representation'
+        ⎕←'-----------------------------------------------'
         
         ⍝ Sample dependency data
         deps ← 4 2⍴'A' 'B' 'B' 'C' 'A' 'D' 'D' 'C'
@@ -109,7 +110,7 @@
         matrix ← ⊃matrix_result
         tasks ← 1⊃matrix_result
         
-        ⎕←'Matrix built in ',⍕matrix_time,'ms using O(N²) operations'
+        ⎕←'Matrix built in ',⍕matrix_time,'ms using array operations'
         ⎕←'Dependency matrix:'
         ⎕←'    ',1↓∊' ',¨tasks
         :For i :In ⍳≢tasks
@@ -117,8 +118,8 @@
         :EndFor
         
         ⎕←''
-        ⎕←'📈 Part 2: Mathematical Build Order Computation'
-        ⎕←'----------------------------------------------'
+        ⎕←'📈 Part 2: Array-Based Build Order Computation'
+        ⎕←'---------------------------------------------'
         
         start_time ← ⎕AI[3]
         build_order ← #.APLCore.TopologicalSort matrix_result
@@ -133,8 +134,8 @@
         result.complexity ← 'O(N²)'
         
         ⎕←''
-        ⎕←'✅ Mathematical demonstration complete'
-        ⎕←'    Algorithm: O(N²) matrix operations'
+        ⎕←'✅ Array-oriented demonstration complete'
+        ⎕←'    Approach: Matrix-based operations (alternative to graph algorithms)'
         ⎕←'    Total time: ',⍕result.total_time,'ms'
     ∇
 
