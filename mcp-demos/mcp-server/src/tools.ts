@@ -15,7 +15,7 @@ export const TOOLS = [
   },
   {
     name: 'analyze_spring_petclinic',
-    description: 'Analyze Spring PetClinic dependencies using APL-CD matrix operations',
+    description: 'Analyze Spring PetClinic extracting 14 real dependencies using O(N²) matrix operations',
     inputSchema: {
       type: 'object',
       properties: {
@@ -58,7 +58,7 @@ export const TOOLS = [
   },
   {
     name: 'maven_integration_demo',
-    description: 'Demonstrate real Maven integration with Spring PetClinic',
+    description: 'Demonstrate production Maven integration extracting 14 dependencies from Spring PetClinic',
     inputSchema: {
       type: 'object',
       properties: {
