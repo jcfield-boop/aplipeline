@@ -90,7 +90,7 @@ initialize() {
     log_success "Found Dyalog APL: $DYALOG_PATH"
     
     # Verify core files exist
-    local required_files=("src/APLCore.dyalog" "src/APLExecution.dyalog" "src/APLSystem.dyalog")
+    local required_files=("src/APLCore.dyalog" "src/APLExecution.dyalog" "src/APLIntegration.dyalog" "src/APLSystem.dyalog")
     for file in "${required_files[@]}"; do
         if [[ ! -f "$file" ]]; then
             echo "❌ Required file missing: $file"
@@ -120,6 +120,19 @@ run_pipeline() {
 
 run_maven_comparison() {
     run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.MavenComparison ⋄ ⎕OFF" "Maven Comparison"
+}
+
+# APL integration demos
+run_apl_integration() {
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.APLIntegrationDemo ⋄ ⎕OFF" "APL Integration Demo"
+}
+
+run_tatin_demo() {
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.TatinPackageDemo ⋄ ⎕OFF" "Tatin Package Demo"
+}
+
+run_workspace_demo() {
+    run_apl_command "⎕FIX'file://src/APLSystem.dyalog' ⋄ APLSystem.Initialize ⋄ APLSystem.WorkspaceAnalysisDemo ⋄ ⎕OFF" "Workspace Analysis Demo"
 }
 
 # Complete system test
@@ -161,6 +174,11 @@ Core Commands:
   pipeline          - Parallel execution demonstration
   maven             - Maven integration demo (28x speedup)
 
+APL Integration:
+  apl               - Comprehensive APL ecosystem integration demo
+  tatin             - Tatin package analysis (validated on real packages)
+  workspace         - APL workspace analysis (.dws files)
+
 Demo Scripts:
   5min              - 5-minute technical demonstration
   comparison        - Maven vs APL-CD head-to-head comparison
@@ -169,6 +187,8 @@ Demo Scripts:
 Examples:
   ./aplcicd test                     # Complete system test
   ./aplcicd demo                     # Core mathematical demo
+  ./aplcicd apl                      # APL ecosystem integration
+  ./aplcicd tatin                    # Tatin package analysis
   ./aplcicd 5min                     # 5-minute presentation
   ./aplcicd maven                    # Maven integration demo
 
@@ -176,13 +196,16 @@ Key Features:
   🔢 O(N²) Dependency Resolution (vs traditional O(N³))
   ⚡ Array-Oriented Parallel Execution  
   📊 Mathematical Optimization with APL
+  🔗 Real APL Ecosystem Integration (workspaces, ]LINK, Tatin)
   🏆 Maven Integration (14 real dependencies extracted)
   📈 Spring PetClinic Validation (447 XML lines processed)
+  📦 Tatin Package Support (validated on real tatin.dev packages)
 
 Architecture:
-  • 3 Core Modules: Complete system with all functionality integrated
+  • 4 Core Modules: Complete system with APL ecosystem integration
   • 5 Demo Scripts: Maven integration and mathematical proofs
   • Production Ready: Clean, robust implementation
+  • APL Integration: Real workspace, ]LINK, and Tatin package support
 
 Requirements:
   • Dyalog APL 19.0+ (automatically detected)
@@ -217,6 +240,15 @@ main() {
             ;;
         "maven")
             run_maven_comparison
+            ;;
+        "apl")
+            run_apl_integration
+            ;;
+        "tatin")
+            run_tatin_demo
+            ;;
+        "workspace")
+            run_workspace_demo
             ;;
         "5min"|"finale")
             run_apl_script "mcp-demos/demo-scripts/simple_5min_demo.apl" "5-Minute Technical Demonstration"
