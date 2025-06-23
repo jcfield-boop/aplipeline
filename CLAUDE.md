@@ -4,12 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## APL-CD: Array-Oriented Continuous Deployment
 
-APL-CD is a continuous deployment system that uses APL's array operations for dependency resolution and pipeline execution. Key capabilities include:
+APL-CD is a continuous deployment system that brings modern CI/CD concepts to the APL ecosystem using array-oriented programming. Key capabilities include:
 
-- **O(N²) Algorithmic Complexity**: Uses matrix operations for dependency resolution
-- **Array-Oriented Architecture**: Built on APL's array paradigm
-- **Pipeline Processing**: Dependency resolution and task execution
-- **External Repository Support**: Processes APL projects from various sources
+- **Array-Oriented Implementation**: Uses APL's natural matrix operations for dependency representation
+- **Clean Architecture**: Built on APL's expressive array paradigm
+- **Pipeline Processing**: Dependency resolution and task execution with APL syntax
+- **APL Ecosystem Support**: Full integration with workspaces, ]LINK, and Tatin packages
 - **Tool Integration**: Interfaces with external build and deployment tools
 
 ## Commands
@@ -18,9 +18,9 @@ APL-CD is a continuous deployment system that uses APL's array operations for de
 - `./aplcicd test` - Complete system demonstration with all APL-CD features
 - `./aplcicd demo` - Array-oriented dependency resolution and parallel execution demo  
 - `./aplcicd test` - Comprehensive system testing with competition validation
-- `dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl` - **Real Maven integration (28x speedup)**
-- `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl` - **Head-to-head Maven comparison (28x speedup)**
-- `./aplcicd benchmark` - **O(N²) vs O(N³) performance proof**
+- `dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl` - **Real Maven integration (implementation comparison)**
+- `dyalog -script mcp-demos/demo-scripts/maven_vs_aplcd_comparison.apl` - **APL vs traditional comparison**
+- `./aplcicd benchmark` - **Array-oriented approach demonstration**
 
 ### Maven Core Integration (Production-Ready)
 - `APLCore.ParseMavenPOM filepath` - Core Maven POM parsing function (VERIFIED WORKING)

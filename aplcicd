@@ -74,8 +74,8 @@ run_apl_command() {
 
 # Initialize system
 initialize() {
-    log_header "APL-CD v$SCRIPT_VERSION - Array-Oriented Dependency Resolution"
-    echo "Mathematical Innovation for CI/CD"
+    log_header "APL-CD - Array-Oriented Dependency Resolution"
+    echo "APL-Native CI/CD Implementation"
     echo ""
     
     # Find Dyalog
@@ -160,9 +160,9 @@ run_test() {
 # Show help
 show_help() {
     cat << EOF
-🚀 APL-CD v$SCRIPT_VERSION - Array-Oriented Dependency Resolution
+🚀 APL-CD - Array-Oriented Dependency Resolution
 ================================================================
-Mathematical Innovation for CI/CD
+APL-Native CI/CD Implementation
 
 Usage: ./aplcicd [command]
 
@@ -193,9 +193,9 @@ Examples:
   ./aplcicd maven                    # Maven integration demo
 
 Key Features:
-  🔢 O(N²) Dependency Resolution (vs traditional O(N³))
+  🔢 Clean Array-Oriented Dependency Resolution
   ⚡ Array-Oriented Parallel Execution  
-  📊 Mathematical Optimization with APL
+  📊 Natural APL Matrix Operations
   🔗 Real APL Ecosystem Integration (workspaces, ]LINK, Tatin)
   🏆 Maven Integration (14 real dependencies extracted)
   📈 Spring PetClinic Validation (447 XML lines processed)
@@ -203,7 +203,7 @@ Key Features:
 
 Architecture:
   • 4 Core Modules: Complete system with APL ecosystem integration
-  • 5 Demo Scripts: Maven integration and mathematical proofs
+  • 5 Demo Scripts: Maven integration and APL expressiveness demos
   • Production Ready: Clean, robust implementation
   • APL Integration: Real workspace, ]LINK, and Tatin package support
 

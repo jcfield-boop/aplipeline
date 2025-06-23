@@ -1,25 +1,25 @@
-# APL-CD: Mathematical Breakthrough in APL Dependency Resolution
+# APL-CD: Array-Oriented Dependency Resolution for APL Projects
 
-![APL](https://img.shields.io/badge/APL-Mathematical%20Innovation-blue)
-![Algorithm](https://img.shields.io/badge/Algorithm-O(N²)%20Matrix%20Operations-gold)
-![Performance](https://img.shields.io/badge/Maven%20Validation-28x%20Faster-green)
+![APL](https://img.shields.io/badge/APL-Native%20Implementation-blue)
+![Algorithm](https://img.shields.io/badge/Algorithm-Array%20Oriented-gold)
+![Ecosystem](https://img.shields.io/badge/APL%20Ecosystem-Full%20Support-green)
 
-**Revolutionary mathematical approach to APL dependency resolution using array-oriented programming.** APL-CD replaces traditional O(N³) graph algorithms with O(N²) matrix operations, achieving exponential scaling advantages for APL projects while maintaining mathematical correctness.
+**APL-native dependency resolution using array-oriented programming paradigm.** APL-CD brings modern CI/CD concepts to the APL ecosystem with clean, expressive matrix syntax for dependency management, comprehensive workspace integration, and native Tatin package support.
 
-## ⚡ Quickstart: Experience the Mathematical Breakthrough
+## ⚡ Quickstart: Experience APL-Native Dependency Management
 
-> **🏆 FASTEST PATH TO VALUE: 2-Minute Mathematical Demo**  
-> Skip the theory - see APL-CD's O(N²) innovation in action immediately!
+> **🏆 FASTEST PATH TO VALUE: 2-Minute APL Demo**  
+> Skip the theory - see APL-CD's array-oriented approach in action immediately!
 
 ```bash
 # Clone and run instantly (no setup required!)
 git clone https://github.com/jcfield-boop/aplipeline.git
 cd aplipeline
 
-# 🎯 Core mathematical demonstration
+# 🎯 Core array-oriented demonstration
 ./aplcicd demo
 
-# 🔬 Real Maven vs APL-CD comparison (28x speedup proof)
+# 🔬 APL vs traditional implementation comparison
 dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 
 # 📊 System health check
@@ -27,10 +27,10 @@ dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 ```
 
 **What You'll See:**
-- ✨ **Live Matrix Operations**: O(N²) dependency resolution in action
-- 🧮 **Mathematical Proof**: 28x performance advantage over traditional approaches
-- 📈 **Scaling Demonstration**: Why complexity class matters for APL projects
-- 🏆 **Production Ready**: Real enterprise validation with Spring PetClinic
+- ✨ **Clean Matrix Syntax**: Array-oriented dependency representation
+- 🧮 **APL Expressiveness**: Concise algorithms using APL's natural strengths
+- 📈 **Ecosystem Integration**: Real workspace, ]LINK, and Tatin package support
+- 🏆 **Production Ready**: Complete APL project analysis capabilities
 
 **Instant APL Analysis via Natural Language** (Optional):
 ```bash
@@ -38,17 +38,17 @@ dyalog -script mcp-demos/demo-scripts/maven_integration_demo.apl
 cd mcp-demos/mcp-server && npm install && npm run build
 ../setup-claude-desktop.sh
 
-# Then use Claude Desktop: "Analyze my APL project using mathematical dependency resolution"
+# Then use Claude Desktop: "Analyze my APL project using array-oriented dependency resolution"
 ```
 
 **Prerequisites:** Dyalog APL 19.0+, Unix-like system (macOS/Linux/WSL)
 
 ## 📋 Table of Contents
 
-- [⚡ Quickstart](#-quickstart-experience-the-mathematical-breakthrough) - Get started in 2 minutes
-- [🚀 Mathematical Innovation](#-mathematical-innovation-why-this-changes-everything) - The breakthrough explained
-- [🎯 APL-First Architecture](#apl-first-architecture-with-mathematical-foundation) - Language support & features
-- [🏆 Maven Validation](#-mathematical-validation-maven-benchmark-proves-on²-superiority) - 28x performance proof
+- [⚡ Quickstart](#-quickstart-experience-apl-native-dependency-management) - Get started in 2 minutes
+- [🚀 APL Innovation](#-apl-innovation-array-oriented-dependency-management) - The approach explained
+- [🎯 APL-First Architecture](#apl-first-architecture-with-array-foundation) - Language support & features
+- [🏆 Implementation Comparison](#-implementation-comparison-apl-vs-traditional-approaches) - APL approach validation
 - [📦 Installation](#installation) - Setup and Claude Desktop integration
 - [⚡ Quick Evaluation](#-experience-the-mathematical-breakthrough) - Demo commands
 - [🔧 Usage](#usage) - APL interface and commands
@@ -56,49 +56,50 @@ cd mcp-demos/mcp-server && npm install && npm run build
 
 ---
 
-## 🚀 Mathematical Innovation: Why This Changes Everything
+## 🚀 APL Innovation: Array-Oriented Dependency Management
 
-### The APL Dependency Problem 
-Traditional dependency systems use object-oriented graph traversal with O(N³) complexity:
+### The APL Ecosystem Challenge
+Traditional dependency systems use imperative, object-oriented approaches that don't leverage APL's array strengths:
 ```
 for each APL module:
     for each dependency:
         for each transitive dependency:
-            resolve and validate  // O(N³) nested loops
+            resolve and validate  // Imperative loops
 ```
 
-### APL-CD Solution: Matrix Mathematics
+### APL-CD Solution: Array-Oriented Approach
 ```apl
-⍝ Revolutionary O(N²) approach using APL's mathematical foundation
-dep_matrix ← BuildDependencyMatrix apl_dependencies  ⍝ O(N²) construction
-order ← TopologicalSort dep_matrix                   ⍝ O(N²) resolution  
-parallel_groups ← FindParallelTasks dep_matrix       ⍝ O(N²) optimization
+⍝ Clean, expressive dependency resolution using APL's natural paradigm
+dep_matrix ← BuildDependencyMatrix apl_dependencies  ⍝ Array construction
+order ← TopologicalSort dep_matrix                   ⍝ Matrix-based sorting  
+parallel_groups ← FindParallelTasks dep_matrix       ⍝ Array grouping
 ```
 
-### Visual Performance Scaling
+### APL Expressiveness Benefits
 
 ```
-Dependency Resolution Time vs Project Size
+Dependency Analysis: Traditional vs APL-Native
 
-Traditional O(N³):     APL-CD O(N²):
+Traditional Approach:    APL-CD Array Approach:
 
-10 deps:   ████         10 deps:   █
-100 deps:  ████████████ 100 deps:  ███  
-1000 deps: [exponential] 1000 deps: █████
+Dep tracking:   ████████      Matrix view:    ███
+Loop logic:     ████████      Array ops:      ██
+Error handling: ████████      Visual clarity: █
 
-Scaling Factor: Traditional grows as N³, APL-CD grows as N²
-Performance Gap: Exponentially increasing advantage
+Code Clarity: APL's matrix notation makes dependencies visual
+Maintenance: Array operations replace complex loop logic
+APL Integration: Native support for workspace/Tatin ecosystems
 ```
 
-## APL-First Architecture with Mathematical Foundation
+## APL-First Architecture with Array Foundation
 
 **Primary Focus: APL Ecosystem Innovation**
-APL-CD revolutionizes APL project dependency management through mathematical matrix operations, providing the first array-oriented approach to build optimization.
+APL-CD brings modern dependency management to the APL ecosystem using clean, expressive array operations, providing comprehensive integration with APL workspaces, ]LINK, and Tatin packages.
 
 ### Language Support Status
 
 ```
-✅ APL Projects: Production-ready matrix-based dependency resolution  
+✅ APL Projects: Production-ready array-based dependency resolution  
    • Real APL ecosystem integration (workspaces, ]LINK, namespaces, Tatin)
    • Validated on real tatin.dev packages (FilesAndDirs, HandleError)
    • .dws workspace analysis using ⎕LOAD introspection
@@ -106,11 +107,11 @@ APL-CD revolutionizes APL project dependency management through mathematical mat
    • Tatin apl-package.json parsing with dependency resolution
    • Dynamic ⎕FIX/⎕COPY expression handling
    • Full .dyalog, .aplf, .apln, .apla file analysis
-   • Mathematical validation with O(N²) complexity
+   • Clean array-oriented implementation
    
-✅ Maven Projects: Mathematical validation benchmark
+✅ Maven Projects: Implementation comparison benchmark
    • Real XML DOM parsing (Spring PetClinic: 14 dependencies)
-   • 28x performance advantage proving mathematical approach
+   • APL vs traditional implementation comparison
    • Production-ready enterprise validation
    
 ⚠️ Node.js: Basic package.json parsing (needs enhancement)
@@ -119,26 +120,26 @@ APL-CD revolutionizes APL project dependency management through mathematical mat
    
 ⚠️ Python: Simple requirements.txt parsing (experimental)
    • Basic parsing capability
-   • Mathematical approach not yet fully optimized
+   • Array approach not yet fully implemented
 ```
 
 ### Core APL Innovation Features
 
 - **🎯 APL-Native**: Built specifically for APL ecosystem needs
-- **📐 Matrix Operations**: N×N dependency matrices using APL's mathematical foundation
-- **⚡ Array Parallelism**: Vectorized task scheduling leveraging APL's concurrent capabilities  
+- **📐 Clean Matrix Syntax**: N×N dependency matrices using APL's expressive notation
+- **⚡ Array Operations**: Vectorized task scheduling leveraging APL's natural strengths  
 - **📦 Tatin Integration**: Native support for tatin.dev APL package registry
-- **🔬 Mathematical Proof**: Maven comparison validates O(N²) vs O(N³) superiority
+- **🔬 Implementation Showcase**: Maven integration demonstrates APL's expressive advantages
 - **🏢 Enterprise Ready**: Proven on real-world projects with comprehensive testing
 
 ## Architecture
 
 ### Core Components (4-Module Architecture)
 
-**APLCore.dyalog** (1,650+ lines)
-- O(N²) mathematical algorithms with matrix operations
+**APLCore.dyalog** (1,450+ lines)
+- Array-oriented algorithms with clean matrix operations
 - **Maven integration**: Production XML DOM parsing extracting 14 real dependencies from Spring PetClinic
-- Topological sorting and cycle detection using array operations
+- Topological sorting and cycle detection using expressive array operations
 - Supports package.json, requirements.txt, Maven pom.xml, and APL project parsing
 
 **APLExecution.dyalog** (295 lines)
@@ -161,13 +162,13 @@ APL-CD revolutionizes APL project dependency management through mathematical mat
 - Security scanning, input validation, and audit logging
 - System monitoring and performance analytics
 
-## Mathematical Innovation: Why Array-Oriented Dependency Resolution?
+## APL Advantages: Why Array-Oriented Dependency Resolution?
 
-### The Problem with Traditional Dependency Management
+### The Challenge with Traditional Dependency Management
 
-Traditional dependency resolution systems suffer from fundamental algorithmic inefficiency:
+Traditional dependency resolution systems use imperative, object-oriented approaches that don't leverage APL's natural strengths:
 
-#### Dependency Resolution: O(N³) Complexity
+#### Dependency Resolution: Imperative Complexity
 ```
 for each task:
     for each dependency:
@@ -175,19 +176,19 @@ for each task:
             resolve and validate
 ```
 
-This nested approach scales poorly as projects grow. Most dependency management systems also process dependencies sequentially, missing parallelization opportunities that require complex analysis to detect.
+This nested approach requires complex loop logic and state management. Most dependency management systems process dependencies sequentially with verbose, hard-to-maintain code.
 
-#### Object-Oriented Overhead
-Traditional systems use classes, abstractions, and design patterns that add computational overhead without algorithmic benefits.
+#### Object-Oriented Verbosity
+Traditional systems use classes, abstractions, and design patterns that add code complexity without leveraging mathematical thinking.
 
-### APL-CD Solution: Mathematical Innovation
+### APL-CD Solution: Array-Oriented Innovation
 
-#### Matrix-Based Dependency Resolution: O(N²)
+#### Matrix-Based Dependency Resolution
 ```apl
 ⍝ Create N×N dependency matrix
 dep_matrix ← BuildDependencyMatrix dependencies
 
-⍝ Compute optimal build order in O(N²) time  
+⍝ Compute optimal build order using array operations  
 order ← TopologicalSort dep_matrix
 
 ⍝ Find parallel execution groups
@@ -196,51 +197,51 @@ parallel_groups ← FindParallelTasks dep_matrix
 
 #### Array-Oriented Advantages
 
-1. **Superior Complexity**: O(N²) vs O(N³) through matrix operations
-2. **Natural Parallelism**: Array operations identify concurrent execution opportunities
-3. **Mathematical Validation**: Linear algebra ensures correctness
-4. **Vectorized Operations**: Native APL efficiency
+1. **Visual Clarity**: Matrix representation makes dependencies immediately visible
+2. **Concise Expression**: Array operations replace verbose loop logic
+3. **APL Natural Fit**: Leverages APL's mathematical paradigm
+4. **Maintainable Code**: Fewer lines, clearer intent
 
 ### Algorithm Details
 
 #### Traditional vs APL-CD Approaches
 
 ```apl
-⍝ Traditional approach: O(N³) nested loops
+⍝ Traditional approach: Verbose imperative loops
 BuildOrder ← {
     nodes ← GetNodes ⍵
     :For node :In nodes
         :For dependency :In GetDependencies node
             :For transitive :In GetTransitiveDeps dependency
-                ⍝ Process...
+                ⍝ Complex state management...
             :EndFor
         :EndFor  
     :EndFor
 }
 
-⍝ APL-CD approach: O(N²) matrix operations
+⍝ APL-CD approach: Clean array operations
 BuildOrder ← {
     matrix ← BuildDependencyMatrix ⍵
-    indegree ← +/matrix           ⍝ O(N²) operation
-    order ← TopologicalSort matrix ⍝ O(N²) operation  
+    indegree ← +/matrix           ⍝ Sum rows for dependency count
+    order ← TopologicalSort matrix ⍝ Array-based sorting  
 }
 ```
 
 ### Concrete Benefits
 
-#### Performance
-- **Dependency Resolution**: Matrix operations vs nested loops
-- **Parallel Detection**: Array analysis vs graph traversal
-- **Build Optimization**: Linear algebra vs heuristic search
+#### Code Clarity
+- **Dependency Visualization**: Matrix representation vs hidden object graphs
+- **Parallel Detection**: Array patterns vs complex graph analysis
+- **Build Logic**: Expressive array operations vs verbose loops
 
-#### Correctness
-- **Cycle Detection**: Matrix diagonal analysis
-- **Transitive Closure**: Mathematical computation vs recursive search
-- **Optimal Ordering**: Topological sort using array operations
+#### Maintainability
+- **Cycle Detection**: Matrix patterns vs recursive graph traversal
+- **Dependency Analysis**: Mathematical notation vs imperative logic
+- **Clear Intent**: Array operations show exactly what's happening
 
-#### Simplicity
-- **Fewer Lines**: Mathematical operations replace complex logic
-- **Self-Evident**: Behavior clear from array operations
+#### APL Integration
+- **Natural Fit**: Leverages APL's core strengths
+- **Ecosystem**: Works seamlessly with APL workspaces and tools
 - **Maintainable**: Less abstraction, more direct computation
 
 ### Performance Characteristics
@@ -268,34 +269,35 @@ BuildOrder ← {
 
 **Mathematical Truth: Array-oriented programming provides exponentially superior scaling for dependency management in APL ecosystems.**
 
-## 🏆 Mathematical Validation: Maven Benchmark Proves O(N²) Superiority
+## 🏆 Implementation Comparison: APL vs Traditional Approaches
 
-**Why Maven?** Maven provides an objective, industry-standard benchmark to validate APL-CD's mathematical approach against traditional O(N³) systems.
+**Why Maven?** Maven provides an objective, industry-standard benchmark to compare APL-CD's array-oriented approach against traditional imperative systems.
 
-### Mathematical Proof Through Real-World Data
+### Implementation Comparison Through Real-World Data
 
-| Validation Metric | Traditional Maven | APL-CD Matrix Approach | Mathematical Advantage |
+| Comparison Metric | Traditional Maven | APL-CD Array Approach | APL Advantage |
 |------------------|-------------------|----------------------|----------------------|
-| **Spring PetClinic** | ~3.7 seconds O(N³) | ~130ms O(N²) | **28x faster scaling** |
-| **Algorithm Type** | Graph traversal nested loops | Matrix mathematical operations | **Complexity class improvement** |
-| **Memory Model** | Object graphs + GC overhead | Compact boolean matrices | **Mathematical efficiency** |
-| **Result Verification** | ✅ Standard Maven output | ✅ Identical dependencies extracted | **Mathematically equivalent** |
+| **Spring PetClinic** | ~3.7 seconds | ~130ms | **Faster execution** |
+| **Algorithm Style** | Imperative nested loops | Expressive array operations | **Cleaner code** |
+| **Memory Model** | Object graphs + GC overhead | Compact boolean matrices | **Efficient representation** |
+| **Result Verification** | ✅ Standard Maven output | ✅ Identical dependencies extracted | **Equivalent results** |
 
-### Scaling Mathematics: Why This Matters for APL
+### Code Expressiveness: Why This Matters for APL
 
 ```
-Project Complexity Growth Comparison:
+Implementation Comparison:
 
-Traditional Systems (Maven-style):    APL-CD Matrix Approach:
+Traditional Approach:              APL-CD Array Approach:
 
-Deps=10:  Time=1000³ = 1B ops          Deps=10:  Time=10² = 100 ops
-Deps=100: Time=100³ = 1M ops           Deps=100: Time=100² = 10K ops  
-Deps=1000:Time=1000³ = 1T ops          Deps=1000:Time=1000² = 1M ops
+Complex nested loops               Clean matrix operations
+Verbose state management           Expressive array syntax
+Hidden dependency relationships    Visual matrix representation
+Difficult to debug                 Self-documenting code
 
-Performance Gap Grows Exponentially!
+Maintainability Gap!
 ```
 
-**Implication for APL Ecosystem**: As APL projects grow in complexity, traditional dependency resolution becomes exponentially slower, while APL-CD maintains mathematical predictability.
+**Implication for APL Ecosystem**: APL-CD brings modern dependency management to APL using the language's natural strengths, making CI/CD more maintainable and expressive.
 
 ### Technical Demonstrations
 
